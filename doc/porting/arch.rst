@@ -1,82 +1,70 @@
 .. _architecture_porting_guide:
 
-Architecture Porting Guide
+架构移植指导
 ##########################
 
-An architecture port is needed to enable Zephyr to run on an :abbr:`ISA
-(instruction set architecture)` or an :abbr:`ABI (Application Binary
-Interface)` that is not currently supported.
+Zephyr 目前不支持某些 :abbr:`ISA(instruction set architecture)` 和 :abbr:`ABI (
+Application Binary Interface)` 架构。如果您希望在这些架构上运行 Zephyr，需要
+做一些架构相关的移植工作。
 
-The following are examples of ISAs and ABIs that Zephyr supports:
+Zephyr 目前支持的 ISA 和 ABI 架构包括：
 
 * x86_32 ISA with System V ABI
 * x86_32 ISA with IAMCU ABI
 * ARMv7-M ISA with Thumb2 instruction set and ARM Embedded ABI (aeabi)
 * ARCv2 ISA
 
-An architecture port is mostly constrained to the nanokernel. The reason is
-that the microkernel is conceptually an application running on top of the
-nanokernel, entirely written in C. The only part of an architecture port that
-is specific to the microkernel is part of the system clock timer driver.
+架构相关的移植主要集中在 nanokernel。这是因为 microkernel 在概念上只是一个用
+ C 语言写的、运行在 nanokernel 之上的应用程序。在架构移植过程中，与 microkernel 
+唯一相关的部分是系统时钟定时器驱动。
 
-An architecture port can be divided in several parts; most are required and
-some are optional:
+架构相关的移植可以划分为几个部分，其中一部分是必须的，另一些是可选的：
 
-* **The early boot sequence**: each architecture has different steps it must
-  take when the CPU comes out of reset (required).
+* **早期的启动过程**: 必须的。当 CPU 复位后，每种架构都需要做不同的处理。
 
-* **Interrupt and exception handling**: each architecture handles asynchronous
-  and un-requested events in a specific manner (required).
+* **中断和异常处理**: 必须的。每种架构以特定的方式处理异步和未请求事件。
 
-* **Thread context switching**: the Zephyr context switch is dependent on the
-  ABI and each ISA has a different set of registers to save (required).
+* **线程上下文切换**: 必须的。 Zephyr 的上下文切换依赖于 ABI。不同的 ISA 
+  需要保存不同的寄存器集合。
 
-* **Thread creation and termination**: A thread's initial stack frame is ABI
-  and architecture-dependent, and thread abortion possibly as well (required).
+* **线程的创建和结束**: 必须的。线程的初始化帧依赖于 ABI 和架构。线程的终止
+  也类似。
 
-* **Device drivers**: most often, the system clock timer and the interrupt
-  controller are tied to the architecture (some required, some optional).
+* **设备驱动程序**: 部分是必须的，部分是可选的。大多数情况下，系统的时钟定时器
+  和中断控制器都是与架构绑定在一起的。
 
-* **Utility libraries**: some common kernel APIs rely on a
-  architecture-specific implementation for performance reasons (required).
+* **工具库**: 必须的。由于性能问题，内核的一些通用 API 依赖于架构相关的实现。
 
-* **CPU idling/power management**: most architectures implement instructions
-  for putting the CPU to sleep (partly optional).
+* **CPU 空转/电源管理**: 可选的。大多数架构都实现了让 CPU 睡眠的指令。
 
-* **Fault management**: for implementing architecture-specific debug help and
-  handling of fatal error in threads (partly optional).
+* **Fault 处理**: 可选的。 主要与架构相关的调试、处理线程致命错误相关。
 
-* **Linker scripts and toolchains**: architecture-specific details will most
-  likely be needed in the build system and when linking the image (required).
+* **链接脚本和工具链**: 必须的。 编译系统在链接镜像时，极有可能需要一些架构相关
+  的细节。
 
-Early Boot Sequence
+早期的启动过程
 *******************
 
-The goal of the early boot sequence is to take the system from the state it is
-after reset to a state where is can run C code and thus the common kernel
-initialization sequence. Most of the time, very few steps are needed, while
-some architectures require a bit more work to be performed.
+早起的启动过程是为了让系统从复位状态切换到能运行 C 代码的状态。大多数情况下都只需要
+很少的步骤，只有个别架构需要略多的处理。
 
-Common steps for all architectures:
+所有架构的通用步骤：
 
-* Setup an initial stack.
-* If running an :abbr:`XIP (eXecute-In-Place)` kernel, copy initialized data from ROM
-  to RAM.
-* If not using an ELF loader, zero the BSS section.
-* Jump to :code:`_Cstart()`, the early kernel initialization
+* 设置初始化栈。 
+* 如果运行的是 :abbr:`XIP (eXecute-In-Place)` 内核，将初始化代码从 ROM 拷贝到 RAM。
+* 如果没有使用 ELF 加载器，初始化 BSS 段。
+* 跳转到 :code:`_Cstart()` 去初始化内核。
 
-  * :code:`_Cstart()` is responsible for context switching out of the fake context
-    running at startup into the background/idle task
+  * :code:`_Cstart()` 负责从系统启动时的虚拟上下文切换到后台/空转任务。
 
-Some examples of architecture-specific steps that have to be taken:
+一些架构相关的步骤可能包括：
 
-* If given control in real mode on x86_32, switch to 32-bit protected mode.
-* Setup the segment registers on x86_32 to handle boot loaders that leave them
-  in an unknown or broken state.
-* Initialize a board-specific watchdog on Cortex-M3/4.
-* Switch stacks from MSP to PSP on Cortex-M3/4.
+* 如果处于 x86_32 实模式，则需要切换到 32 位的保护模式。
+* 设置 x86_32 的段寄存器，以处理 boot loader。
+* 处理 Cortex-M3/4 的开发板相关的看门狗。
+* 将 Cortex-M3/4 的栈由 MSP 切换到 PSP。
 
-Interrupt and Exception Handling
+中断和异常处理
 ********************************
 
 Each architecture defines interrupt and exception handling differently.

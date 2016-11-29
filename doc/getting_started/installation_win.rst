@@ -1,42 +1,34 @@
 .. _installing_zephyr_win:
 
-Development Environment Setup on Windows
+在 Windows 下设置开发环境
 ########################################
 
-This section describes how to configure your development environment and
-to build Zephyr applications in a Microsoft Windows environment.
+本节描述如何在微软的 Windows 环境下配置您的开发环境并编译 Zephyr 应用程序。
 
-This guide was tested by compiling and running the Zephyr's sample
-applications on the following Windows version:
+本节的内容在如下的 Windows 版本下进行了编译、运行 Zephyr 应用程序例程的测试：
 
 * Windows 8.1
 
-Update Your Operating System
+更新您的操作系统
 ****************************
 
-Before proceeding with the build, ensure that you are running your
-Windows system with the latest updates installed.
+在编译之前，请确保你所运行的 Windows 系统已经安装了最新的更新包。
 
 .. _windows_requirements:
 
-Installing Requirements and Dependencies
+安装需求和依赖
 ****************************************
 
-To install the software components required to build Zephyr applications on
-Windows, you will need to build or install a toolchain.
+为了在 Windows 上安装编译 Zephyr 应用程序所需的软件组件，您需要编译或运行
+一个工具链。
 
-Install :program:`GIT`. Go to `GIT Download`_ to obtain the latest copy of
-the software.
+安装 :program:`GIT`。进入 `GIT Download`_ 获取最新版的软件副本。
 
-Install :program:`Python 2.7`. Go to `Python Download`_ to obtain the 2.7
-version of the software.
+安装 :program:`Python 2.7`。进入 `Python Download`_ 获取 2.7 版的 Python。
 
-Install :program:`MinGW`. MinGW is the minimalist GNU development environment
-for native Windows applications. The Zephyr build system will execute on top of
-this tool set.
-
-To install :program:`MinGW`, visit the site `MinGW Home`_ and install the
-following packages with their installler `mingw-get-setup.exe`:
+安装 :program:`MinGW`。MinGW 是本地 Windows 应用程序的最小化 GNU 开发环境。
+Zephyr 的编译系统将在该工具集上运行。进入站点 `MinGW Home`_  下载程序，并使用
+它的安装器 `mingw-get-setup.exe` 安装如下程序：
 
 * mingw-developer-toolkit
 * mingw32-base
@@ -45,30 +37,26 @@ following packages with their installler `mingw-get-setup.exe`:
 * msys-console
 * msys-w32api
 
-Launch the `MSYS console`. The installer does not create shortcuts for you,
-but the script to launch it is in :file:`C:\\MinGW\\msys\\1.0\\msys.bat.`.
-We need the following line in :file:`/etc/fstab`:
+启动 `MSYS console`。安装器不会为您创建快捷方式，启动脚本是 :file:`C:\\MinGW\\msys\\1.0\\msys.bat.`。
+我们需要在文件 :file:`/etc/fstab` 中添加如下两行：
 
 .. code-block:: console
 
    #Win32_Path     Mount_Point
    c:/mingw             /mingw
 
-The easiest way to do this is just copy the file :file:`fstab.sample` as
-:file:`fstab` and confirm that the these lines are in the new
-:file:`fstab` file.
+最简单的方法是将文件 :file:`fstab.sample` 拷贝为 :file:`fstab`，并确定新文件
+:file:`fstab` 中包含上面两行。
 
 .. code-block:: console
 
    $ cp /etc/fstab.sample /etc/fstab
    $ cat /etc/fstab
 
-Configure Python's folder location in the environmental variable :envvar:`PATH`
-and the installation path for MinGW.
+在环境变量 :envvar:`PATH` 中配置 Python 和 MinGW 的安装路劲。
 
-.. note:: The format of the path for `PYTHON_PATH` must to be in the
-   linux format. Default installation is in :file:`C:\\python27`,
-   which would be written as :file:`/c/python27/`.
+.. note:: `PYTHON_PATH` 路劲的格式必须是 linux 格式。例如，Python 默认的安装路劲是 :file:`C:\\python27`，
+   应该写为 :file:`/c/python27/`。
 
 .. code-block:: console
 
@@ -76,52 +64,44 @@ and the installation path for MinGW.
    export PATH=$PATH:${PYTHON_PATH}
    export MINGW_DIR=/c/MinGW
 
-Pthread library
+Pthread 库
 ===============
 
-The Zephyr OS build process has a dependency on the Pthread library.
-The required packages for Msys installation would normally provide it.
-However, if a minimal installation fails to provide the Pthread library,
-it can be installed with the following command:
+Zephyr OS 编译时依赖于 Pthread 库。安装 Msys 时会安装该库。不过，如果最小化安
+装没有提供该库，您也可以根据下面的命令安装：
 
 .. code-block:: console
 
    mingw-get install libpthread
 
-GNU Regex C library
+GNU Regex C 库
 ===================
 
-The Zephyr build process has a dependency with the GNU regex library.
-Msys provides its own GNU library implementation that can be downloaded from the
-MinGW and Msys official repository:`MinGW Repository`_.
-Install the library from the Msys console interface with the following commands:
+Zephyr 编译时也依赖于 GNU regex 库。Msys 自身已实现了该库，您可以在 MinGw 和 Msys 的官方仓库 
+ :`MinGW Repository`_ 下载。使用下面的命令安装该库：
 
 .. code-block:: console
 
    mingw-get update
    mingw-get install msys-libregex-dev --all-related
 
-Update the following environment variables on your system to allow the C compiler
-and linker to find the library and headers:
+更新您系统的环境变量，以确保 C 编译器和链接器能找到库文件：
 
 .. code-block:: console
 
    export LIBRARY_PATH=$LIBRARY_PATH:/c/mingw/msys/1.0/lib
    export C_INCLUDE_PATH=$C_INCLUDE_PATH:/c/mingw/msys/1.0/include
 
-Toolchain Installation
+安装工具链
 ======================
 
-The build system should be able to work with any toolchain installed in your system.
+编译系统能使用您系统上所安装的任何工具链。
 
-For instance, the Zephyr build system was tested with the toolchain provided with
-the ISSM 2016 (Intel System Studio for Microcontrollers) installation.
+Zephyr 的编译系统使用 ISSM 2016 (Intel System Studio for Microcontrollers) 测试过。
 
-To install ISSM use the link provided to download from the Intel Developer Zone:
-`ISSM 2016 Download`_ and install it into your system.
+您可以从 Inter 开发者专区 `ISSM 2016 Download`_ 下载 ISSM，然后将其安装到您的系统上。
 
-Finally, configure your environment variables for the ISSM 2016 toolchain.
-For example, using the default installation path for ISSM:
+最后，您还需要为 ISSM 2016 配置环境变量。例如，使用 ISSM 的默认安装路径：
 :file:`C:/IntelSWTools/ISSM_2016`
 
 .. code-block:: console

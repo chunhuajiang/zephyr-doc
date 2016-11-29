@@ -1,67 +1,60 @@
 .. _source_tree_v2:
 
-Source Tree Structure
+源码树结构
 #####################
 
-Understanding the Zephyr source tree can be helpful in locating the code
-associated with a particular Zephyr feature.
+理解 Zephyr 源码树有助于快速定位 Zephyr 相关功能的代码。
 
-The Zephyr source tree provides the following top-level directories,
-each of which may have one or more additional levels of subdirectories
-which are not described here.
+Zephyr 源码树提供了如下顶层目录，且每个目录可能还包括一个或多个子目录：
 
 :file:`arch`
-    Architecture-specific kernel and system-on-chip (SoC) code.
-    Each supported architecture (for example, x86 and ARM)
-    has its own subdirectory,
-    which contains additional subdirectories for the following areas:
+    架构相关的内核以及 SoC 相关的代码。每个所支持的架构（例如 x86 和 ARM）
+	都有一个自己的子目录。每个子目录还包括如下功能的子目录：
 
-    * architecture-specific kernel source files
-    * architecture-specific kernel include files for private APIs
-    * SoC-specific code
+    * 架构相关的内核源文件
+    * 架构相关的内核头文件和私有 API
+    * SoC 相关的代码
 
 :file:`boards`
+    开发板相关的代码和配置文件。
     Board related code and configuration files.
 
 :file:`doc`
-    Zephyr documentation source files and tools.
+    Zephyr 文档的源文件和工具。
 
 :file:`drivers`
-    Device driver code.
+    设备驱动的代码。
 
 :file:`ext`
-    Externally created code that has been integrated into Zephyr
-    from other sources, such as hardware interface code supplied by
-    manufacturers and cryptographic library code.
+    集成到 Zephyr 中的外部源代码，例如厂商提供的硬件接口代码、密码库代码等。
 
 :file:`fs`
-    File system code.
+    文件系统的代码。
 
 :file:`include`
-    Include files for all public APIs, except those defined under :file:`lib`.
+    
+    除 :file:`lib` 外的所公有 API 的头文件。
 
 :file:`kernel`
-    Architecture-independent kernel code.
+    架构无关的内核代码。
 
 :file:`lib`
-    Library code, including the minimal standard C library.
+    包括最小化 C 库在内的库代码。
 
 :file:`misc`
-    Miscellaneous code that doesn't belong to any of the other top-level
-    directories.
+    不属于如何顶层目录的杂项代码。
 
 :file:`net`
-    Networking code, including the Bluetooth stack and networking stacks.
+    网络相关的代码，包括蓝牙协议栈和网络协议栈。
 
 :file:`samples`
-    Sample applications that demonstrate the use of Zephyr features.
+    演示 Zephyr 功能特性的应用程序例程。
 
 :file:`scripts`
-    Various programs and other files used to build and test Zephyr
-    applications.
+    各种程序以及用于编译、测试 Zephyr 应用程序的其它文件。
 
 :file:`tests`
-    Test code and benchmarks for Zephyr features.
+    Zephyr 功能特性的测试代码。
 
 :file:`usb`
-    USB device stack code.
+    USB 设备栈的代码。

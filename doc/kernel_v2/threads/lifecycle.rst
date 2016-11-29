@@ -1,119 +1,94 @@
 .. _lifecycle_v2:
 
-Lifecycle
+生命周期
 #########
 
-A :dfn:`thread` is a kernel object that is used for application processing
-that is too lengthy or too complex to be performed by an ISR.
+:dfn:`Thread` 是一个用于处理由于太复杂或耗时太长而不便于在 ISR 内完成的工作的内核对象。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-Any number of threads can be defined by an application. Each thread is
-referenced by a :dfn:`thread id` that is assigned when the thread is spawned.
+应用程序可以定义任意数量的线程，且可以使用线程诞生时分配给该线程的 :dfn:`thread id` 来引用该线程。
 
-A thread has the following key properties:
+线程的注关键属性包括：
 
-* A **stack area**, which is a region of memory used for the thread's
-  control block (of type :c:type:`struct k_thread`) and for its stack.
-  The **size** of the stack area can be tailored to conform to the actual needs
-  of the thread's processing.
+* **栈区域**：一段用于线程控制块（:c:type:`struct k_thread`）和线程栈的内存区域。
+  栈空间的 **大小** 可以被裁剪，以适应实际的线程处理需求。
 
-* An **entry point function**, which is invoked when the thread is started.
-  Up to 3 **argument values** can be passed to this function.
+* **入口点函数**：当线程启动时调用的函数。该函数最多能接收 3 个参数。
 
-* A **scheduling priority**, which instructs the kernel's scheduler how to
-  allocate CPU time to the thread. (See :ref:`scheduling_v2`.)
+* **调度优先级**：指示内核的调度器如何给该线程分配 CPU 时间。（参考 :ref:`scheduling_v2`。）
 
-* A set of **thread options**, which allow the thread to receive special
-  treatment by the kernel under specific circumstances.
-  (See :ref:`thread_options_v2`.)
+* **线程选项**：允许内核在特定场景中对该线程做某种特殊处理。（参考 :ref:`thread_options_v2`。）
 
-* A **start delay**, which specifies how long the kernel should wait before
-  starting the thread.
+* **启动时延**： 指定线程在才启动前需要等待的时间。
 
-Thread Spawning
+线程的创建
 ===============
 
-A thread must be spawned before it can be used. The kernel initializes
-the control block portion of the thread's stack area, as well as one
-end of the stack portion. The remainder of the thread's stack is typically
-left uninitialized.
+线程必须先创建、再使用。创建线程时，内核将初始化线程栈区域的控制块区域以及栈的尾
+部。栈区域的其它部分通常都是未初始化的。
 
-Specifying a start delay of :c:macro:`K_NO_WAIT` instructs the kernel
-to start thread execution immediately. Alternatively, the kernel can be
-instructed to delay execution of the thread by specifying a timeout
-value -- for example, to allow device hardware used by the thread
-to become available.
+如果指定的启动时延是 :c:macro:`K_NO_WAIT`，内核将立即启动线程。您也可以指定一个
+超时时间，指示内核延迟启动该线程。例如，让线程需要使用的设备就绪后再启动线程。
 
-The kernel allows a delayed start to be cancelled before the thread begins
-executing. A cancellation request has no effect if the thread has already
-started. A thread whose delayed start was successfully cancelled must be
-re-spawned before it can be used.
+如果延迟启动的线程还未启动，内核可以取消该线程。如果线程已经启动了，则内核在尝试
+取消它时不会有如何效果。如果延迟启动的线程被成功地取消了，它必须被再次创建后才能
+再次使用。
 
-Thread Termination
+线程的正常结束
 ==================
 
-Once a thread is started it typically executes forever. However, a thread may
-synchronously end its execution by returning from its entry point function.
-This is known as **termination**.
+线程一旦启动，它通常会一直运行下去。不过，线程也可以从它的入口点函数中返回，从而
+同步结束执行。这种结束方式叫做**正常结束（terminaltion）**。
 
-A thread that terminates is responsible for releasing any shared resources
-it may own (such as mutexes and dynamically allocated memory)
-prior to returning, since the kernel does *not* reclaim them automatically.
+正常结束的线程需要在返回前释放它所拥有的共享资源（例如互斥量、动态分配的内存）。
+内核*不会*自动回收这些资源。
 
 .. note::
-    The kernel does not currently make any claims regarding an application's
-    ability to respawn a thread that terminates.
+    当前内核不会做任何补偿。应用程序可以重新创建正常结束的线程。
 
-Thread Aborting
+线程的异常终止
 ===============
 
-A thread may asynchronously end its execution by **aborting**. The kernel
-automatically aborts a thread if the thread triggers a fatal error condition,
-such as dereferencing a null pointer.
+线程可以通过**异常终止 （aborting）**异步结束其执行。如果线程触发了一个致命错误
+（例如引用了空指针），内核将自动终止该线程。
 
-A thread can also be aborted by another thread (or by itself)
-by calling :cpp:func:`k_thread_abort()`. However, it is typically preferable
-to signal a thread to terminate itself gracefully, rather than aborting it.
+其它线程（或线程自己）可以调用 :cpp:func:`k_thread_abort()` 终止一个线程。不过，
+更优雅的做法是向线程发送一个信号，让该线程自己结束执行。
 
-As with thread termination, the kernel does not reclaim shared resources
-owned by an aborted thread.
+线程终止时，内核不会自动回收该线程拥有的共享资源。
 
 .. note::
-    The kernel does not currently make any claims regarding an application's
-    ability to respawn a thread that aborts.
+    当前内核不会做任何补偿。应用程序可以重新创建异常终止的线程。
 
-Thread Suspension
+线程的挂起
 =================
 
-A thread can be prevented from executing for an indefinite period of time
-if it becomes **suspended**. The function :cpp:func:`k_thread_suspend()`
-can be used to suspend any thread, including the calling thread.
-Suspending a thread that is already suspended has no additional effect.
+如果一个线程被挂起，它将在一段不确定的时间内暂停执行。函数 :cpp:func:`k_thread_suspend()`
+可以用于挂起包括调用线程在内的所有线程。对已经挂起的线程再次挂起时不会产生任何
+效果。
 
-Once suspended, a thread cannot be scheduled until another thread calls
-:cpp:func:`k_thread_resume()` to remove the suspension.
+线程一旦被挂起，它将一直不能被调度，除非另一个线程调用 :cpp:func:`k_thread_resume()` 
+取消挂起。
 
 .. note::
-   A thread can prevent itself from executing for a specified period of time
-   using :cpp:func:`k_sleep()`. However, this is different from suspending
-   a thread since a sleeping thread becomes executable automatically when the
-   time limit is reached.
+   线程可以使用 :cpp:func:`k_sleep()` 睡眠一段指定的时间。不过，这与挂起不同，
+   睡眠线程在睡眠时间完成后会自动运行。
 
 .. _thread_options_v2:
 
-Thread Options
+线程的选项
 ==============
 
-The kernel supports a small set of :dfn:`thread options` that allow a thread
-to receive special treatment under specific circumstances. The set of options
-associated with a thread are specified when the thread is spawned.
+内核支持一系列 :dfn:`thread options`，以允许线程在特殊情况下被特殊对待。这些
+与线程关联的选项在线程创建时就被指定了。
 
+不需要任何线程选项的线程的选项值是零。
 A thread that does not require any thread option has an option value of zero.
 A thread that requires a thread option specifies it by name, using the
 :literal:`|` character as a separator if multiple options are needed
@@ -138,10 +113,10 @@ The following thread options are supported.
     By default, the kernel does not attempt to save and restore the contents
     of these registers when scheduling the thread.
 
-Implementation
+实现
 **************
 
-Spawning a Thread
+创建一个线程
 =================
 
 A thread is spawned by defining its stack area and then calling
@@ -185,7 +160,7 @@ The following code has the same effect as the code segment above.
                     my_entry_point, NULL, NULL, NULL,
                     MY_PRIORITY, 0, K_NO_WAIT);
 
-Terminating a Thread
+结束一个线程
 ====================
 
 A thread terminates itself by returning from its entry point function.
@@ -208,7 +183,7 @@ The following code illustrates the ways a thread can terminate.
     }
 
 
-Suggested Uses
+建议的用法
 **************
 
 Use threads to handle processing that cannot be handled in an ISR.
@@ -216,14 +191,14 @@ Use threads to handle processing that cannot be handled in an ISR.
 Use separate threads to handle logically distinct processing operations
 that can execute in parallel.
 
-Configuration Options
+配置选项
 *********************
 
 Related configuration options:
 
 * None.
 
-APIs
+API
 ****
 
 The following thread APIs are provided by :file:`kernel.h`:

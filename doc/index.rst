@@ -1,28 +1,15 @@
 ..
     Zephyr Project documentation master file
 
-Zephyr Project Documentation
+Zephyr Project 文档
 ############################
 
-.. only:: release
 
-   Welcome to the Zephyr Project's documentation version |version|!
+欢迎阅读 Zephyr Project 的文档，当前的版本是 v1.6.0。
 
-   Documentation for the development branch of Zephyr can be found at
-   https://www.zephyrproject.org/doc/
+Zephyr 的开发分支的文档位于 https://www.zephyrproject.org/doc/。
 
-.. only:: development
-
-   Welcome to the Zephyr Project's documentation. This is the documentation of the
-   master tree under development.
-
-   Documentation for released versions of Zephyr can be found at
-   ``https://www.zephyrproject.org/doc/<version>``. The following documentation
-   versions are available:
-
-   `Zephyr 1.1.0`_ | `Zephyr 1.2.0`_ | `Zephyr 1.3.0`_ | `Zephyr 1.4.0`_ | `Zephyr 1.5.0`_
-
-Sections
+总目录
 ********
 
 .. toctree::
@@ -41,9 +28,9 @@ Sections
    reference/kbuild/kbuild.rst
    LICENSING.rst
 
-You can find further information on the `Zephyr Project Wiki`_.
+更多信息请访问 `Zephyr Project Wiki`_。
 
-Indices and Tables
+索引和表格
 ******************
 
 * :ref:`genindex`

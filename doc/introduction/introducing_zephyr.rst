@@ -1,6 +1,6 @@
 .. _introducing_zephyr:
 
-Introducing Zephyr
+Zephyr 简介
 ##################
 
 The Zephyr kernel is a small-footprint kernel designed for use on
@@ -18,7 +18,7 @@ Licensing
 The Zephyr project associated with the kernel makes it available
 to users and developers under the Apache License, version 2.0.
 
-Distinguishing Features
+特性
 ***********************
 
 The Zephyr kernel offers a number of features that distinguish it from other
@@ -62,7 +62,7 @@ small-footprint OSes:
    * *Power Management Services* such as tickless idle and an advanced idling
      infrastructure.
 
-Fundamental Terms and Concepts
+基本术语和概念
 ******************************
 
 This section outlines the basic terms used by the Zephyr kernel ecosystem.

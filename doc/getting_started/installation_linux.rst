@@ -1,62 +1,53 @@
 .. _installation_linux:
 
-Development Environment Setup on Linux
+在 Linux 下搭建开发环境
 ######################################
 
-This section describes how to set up a Linux development system.
+本节描述如何搭建一个 Linux 开发环境。
 
-After completing these steps, you will be able to compile and run your Zephyr
-applications on the following Linux distributions:
+完成这些操作后，您将能够在如下 Linux 发行版上编译、运行您的 Zephyr 应用程序：
 
 * Ubuntu 14.04 LTS 64-bit
 * Fedora 22 64-bit
 
-Where needed, alternative instructions are listed for Ubuntu and Fedora.
+您应该根据需要选择 Ubuntu 或者 Fedora 的指令。
 
-Installing the Host's Operating System
+安装主机操作系统
 **************************************
+Zephyr 项目的软件组件（包括内核）已经在 Ubuntu 和 Fedora 上面测试通过了。
+安装 Ubuntu 和 Fedora 的方法不在本文档的讨论范围内。
 
-Building the project's software components including the kernel has been
-tested on Ubuntu and Fedora systems. Instructions for installing these OSes
-are beyond the scope of this document.
-
-Update Your Operating System
+更新您的操作系统
 ****************************
 
-Before proceeding with the build, ensure your OS is up to date.  On Ubuntu,
-you'll first need to update the local database list of available packages
-before upgrading:
+在进行编译前，请先确保您的操作系统已经更新到最新了。对于 Ubuntu，您需要先
+更新可用软件包的本地数据库列表：
 
 .. code-block:: console
 
    $ sudo apt-get update
    $ sudo apt-get upgrade
 
-On Fedora:
+对于 Fedora：
 
 .. code-block:: console
 
    $ sudo dnf upgrade
 
-Note that having a newer version available for an installed package
-(and reported by ``dnf check-update``) does not imply a subsequent
-``dnf upgrade`` will install it, because it must also ensure dependencies
-and other restrictions are satisfied.
-
 .. _linux_required_software:
 
-Installing Requirements and Dependencies
+安装需求和依赖
 ****************************************
 
-Install the following with either apt-get or dnf.
+请按照下面的方法使用 apt-get 或者 dnf 进行安装。
 
-Install the required packages in a Ubuntu host system with:
+对于 Ubuntu：
 
 .. code-block:: console
 
    $ sudo apt-get install git make gcc g++ python3-ply ncurses-dev
 
-Install the required packages in a Fedora host system with:
+对于 Fedora：
 
 .. code-block:: console
 
@@ -65,14 +56,12 @@ Install the required packages in a Fedora host system with:
 
 .. _zephyr_sdk:
 
-Installing the Zephyr Software Development Kit
+安装 Zephyr 软件开发套件（SDK）
 ==============================================
 
-Zephyr's :abbr:`SDK (Software Development Kit)` contains all necessary tools
-and cross-compilers needed to build the kernel on all supported
-architectures. Additionally, it includes host tools such as a custom QEMU and
-a host compiler for building host tools if necessary. The SDK supports the
-following architectures:
+Zephyr 的 :abbr:`SDK (Software Development Kit)` 中包含为其支持的所有架构编译内核
+所需的工具和交叉编译器。此外，它还包括主机上的工具，例如定制的 QEMU 以及编译主机
+工具的主机编译器。SDK 支持如下架构：
 
 * :abbr:`IA-32 (Intel Architecture 32 bits)`
 
@@ -80,21 +69,19 @@ following architectures:
 
 * :abbr:`ARC (Argonaut RISC Core)`
 
-Follow these steps to install the SDK on your Linux host system.
+按照下面的步骤就能在您的 Linux 主机系统上安装 SDK。
 
-#. Download the latest SDK self-extractable binary.
+#. 下载最新的 SDK 自解压二进制文件。
 
-   Visit the `Zephyr SDK archive`_ to find all available SDK versions,
-   including the latest version.
+   访问 `Zephyr SDK archive`_ 可查找到所有可有的（包括最新的） SDK。
 
-   Alternatively, you can use the following command to download the desired
-   version, replacing <version> with the version number you wish to download.
+   您也可以使用下面的摩纳哥咯来现在所需的版本，其中需要将 <version> 替换为您想下载的版本号。
 
    .. code-block:: console
 
       $ wget https://nexus.zephyrproject.org/content/repositories/releases/org/zephyrproject/zephyr-sdk/<version>-i686/zephyr-sdk-<version>-i686-setup.run
 
-#. Run the installation binary, follow this example:
+#. 运行自解压二进制文件。
 
    .. code-block:: console
 
@@ -102,16 +89,12 @@ Follow these steps to install the SDK on your Linux host system.
 
       $ ./zephyr-sdk-<version>-i686-setup.run
 
-   There is no need for `sudo` if the SDK is installed in the current
-   user's home directory.
+   如果将 SDK 按照到用户的 home 目录，则没有必要是使用 `sudo` 权限。
 
-#. Follow the installation instructions on the screen. The
-   toolchain's default installation location is :file:`/opt/zephyr-sdk/`.
-   To install in the default installation location, you will need to use sudo. It is recommended
-   to install the SDK in your home directory and not in a system directory.
+#. 遵循屏幕上提上的指令进行操作。工具链的默认安装路径位于 :file:`/opt/zephyr-sdk/`。如果要
+   安装到默认路径，您需要使用 sudo。推荐将 SDK 安装到您的 home 目录，而不是系统目录。
 
-#. To use the Zephyr SDK, export the following environment variables and
-   use the target location where SDK was installed, type:
+#. 要使用 Zephyr SDK，您还需要 export 如下的环境变量，并指明 SDK 的安装路径，输入：
 
    .. code-block:: console
 
@@ -119,8 +102,7 @@ Follow these steps to install the SDK on your Linux host system.
 
       $ export ZEPHYR_SDK_INSTALL_DIR=<sdk installation directory>
 
-  To use the same toolchain in new sessions in the future you can set the
-  variables in the file :file:`${HOME}/.zephyrrc`, for example:
+如果您希望将来在新的会话中也是使用该工具链，您可以上面的设置添加到文件 :file:`${HOME}/.zephyrrc` 中，例如：
 
   .. code-block:: console
 

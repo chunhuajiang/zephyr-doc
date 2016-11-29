@@ -1,16 +1,15 @@
 .. _glossary_v2:
 
-Glossary of Terms [TBD]
+术语表
 #######################
 
-API (Application Program Interface)
-    A defined set of routines and protocols for building software inputs
-    and output mechanisms.
+API (应用程序接口)
+	构建软件输入输出的程序和协议的集合。
 
-IDT (Interrupt Descriptor Table)
+IDT (中断描述符表)
     [TBD]
 
-ISR (Interrupt Service Routine)
+ISR (中断服务例程)
     [TBD]
 
 XIP (eXecute In Place)

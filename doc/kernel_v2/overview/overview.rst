@@ -1,25 +1,20 @@
 .. _overview_v2:
 
-Overview
+概述
 ########
 
-The Zephyr kernel lies at the heart of every Zephyr application. It provides
-a low footprint, high performance, multi-threaded execution environment
-with a rich set of available features. The rest of the Zephyr ecosystem,
-including device drivers, networking stack, and application-specific code,
-uses the kernel's features to create a complete application.
+Zephyr 内核是每个 Zephyr 应用程序的心脏，它提供了一个低内存、高性能、多线程
+以及一系列功能特性的执行环境。Zephyr 的其它部分，例如设备驱动程序、网络协议栈、
+应用程序相关的代码都需要使用内核提供的功能。
 
-The configurable nature of the kernel allows you to incorporate only those
-features needed by your application, making it ideal for systems with limited
-amounts of memory (as little as 2 KB!) or with simple multi-threading
-requirements (such as a set of interrupt handlers and a single background task).
-Examples of such systems include: embedded sensor hubs, environmental sensors,
-simple LED wearables, and store inventory tags.
 
-Applications requiring more memory (50 to 900 KB), multiple communication
-devices (like WiFi and Bluetooth Low Energy), and complex multi-threading,
-can also be developed using the Zephyr kernel. Examples of such systems
-include: fitness wearables, smart watches, and IoT wireless gateways.
+内核的可配置特性允许您只使用您应用程序所需的功能。这是内存受限系统（低至 2 KB！）
+和简单的多线程系统（例如一系列的中断处理、单后台任务）的理想方式。这样的系统包括
+嵌入式传感器集线器、环境传感器、简单的 LED 可穿戴设备、商店库存标签等。
+
+如果应用程序需要更多的内存（50 至 900 KB）、多个通信设备（比如 WiFi 和低功耗蓝牙）、
+复杂的多线程，您也可以使用 Zephyr 内核进行开发。这样的系统包括健康穿戴设备、智能手表、
+IoT 无线网关等。
 
 .. toctree::
    :maxdepth: 1

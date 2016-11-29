@@ -1,57 +1,45 @@
 .. _installing_zephyr_mac:
 
-Development Environment Setup on Mac OS
+在 Mac OS 下搭建开发环境
 #######################################
 
-This section describes how to set up a Mac OS development system.
+本节描述如何搭建 Mac OS 开发环境。
 
-After completing these steps, you will be able to compile and run your Zephyr
-applications on the following Mac OS version:
+完成这些操作后，您将能够在如下版本的 Mac OS 下编译、运行 Zephyr 应用程序。
 
 * Mac OS X 10.11 (El Capitan)
 
-Developing for Zephyr on OS X generally requires you to build the
-toolchain yourself. However, if there is already an OS X toolchain for your
-target architecture you can use it directly.
+在 OS X 上开发 Zephyr 需要您自己编译工具链。不过，如果您的目标架构已经有 OS X 
+的工具链了，您可以直接使用它。
 
-Using a 3rd Party toolchain
+使用三方工具链
 ***************************
 
-If a toolchain is available for the architecture you plan to build for, then
-you can use it as explained in:
-:ref:`third_party_x_compilers`.
+如果你想使用的架构已经有工具链，您可以参考 :ref:`third_party_x_compilers` 使用它。
 
-An example of an available 3rd party toolchain is GCC ARM Embedded for the
-Cortex-M family of cores.
+例如，对于 Coretex-M 家族的核心，您可以使用三方工具链 GCC ARM Embedded。
 
 .. _mac_requirements:
 
-Installing Requirements and Dependencies
+安装需求和依赖
 ****************************************
 
-To install the software components required to build the Zephyr kernel on a
-Mac, you will need to build a cross compiler for the target devices you wish to
-build for and install tools that the build system requires.
+要在 Mac 上安装编译 Zephyr 内核的软件组件，您需要为使用编译系统的目标设备编译一个交叉编译器。
 
 .. note::
    Minor version updates of the listed required packages might also
    work.
 
-Before proceeding with the build, ensure your OS is up to date.
+在进行编译前，请先确保您的系统已经更新到最新了。
 
-First, install the :program:`Homebrew` (The missing package manager for
-OS X). Homebrew is a free and open-source software package management system
-that simplifies the installation of software on Apple's OS X operating
-system.
+首先，您需要安装 :program:`Homebrew` （OS X 默认未安装该包）。Homebrew 是一个免费、开源
+的软件包管理系统，能简化苹果 OS X 操作系统上安装软件的过程。
 
-To install :program:`Homebrew`, visit the `Homebrew site`_ and follow the
-installation instructions on the site.
+请访问 `Homebrew site`_ 并按照该网站的安装指示安装 :program:`Homebrew`
 
-To complete the Homebrew installation, you might be prompted to install some
-missing dependency. If so, follow please follow the instructions provided.
+在安装 Homebrew 的过程中，系统可能会提示您安装一些缺失的依赖，请按照指示进行安装。
 
-After Homebrew was successfully installed, install the following tools using
-the brew command line.
+安装完 Homebrew 后，请使用 brew 的命令行安装如下工具。
 
 .. code-block:: console
 
@@ -67,9 +55,8 @@ the brew command line.
 
    $ brew install crosstool-ng
 
-Alternatively you can install the latest version of :program:`crosstool-ng`
-from source. Download the latest version from the `crosstool-ng site`_. The
-latest version usually supports the latest released compilers.
+您也可以从源码安装最新版的 :program:`crosstool-ng`。从 `crosstool-ng site`_ 下载最新版。
+最新版通常支持最新发布的编译器。
 
 .. code-block:: console
 
@@ -88,18 +75,16 @@ latest version usually supports the latest released compilers.
 
 .. _setting_up_mac_toolchain:
 
-Setting Up the Toolchain
+设置工具链
 ************************
 
-Creating a Case-sensitive File System
+创建一个大小写敏感的文件系统
 =====================================
 
-Building the compiler requires a case-senstive file system. Therefore, use
-:program:`diskutil` to create an 8 GB blank sparse image making sure you select
-case-sensitive file system (OS X Extended (Case-sensitive, Journaled) and
-mount it.
+编译编译器需要一个大小写敏感的文件系统。使用程序 :program:`diskutil` 创建一个 8 GB 的空白
+镜像，且选择大小写敏感的文件系统（OS X 扩展（大小写敏感，日志式）），然后挂在它。
 
-Alternatively you can use the script below to create the image:
+您也可以直接使用下面的脚本创建镜像：
 
 .. code-block:: bash
 
@@ -111,8 +96,7 @@ Alternatively you can use the script below to create the image:
    hdiutil mount ${ImageNameExt}
    cd /Volumes/$ImageName
 
-When mounted, the file system of the image will be available under
-:file:`/Volumes`. Change to the mounted directory:
+镜像被挂载后，它将位于目录 :file:`/Volumes` 下。进入该目录：
 
 .. code-block:: console
 
@@ -122,35 +106,31 @@ When mounted, the file system of the image will be available under
 
    $ cd build
 
-Setting the Toolchain Options
+设置工具链选项
 =============================
 
-In the Zephyr kernel source tree we provide two configurations for
-both ARM and X86 that can be used to pre-select the options needed
-for building the toolchain.
-The configuration files can be found in :file:`${ZEPHYR_BASE}/scripts/cross_compiler/`.
+在 Zephyr 内核源码树下，我们为 ARM 和 X86 提供了两种配置，可用于预选择编译工具链的选项。
+配置文件位于 :file:`${ZEPHYR_BASE}/scripts/cross_compiler/`。
 
 .. code-block:: console
 
    $ cp ${ZEPHYR_BASE}/scripts/cross_compiler/x86.config .config
 
-You can create a toolchain configuration or customize an existing configuration
-yourself using the configuration menus:
+
+您可以使用配置菜单创建一个新的配置或者基于已有的配置进行修改：
 
 .. code-block:: console
 
    $ ct-ng menuconfig
 
-Verifying the Configuration of the Toolchain
+验证工具链的配置
 ============================================
 
-Before building the toolchain it is advisable to perform a quick verification
-of the configuration set for the toolchain.
+建议在编译工具链前对配置进行一个快速校验。
 
-1. Open the generated :file:`.config` file.
+1. 打开生成的配置文件 :file:`.config`。
 
-2. Verify the following lines are present, assuming the sparse image was
-   mounted under :file:`/Volumes/CrossToolNG`:
+2. 假设镜像被挂在到目录 :file:`/Volumes/CrossToolNG` 下。确认存在以下代码：
 
 .. code-block:: bash
 
@@ -165,22 +145,21 @@ of the configuration set for the toolchain.
    CT_CC_STATIC_LIBSTDCXX=n
    ...
 
-Building the Toolchain
+编译工具链
 ======================
 
-To build the toolchain, enter:
+要编译工具链，请输入：
 
 .. code-block:: console
 
    $ ct-ng build
 
-The above process takes a while. When finished, the toolchain will be available
-under :file:`/Volumes/CrossToolNG/x-tools`.
+上面的过程需要一定的事件。当编译完成后，工具链将位于 :file:`/Volumes/CrossToolNG/x-tools`
+ 目录下。
 
-Repeat the step for all architectures you want to support in your environment.
+如果您还需要在您的环境中支持其它架构，请重复上面的步骤。
 
-To use the toolchain with Zephyr, export the following environment variables
-and use the target location where the toolchain was installed, type:
+要在 Zephyr 中使用工具链，您还需要 export 下面的环境变量，知名工具链的安装路径：
 
 .. code-block:: console
 
@@ -189,8 +168,7 @@ and use the target location where the toolchain was installed, type:
    $ export XTOOLS_TOOLCHAIN_PATH=/Volumes/CrossToolNG/x-tools
 
 
-To use the same toolchain in new sessions in the future you can set the
-variables in the file :file:`${HOME}/.zephyrrc`, for example:
+如果您希望将来新在的会话中也是使用该工具链，您可以上面的设置添加到文件 :file:`${HOME}/.zephyrrc` 中，例如：
 
 .. code-block:: console
 

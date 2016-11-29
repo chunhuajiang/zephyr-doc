@@ -1,166 +1,129 @@
 .. _changes_v2:
 
-Changes from Version 1 Kernel
+与第 1 版内核的改动
 #############################
 
-The version 2 kernel incorporates numerous changes
-that improve ease of use for developers.
-Some of the major benefits of these changes are:
+为了提升开发者的易用性，第 2 版内核有巨大的变量。这些变化的主要优点包括：
 
-* elimination of separate microkernel and nanokernel build types,
-* elimination of the MDEF in microkernel-based applications,
-* simplifying and streamlining the kernel API,
-* easing restrictions on the use of kernel objects,
-* reducing memory footprint by merging duplicated services, and
-* improving performance by reducing context switching.
+* 消除了单独的 micorkernel 和 nanokernel 的编译类型
+* 消除了基于 microkernel 的应用程序的 MDEF
+* 简化、统一了内核的 API
+* 减轻了使用内核对象的限制
+* 减小了合并相似服务的内存占用
+* 通过减小上下文切换提升了性能
 
 .. note::
-    To ease the transition of existing applications and other Zephyr subsystems
-    to the new kernel model, the revised kernel will continue to support
-    the version 1 "legacy" APIs and MDEF for a limited period of time,
-    after which support will be removed.
+    为了使已存在的应用程序和其它 Zephyr 子系统能够更方便地移植到新的内核模型，
+    新的内核将在今后的短时间内继续支持第 1 版遗留的 API 和 MDEF，经过这段
+    时间后，这些 API 和 MDEF 将被移除。
 
-The changes introduced by the version 2 kernel are too numerous to fully
-describe here; readers are advised to consult the individual sections of the
-Kernel Primer to familiarize themselves with the way the version 2 kernel
-operates. However, the most significant changes are summarized below.
+由于第 2 版所做的改动太多了，本文并不能完整描述；建议读者查阅 Zephyr 内核
+原语的各个章节，以熟悉其在第 2 版中的实现方式。尽管如此，我们将重要的改动做了
+如下的总结。
 
-Application Design
+应用程序设计
 ******************
 
-The microkernel and nanokernel portions of Zephyr have been merged into
-a single entity, which is simply referred to as "the kernel". Consequently,
-there is now only a single way to design and build Zephyr applications.
+Zephyr 的 microkernel 和 nanokernel 被合并为了一个叫做“内核”的实体。相应地，现在
+只有一种方法去设计、编译 Zephyr 应用程序。
 
-The task and fiber context types have been merged into a single type,
-known as a "thread". Setting a thread's priority to a negative priority
-makes it a "cooperative thread", which operates in a fiber-like manner;
-setting it to a non-negative priority makes it a "preemptive thread",
-which operates in a task-like manner.
+task 和 fiber 上下文类型被合并为了一个叫做“线程”的类型。优先级为负数的线程被叫做
+“协作式线程”，它的运行方式与 fiber 类似；优先级非负的线程被叫做“可抢占式线程”，它
+的运作方式与 task 类似。
 
-Kernel objects can now be used by both task-like threads and fiber-like
-threads. (The version 1 kernel did not permit fibers to use microkernel
-objects, and could result in undesirable busy-waiting when nanokernel
-objects were used by tasks.)
+现在的内核对象既可以被 task 类线程使用，又可以被 fiber 类线程使用（第 1 版内核不
+允许 fiber 使用 microkernel 的对象，且当 task 使用 nanokernel 对象时会导致不可预
+料的忙等待）。
 
-Kernel objects now typically allow multiple threads to wait on a given
-object. (The version 1 kernel restricted waiting on certain types of
-kernel object to a single thread.)
+现在的内核对象通常都允许多线程等待一个给定的对象（第 1 版的内核严格限制只能单一线
+程等待特定的对象）。
 
-Kernel object APIs now always execute in the context of the invoking thread.
-(The version 1 kernel required microkernel object APIs to context switch
-the thread to the microkernel server fiber, followed by another context
-switch back to the invoking thread.)
+现在的内核对象 API 总是执行在线程的上下文（第 1 版内核需要 microkernel 对象 API 
+切换到microkernel 服务 fiber，然后再切换回调用的线程）。
 
-The MDEF has been eliminated. Consequently, all kernel objects are now defined
-directly in code.
+MDEF 被完全删除了。相应地，所有的内核对象直接被定义在代码里面。
 
-Kernel APIs
+内核 API
 ***********
 
-Most kernel APIs have been renamed or have had changes to their arguments
-(or both) to make them more intuitive, and to improve consistency.
-The **k_** and **K_** prefixes are now used by most kernel APIs.
+大多数的内核 API 都被重命名或者/和修改了参数列表，以使其更直观、统一。现在，
+大多数内核 API 都以 **k_** 和 **K_** 作为前缀。
 
-A version 1 kernel operation that can be invoked from a task, a fiber,
-or an ISR using distinct APIs is now invoked from a thread or an ISR
-using a single common API.
+第 1 版内核的操作在 task、fiber 和 ISR 中需要使用不同的 API 进行调用，而现在
+在线程或者 ISR 中的 API 是统一的。
 
-Many kernel APIs now return 0 to indicate success and a non-zero error code
-to indicate the reason for failure. (The version 1 kernel supported only
-two error codes, rather than an unlimited number of them.)
+现在，许多内核 API 都通过返回 0 表示成功，非 0 表示错误代码，以只是错误的原因（
+第 1 版只支持两个错误代码）。
 
-Threads
+线程
 *******
 
-A task-like thread can now make itself temporarily non-preemptible
-by locking the kernel's scheduler (rather than by locking interrupts).
+task 类的线程现在可以锁定内核的调度器（而不是锁定中断）使自己临时不可被抢占。
 
-It is now possible to pass up to 3 arguments to a thread's entry point.
-(The version 1 kernel allowed 2 arguments to be passed to a fiber
-and allowed no arguments to be passed to a task.)
+现在可以给线程的入口点传递三个参数（第 1 版只允许给 fiber 传递两个参数，且
+不允许给 task 传递参数）。
 
-It is now possible to delay the start of a statically-defined threads.
-(The version 1 kernel only permitted delaying of fibers spawned at run time.)
+现在可以延迟启动静态定义的线程（第 1 版只允许在运行时延迟 fiber 的产生）。
 
-A task can no longer specify an "task abort handler" function
-that is invoked automatically when the task terminates or aborts.
+task 不再需要指定 task 正常结束或者异常终止时自动调用的“task 终止处理着”函数。
 
-An application can no longer use "task groups" to alter the operation
-of a set of related tasks by invoking a single kernel API.
-However, applications can provide their own APIs to achieve a similar effect.
 
-The kernel now spawns both a "main thread" and an "idle thread" during
-startup. (The version 1 kernel spawned only a single thread.)
+应用程序不再需要使用“任务组”来指定用于单个内核 API 调用的一系列相近的任务。
 
-The kernel's main thread performs system initialization and then invokes
-:cpp:func:`main()`. If no :cpp:func:`main()` is defined by the application,
-the main thread terminates.
+内核现在在启动时同时创建 main 线程和 idle 线程（第 1 版内核只创建一个线程）。
 
-System initialization code can now perform blocking operations,
-during which time the kernel's idle thread executes.
+内核的 main 线程负责执行系统的初始化，然后调用 :cpp:func:`main()` 函数。如果应用程序没有指定
+:cpp:func:`main()` 函数，main 线程将直接结束。
 
-Timing
+现在的系统初始化代码可以执行阻塞操作，在阻塞期间将会执行内核的 idle 线程。
+
+定时
 ******
 
-Most kernel APIs now specify timeout intervals in milliseconds, rather than
-in system clock ticks. This change makes things more intuitive for most
-developers. However, the kernel still implements timeouts using the
-tick-based system clock.
+现在大多数内核 API 都能以毫秒（而不是系统时钟滴答）为单位指定超时间隔。这个改动让
+开发者可以更直观地使用 API。尽管如此，内核内部依然使用基于滴答的系统时钟来实现的
+超时功能。
 
-The nanokernel timer and microkernel timer object types have been merged
-into a single type.
+nanokernel 定时器和 microkernel 定时器对象类型被合并为一个类型。
 
-Memory Allocation
+内存分配
 *****************
 
-The microkernel memory map object has been renamed to "memory slab", to better
-reflect its management of equal-size memory blocks.
+microkernel 内存映射对象被重命名为“内存片",更能折现出管理大小相等的内存块的思想。
 
-It is now possible to specify the alignment used by the memory blocks
-belonging to a memory slab or a memory pool.
+现在可以指定内存片或者内存池所使用的内存块的对齐操作。
 
-It is now possible to define a memory pool directly in code.
+现在可以直接在代码里定义内存池。
 
-It is now possible to allocate and free memory in a malloc()-like manner
-from a heap data pool.
+现在可以使用类似 malloc() 的方式从堆数据池分配、释放内存。
 
-Synchronization
+同步
 ***************
 
-The nanokernel semaphore and microkernel semaphore object types have been
-merged into a single type. The new type can now be used as a binary semaphore,
-as well as a counting semaphore.
+nanokernel 信号量和 microkernel 信号量对象类型被合并为了单一类型。新的类型可以
+直接作为二元信号量以及计数信号量。
 
-An application can no longer use a "semaphore group" to allow a thread to wait
-on multiple semaphores simultaneously. Until the kernel incorporates a
-:cpp:func:`select()` or :cpp:func:`poll()` capability an application wishing
-to wait on multiple semaphores must either test them individually in a
-non-blocking manner or use an additional mechanism, such as an event object,
-to signal the application that one of the semaphores is available.
+应用程序不能再使用信号量组来达到一个线程同时等待多个信号量的目的。在内核提供
+ :cpp:func:`select()` 或 :cpp:func:`poll()` 功能前，那些希望等待多个信号量的线
+程必须以非阻塞的方式单独测试每个信号量，或者使用其它的机制（例如事件对象）给某
+个有效信号量发送信号。
 
-The microkernel event object type is renamed to "alert" and is now presented as
-a relative to Unix-style signalling. Due to improvements to the implementation
-of semaphores, alerts are now less efficient to use for basic synchronization
-than semaphores; consequently, alerts should now be reserved for scenarios
-requiring the use of a callback function.
+microkernel 事件对象类型被重命名为“警报”，且类似于 Unix 风格的信号。由于对信号量
+进行了改进，对于基本同步，警报的效率比信号量的效率低。自然而然，警报主要被保留用
+于需要使用回调函数的场景。
 
-Data Passing
+数据传递
 ************
 
-The microkernel FIFO object type has been renamed to "message queue",
-to avoid confusion with the nanokernel FIFO object type.
+为了避免与 nanokernel 的 FIFO 的对象类型冲突，microkernel 的 FIFO 对象类型已被
+重命名为“消息队列”。
 
-It is now possible to specify the alignment used by the data items
-stored in a message queue (aka microkernel FIFO).
+现在可以指定消息队列（即以前的 microkernel FIFO）中所存储的数据线的对齐操作。
 
-The microkernel mailbox object type no longer supports the explicit message
-priority concept. Messages are now implicitly ordered based on the priority
-of the sending thread.
+microkernel 的邮箱对象类型不再支持显式的消息优先级概念。现在的消息以发送消息的线
+程的优先级作为隐式顺序。
 
-The microkernel mailbox object type now supports the sending of asynchronous
-messages using a message buffer. (The version 1 kernel only supported
-asynchronous messages using a message block.)
+microkernel 的邮箱对象类型将支持使用消息缓冲发送同步消息（第 1 版内核仅支持使用
+消息块发送同步消息）。
 
-It is now possible to specify the alignment used by a microkernel pipe object's
-buffer.
+现在可以指定 microkernel 管道对象的缓冲的对齐操作。
