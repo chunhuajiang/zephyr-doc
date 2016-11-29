@@ -1,6 +1,6 @@
 .. _custom_data_v2:
 
-Custom Data
+自定义数据
 ###########
 
 A thread's :dfn:`custom data` is a 32-bit, thread-specific value
