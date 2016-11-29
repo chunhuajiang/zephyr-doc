@@ -10,7 +10,7 @@ that may be used by an application for any purpose.
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
 Every thread has a 32-bit custom data area.
