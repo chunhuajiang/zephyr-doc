@@ -1,0 +1,28 @@
+ifdef CONFIG_HAS_STM32CUBE
+
+ifdef CONFIG_SOC_SERIES_STM32F1X
+obj-y += stm32f1xx/drivers/src/stm32f1xx_hal.o
+obj-y += stm32f1xx/soc/system_stm32f1xx.o
+endif
+
+ifdef CONFIG_SOC_SERIES_STM32F3X
+obj-y += stm32f3xx/drivers/src/stm32f3xx_hal.o
+obj-y += stm32f3xx/soc/system_stm32f3xx.o
+endif
+
+ifdef CONFIG_SOC_SERIES_STM32F4X
+obj-y += stm32f4xx/drivers/src/stm32f4xx_hal.o
+obj-y += stm32f4xx/soc/system_stm32f4xx.o
+endif
+
+ifdef CONFIG_SOC_SERIES_STM32F7X
+obj-y += stm32f7xx/drivers/src/stm32f7xx_hal.o
+obj-y += stm32f7xx/soc/system_stm32f7xx.o
+endif
+
+ifdef CONFIG_SOC_SERIES_STM32L4X
+obj-y += stm32l4xx/drivers/src/stm32l4xx_hal.o
+obj-y += stm32l4xx/soc/system_stm32l4xx.o
+endif
+
+endif

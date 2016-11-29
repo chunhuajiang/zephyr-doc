@@ -1,0 +1,95 @@
+########################################################################
+#
+# Pass1: Determine CROSS_COMPILE only.
+#   We need CROSS_COMPILE in order to validate various KBUILD_CFLAGS
+#   GCC CROSS_COMILE is needed in order to validate compiler options
+#   via constructs such as:
+#   KBUILD_CFLAGS += $(call cc-option,-option,)
+#
+# Pass2: Determine LIB_INCLUDE_DIR and TOOLCHAIN_CFLAGS.
+#   Knowing KBUILD_CFLAGS, we can query GCC compiler for the location
+#   of the libraries corresponding to the KBUILD_CFLAGS.
+#
+#######################################################################
+
+REQUIRED_SDK_VER=0.8.2
+
+ifndef ZEPHYR_SDK_INSTALL_DIR
+
+$(error ZEPHYR_SDK_INSTALL_DIR is not set)
+else
+SDK_VERSION = $(shell cat ${ZEPHYR_SDK_INSTALL_DIR}/sdk_version)
+SDK_CHECK = $(shell ${ZEPHYR_BASE}/scripts/vercomp $(REQUIRED_SDK_VER) $(SDK_VERSION) || echo $$?)
+
+ifeq ($(SDK_CHECK),1)
+$(error (The SDK version you are using is old, please update your SDK. You need at least SDK version $(REQUIRED_SDK_VER)))
+endif
+endif
+
+ifeq ($(HOST_OS),MINGW)
+	TOOLCHAIN_HOME = ${ZEPHYR_SDK_INSTALL_DIR}/sysroots/i686-pokysdk-mingw32
+else
+	TOOLCHAIN_HOME = ${ZEPHYR_SDK_INSTALL_DIR}/sysroots/i686-pokysdk-linux
+endif
+
+ifndef MAKEFILE_TOOLCHAIN_DO_PASS2
+
+# arm (pass1)
+CROSS_COMPILE_TARGET_arm = arm-poky-eabi
+SYSROOT_TARGET_arm = armv5-poky-eabi
+CROSS_COMPILE_arm=$(TOOLCHAIN_HOME)/usr/bin/$(CROSS_COMPILE_TARGET_arm)/$(CROSS_COMPILE_TARGET_arm)-
+
+# arc (pass1)
+CROSS_COMPILE_TARGET_arc = arc-poky-elf
+SYSROOT_TARGET_arc = arc-poky-elf
+CROSS_COMPILE_arc=$(TOOLCHAIN_HOME)/usr/bin/$(CROSS_COMPILE_TARGET_arc)/$(CROSS_COMPILE_TARGET_arc)-
+
+# iamcu (pass1)
+CROSS_COMPILE_TARGET_iamcu = i586-poky-elfiamcu
+SYSROOT_TARGET_iamcu = iamcu-poky-elfiamcu
+CROSS_COMPILE_iamcu=$(TOOLCHAIN_HOME)/usr/bin/iamcu-poky-elfiamcu/$(CROSS_COMPILE_TARGET_iamcu)-
+
+# x86 (pass1)
+CROSS_COMPILE_TARGET_x86 = i586-poky-elf
+SYSROOT_TARGET_x86 = i586-poky-elf
+CROSS_COMPILE_x86=$(TOOLCHAIN_HOME)/usr/bin/$(CROSS_COMPILE_TARGET_x86)/$(CROSS_COMPILE_TARGET_x86)-
+
+# nios2 (pass1)
+CROSS_COMPILE_TARGET_nios2 = nios2-poky-elf
+SYSROOT_TARGET_nios2 = nios2-poky-elf
+CROSS_COMPILE_nios2=$(TOOLCHAIN_HOME)/usr/bin/$(CROSS_COMPILE_TARGET_nios2)/$(CROSS_COMPILE_TARGET_nios2)-
+
+else
+
+# Test CONFIG_TOOLCHAIN_VARIANT value with surrounding quotes removed (if any)
+ifneq ($(CONFIG_TOOLCHAIN_VARIANT:"%"=%),)
+SYSROOT := ${ZEPHYR_SDK_INSTALL_DIR}/sysroots/${SYSROOT_TARGET_$(subst $\",,${CONFIG_TOOLCHAIN_VARIANT})}
+else
+SYSROOT := ${ZEPHYR_SDK_INSTALL_DIR}/sysroots/${SYSROOT_TARGET_${ARCH}}
+endif
+
+LIBGCC_DIR = $(shell dirname `$(CROSS_COMPILE)gcc --sysroot=$(SYSROOT) $(KBUILD_CFLAGS) -print-libgcc-file-name`)
+NEWLIB_DIR = $(shell $(CROSS_COMPILE)gcc --sysroot=$(SYSROOT) $(KBUILD_CFLAGS) -print-multi-directory)
+TOOLCHAIN_CFLAGS = -I $(SYSROOT)/usr/include
+LIB_INCLUDE_DIR += -L $(LIBGCC_DIR) -L $(SYSROOT)/usr/lib/$(NEWLIB_DIR)
+endif
+
+ifneq ($(CONFIG_TOOLCHAIN_VARIANT:"%"=%),)
+CROSS_COMPILE = $(CROSS_COMPILE_$(subst $\",,$(CONFIG_TOOLCHAIN_VARIANT)))
+else
+CROSS_COMPILE = $(CROSS_COMPILE_$(ARCH))
+endif
+
+QEMU_BIN_PATH ?= $(TOOLCHAIN_HOME)/usr/bin
+QEMU_BIOS=$(TOOLCHAIN_HOME)/usr/share/qemu
+
+TOOLCHAIN_LIBS = gcc
+
+OPENOCD ?= ${ZEPHYR_SDK_INSTALL_DIR}/sysroots/i686-pokysdk-linux/usr/bin/openocd
+OPENOCD_DEFAULT_PATH ?= ${ZEPHYR_SDK_INSTALL_DIR}/sysroots/i686-pokysdk-linux/usr/share/openocd/scripts
+
+export LIB_INCLUDE_DIR CROSS_COMPILE TOOLCHAIN_LIBS QEMU_BIN_PATH QEMU TOOLCHAIN_CFLAGS OPENOCD OPENOCD_DEFAULT_PATH
+
+ifndef MAKEFILE_TOOLCHAIN_DO_PASS2
+MAKEFILE_TOOLCHAIN_DO_PASS2=true
+endif

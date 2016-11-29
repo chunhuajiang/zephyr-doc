@@ -1,0 +1,36 @@
+:orphan:
+
+.. title:: UART_NSIM_PORT_0_NAME
+
+.. option:: CONFIG_UART_NSIM_PORT_0_NAME:
+.. _CONFIG_UART_NSIM_PORT_0_NAME:
+
+This is the device name for UART, and is included in the device
+struct.
+
+
+
+:Symbol:           UART_NSIM_PORT_0_NAME
+:Type:             string
+:Value:            ""
+:User value:       (no user value)
+:Visibility:       "n"
+:Is choice item:   false
+:Is defined:       true
+:Is from env.:     false
+:Is special:       false
+:Prompts:
+
+ *  "Port 0 Device Name" if UART_NSIM (value: "n")
+:Default values:
+
+ *  "UART_0"
+ *   Condition: UART_NSIM (value: "n")
+:Selects:
+ (no selects)
+:Reverse (select-related) dependencies:
+ (no reverse dependencies)
+:Additional dependencies from enclosing menus and ifs:
+ SERIAL (value: "n")
+:Locations:
+ * ../drivers/serial/Kconfig.nsim:8

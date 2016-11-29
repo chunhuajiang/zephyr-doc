@@ -1,0 +1,44 @@
+This directory contains different HALs for SoCs supported by Zephyr.
+
+The following HALs are supported:
+
+cmsis
+-------
+The ARM Cortex Microcontroller Software Interface Standard (CMSIS) defines a
+set of standard interfaces to ARM Cortex-M SoCs.
+
+ksdk
+-------
+The Kinetis Software Development Kit (KSDK) provides device header files and
+peripheral drivers for Kinetis SoCs.
+
+nordic
+-------
+The Nordic Semiconductor Microcontroller Development Kit (MDK) provides device
+header files for the Nordic Semiconductor nRF5 SoCs.
+
+qmsi
+-------
+Intel® Quark™ Microcontroller Software Interface (QMSI) is a Hardware
+Abstraction Layer (HAL) for Intel® Quark™ Microcontroller products. It
+currently support the following SoCs:
+
+- Intel® Quark™ D2000 Microcontroller
+- Intel® Quark™ SE Microcontroller
+
+stm32cube
+---------
+ST Microelectronics STM32Cube SDK
+Provides CMSIS header files and two different porting layers HAL (hardware
+abstraction layer), and LL (low layers) enabling portability between different
+STM32 devices via standardized API calls.
+LL and HAL provide different level of porting on STM32 SoCs. They could be used
+independently, or mixed depending on the needs.
+
+For further information:
+http://www.st.com/en/ecosystems/stm32cube.html
+
+ti
+-------
+Texas Instruments CC3200 SDK provides a peripheral driver library for
+the SimpleLink WiFi family of SoCs.

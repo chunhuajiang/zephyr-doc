@@ -1,0 +1,35 @@
+:orphan:
+
+.. title:: UART_STM32_PORT_1_IRQ_PRI
+
+.. option:: CONFIG_UART_STM32_PORT_1_IRQ_PRI:
+.. _CONFIG_UART_STM32_PORT_1_IRQ_PRI:
+
+The interrupt priority for USART2 port.
+
+
+
+:Symbol:           UART_STM32_PORT_1_IRQ_PRI
+:Type:             int
+:Value:            ""
+:User value:       (no user value)
+:Visibility:       "n"
+:Is choice item:   false
+:Is defined:       true
+:Is from env.:     false
+:Is special:       false
+:Prompts:
+
+ *  "STM32 USART2 Interrupt Priority" if UART_STM32_PORT_1 && UART_INTERRUPT_DRIVEN (value: "n")
+:Default values:
+
+ *  0 (value: "n")
+ *   Condition: UART_STM32_PORT_1 && UART_INTERRUPT_DRIVEN (value: "n")
+:Selects:
+ (no selects)
+:Reverse (select-related) dependencies:
+ (no reverse dependencies)
+:Additional dependencies from enclosing menus and ifs:
+ SERIAL (value: "n")
+:Locations:
+ * ../drivers/serial/Kconfig.stm32:85
