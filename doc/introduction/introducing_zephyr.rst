@@ -3,112 +3,70 @@
 Zephyr 简介
 ##################
 
-The Zephyr kernel is a small-footprint kernel designed for use on
-resource-constrained systems: from simple embedded environmental
-sensors and LED wearables to sophisticated smart watches and IoT
-wireless gateways.
+Zephyr 内核是一个内存占用极低的内核，它主要设计用于资源受限系统：从简单的嵌入式环境传感器、LED 可穿戴设备，到复杂的智能手表、IoT 无线网关。
 
-It is designed to be supported by multiple architectures, including
-ARM Cortex-M, Intel x86, and ARC. The full list of supported boards
-can be found :ref:`here <board>`.
+Zephyr 在被设计时就支持多架构，包括 ARM Cortex-M，Intel x86 和 ARC。您可以在 :ref:`这里 <board>` 找到 Zephyr 所支持的所有开发板。
 
-Licensing
+许可
 *********
 
-The Zephyr project associated with the kernel makes it available
-to users and developers under the Apache License, version 2.0.
+Zephyr 项目及其内核遵循 Apache License, version 2.0。
 
 特性
 ***********************
 
-The Zephyr kernel offers a number of features that distinguish it from other
-small-footprint OSes:
+与其它微型内核相比，Zephyr 内核有很多独特的优秀特性：
 
-#. **Single address-space**. Combines application-specific code
-   with a custom kernel to create a monolithic image that gets loaded
-   and executed on a system's hardware. Both the application code and
-   kernel code execute in a single shared address space.
+#. **单地址空间**。将应用程序相关的代码与内核结合在一起，创建一个在硬件上加载、运行的单一镜像。应用程序代码和内核代码运行在同一个共享地址空间。
 
-#. **Highly configurable**. Allows an application to incorporate *only*
-   the capabilities it needs as it needs them, and to specify their
-   quantity and size.
+#. **高度可配置**。应用程序 *只需要* 包含它们需要的功能。
 
-#. **Compile-time resource definition**. Allows system resources
-   to be defined at compile-time, which reduces code size and
-   increases performance.
+#. **编译时定义资源**。所有系统资源都在编译时定义，以减小代码量、增强代码性能。
 
-#. **Minimal error checking**. Provides minimal run-time error checking
-   to reduce code size and increase performance. An optional error-checking
-   infrastructure is provided to assist in debugging during application
-   development.
+#. **最小错误检查**。提供最小化的运行时错误检查，以减小代码量、增强代码性能。提供一个可选的错误检查基础，以协助应用程序的开发和调试。
 
-#. **Extensive suite of services**. Offers a number of familiar services
-   for development:
+#. **广泛的服务**。提供了许多耳熟能详的服务:
 
-   * *Multi-threading Services* for priority-based, non-preemptive and
-     preemptive threads with optional round robin time-slicing.
+   * *多线程服务*：为基于优先级的、非抢占式或抢占式的线程提供可选的时间片。
 
-   * *Interrupt Services* for compile-time registration of interrupt handlers.
+   * *中断服务*：在编译时注册中断处理函数。
 
-   * *Memory Allocation Services* for dynamic allocation and freeing of
-     fixed-size or variable-size memory blocks.
+   * *内存分配服务*：动态地分配和释放固定尺寸、可变尺寸的内存块。
 
-   * *Inter-thread Synchronization Services* for binary semaphores,
-     counting semaphores, and mutex semaphores.
+   * *线程间同步服务*：包括二元信号量、计数信号量和互斥信号量。
 
-   * *Inter-thread Data Passing Services* for basic message queues, enhanced
-     message queues, and byte streams.
+   * *线程间数据传递服务*：包括基本消息队列、增强型消息队列和字节流。
 
-   * *Power Management Services* such as tickless idle and an advanced idling
-     infrastructure.
+   * *电源管理服务*：包括无滴答 CPU 空转和高级 CPU 空转。
 
 基本术语和概念
 ******************************
 
-This section outlines the basic terms used by the Zephyr kernel ecosystem.
+本节列举了 Zephyr 内核中所使用的的基本术语。
 
-:dfn:`kernel`
-   The set of Zephyr-supplied files that implement the Zephyr kernel,
-   including its core services, device drivers, network stack, and so on.
+:dfn:`内核`
+   Zephyr 提供的实现其内核的相关文件的集合，包括核心服务、设备驱动程序、网络协议栈等。
 
-:dfn:`application`
-   The set of user-supplied files that the Zephyr build system uses
-   to build an application image for a specified board configuration.
-   It can contain application-specific code, kernel configuration settings,
-   and at least one Makefile.
+:dfn:`应用程序`
+   用户提供的相关文件的集合。Zephyr 的编译系统使用这些文件为特定的板级配置编译应用程序镜像。它包括应用程序相关的代码、内核的配置设置以及至少一个 Makefile 文件。
 
-   The application's kernel configuration settings direct the build system
-   to create a custom kernel that makes efficient use of the board's resources.
+   应用程序的内核配置指引编译系统高效地利用板子的资源创建自定义内核。
 
-   An application can sometimes be built for more than one type of board
-   configuration (including boards with different CPU architectures),
-   if it does not require any board-specific capabilities.
+   如果不需要任何板子相关的功能，一个应用程序可以被多个板级配置（包括不同 CPU 架构的板子）所编译。
 
-:dfn:`application image`
-   A binary file that is loaded and executed by the board for which
-   it was built.
+:dfn:`应用程序镜像`
+   被板子加载并执行的二进制文件。
 
-   Each application image contains both the application's code and the
-   Zephyr kernel code needed to support it. They are compiled as a single,
-   fully-linked binary.
+   每个应用程序镜像既包含应用程序相关的代码，还包含支撑这些应用程序的 Zephyr 内核代码。应用程序代码和内核代码被编译为单一的、完全链接的二进制文件。
 
-   Once an application image is loaded onto a board, the image takes control
-   of the system, initializes it, and runs as the system's sole application.
-   Both application code and kernel code execute as privileged code
-   within a single shared address space.
+   应用程序加载到板子上后，它将控制整个系统进行初始化，并作为系统的专有应用。应用程序代码和内核代码都将在一个单一的共享地址空间上以特权级的方式运行。
 
-:dfn:`board`
-   A target system with a defined set of devices and capabilities,
-   which can load and execute an application image. It may be an actual
-   hardware system or a simulated system running under QEMU.
+:dfn:`开发板`
+   一个带有一系列设备和功能的目标系统，它可以加载、执行应用程序镜像。它既可以是实际的硬件系统，也可以是运行在 QEMU 下的仿真系统。
 
-   The Zephyr kernel supports a :ref:`variety of boards <board>`.
+   Zephyr 内核支持  :ref:`variety of boards <board>`.
 
-:dfn:`board configuration`
-   A set of kernel configuration options that specify how the devices
-   present on a board are used by the kernel.
+:dfn:`开发板配置`
+   一系列的内核配置选项，指定内核如何利用开发板上的设备。
 
-   The Zephyr build system defines one or more board configurations
-   for each board it supports. The kernel configuration settings that are
-   specified by the build system can be over-ridden by the application,
-   if desired.
+   Zephyr 编译系统为它所支持的每个开发板都定义了一个或多个开发板配置。如果需要，应用程序可以覆盖编译系统指定的内核配置项。
