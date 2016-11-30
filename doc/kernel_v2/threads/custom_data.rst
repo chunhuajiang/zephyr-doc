@@ -22,7 +22,7 @@ The default custom data for a thread is zero.
    Custom data support is not available to ISRs because they operate
    within a single shared kernel interrupt handling context.
 
-Implementation
+实现
 **************
 
 Using Custom Data
