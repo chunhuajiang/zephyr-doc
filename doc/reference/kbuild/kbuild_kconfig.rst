@@ -1,52 +1,31 @@
 .. _kconfig:
 
-The Kconfig File Structure
+Kconfig 文件结构
 **************************
 
-Introduction
+简介
 ============
 
-The Kconfig files describe: the configuration symbols supported in the build
-system, the logical organization and structure to group the symbols in menus
-and sub-menus, and the relationships between the different configuration
-symbols that govern the valid configuration combinations.
+Kconfig 文件用于描述：编译系统所支持的配置符号、菜单和子菜单中符号组的逻辑组织结构、不同配置符号之间的关系。
 
-The Kconfig files are distributed across the build directory tree. The files
-are organized based on their common characteristics and on what new symbols
-they add to the configuration menus. For example:
+Kconfig 文件遍布于编译目录树中，这些文件是基于其通用特性和增加到配置菜单中的新符号组织起来的。例如：
 
-* The Kconfig file at the root directory contains the general
-  configuration options like :option:`CONFIG_ARCH` and
-  ``CONFIG_KERNEL VERSION``. These symbols are defined for and
-  apply to the entire build system.
+* 根目录的 Kconfig 文件包含通用的配置选项，例如 :option:`CONFIG_ARCH` 和 ``CONFIG_KERNEL VERSION``。这些符号被定义用于整个编译系统。
 
-* The Kconfig file at the :file:`kernel` directory contains the general
-  configuration related to the core kernel.
+* :file:`kernel` 目录下的 Kconfig 文件包含与核心内核相关的通用配置。
 
-* The Kconfig file at the :file:`drivers` directory organizes the inclusion of
-  the various Kconfig files needed for each supported driver in the system.
+* :file:`drivers` 目录下的 Kconfig 文件包含系统所支持的各种驱动程序的配置。
 
-* The Kconfig file at the :file:`misc` directory contains the
-  configuration symbols that affect different aspects of the build
-  system. For example, the *Custom Compiler Options* and the
-  ``Minimal Libc`` are general build options that apply to the build
-  system.  *Debugging Options* and *System Monitoring Options* are
-  also examples of build options that apply to the entire system.
+* :file:`misc` 目录下的 Kconfig 文件包含与编译系统相关的配置符号。例如，*Custom Compiler Options* 和 ``Minimal Libc`` 是用于编译系统的选项。*Debugging Options* 和 *System Monitoring Options* 是适用于整个编译系统的选项。
 
-* The Kconfig file at the :file:`net` directory contains the different symbols
-  that define the configuration options for the communications stack code.
+* :file:`net` 目录下的 Kconfig 文件包含为通信协议栈定义的配置选项。
 
-* The Kconfig file at the :file:`crypto` directory contains the different
-  symbols that define the configuration options for the cryptography algorithms
-  supported.
+* :file:`crypto` 目录下的 Kconfig 文件包含为加密算法定义的配置选项。
 
-Dependencies
+依赖
 ============
 
-Dependencies allow you to define the valid and invalid configuration
-combinations in the system.  Each dependency is a rule that a particular symbol
-must follow to be either selected or allowed to have a specific value. For
-example, the configuration symbol *B* states a dependency on another one, *A*.
+依赖允许您在系统中定义有效的、无效的配置组合。每个依赖都是一条规则，即一个特殊的符号必须被选择，或者被设置一个值。例如，配置符号 *B* 依赖于另一符号 *A*。
 
 .. code-block:: kconfig
 
@@ -54,61 +33,39 @@ example, the configuration symbol *B* states a dependency on another one, *A*.
 
    config A depends on B
 
-The symbol A does not exist as a configuration option in the system unless B is
-set to true.
+如果符号 A 要存在于系统中，则符号 B 必须被设为 true。
 
-The complete set of dependency rules defines the valid configuration
-combinations that the system can use.
+完整的依赖规则定义了系统可使用的有效配置组合。
 
-
-Default Configurations
+默认配置
 ======================
 
-The default configuration files define the default configuration for a specific
-kernel on a specific SoC. For example:
+默认的配置文件为特定的 SoC 的内核定义了默认的配置。例如：
 
-* :file:`arch/arm/configs`,
-* :file:`arch/x86/configs` and
-* :file:`arch/arc/configs`.
+* :file:`arch/arm/configs`，
+* :file:`arch/x86/configs` 和
+* :file:`arch/arc/configs`。
 
-All the default configuration files must end with the suffix _defconfig. For
-example, the :file:`galileo_defconfig` file contains the configuration
-information for the galileo board.
+所有默认配置文件的后缀必须是 _defconfig。例如，文件 :file:`galileo_defconfig` 包含了 galileo 开发板的配置信息。
 
-The :file:`Makefile.inc` file uses defconfig files to provide a clean interface
-to developers using environment variables to define the kernel type and the
-board of new projects. Developers can provide the build system with a
-target's defconfig. The build system takes the specified defconfig file and
-sets it as the current :file:`.config` file for the current project. For
-example:
+文件 :file:`Makefile.inc` 使用定义系统类型的环境变量，通过 defconfig 文件给开发者提供一个干净的接口。开发者可以提供一个带有目标 defconfig 文件的编译系统。编译系统将使用所指定的 defconfig 文件，并将其作为当工程的 :file:`.config` 文件。例如：
 
 .. code-block:: console
 
    $ make galileo_defconfig
 
-The command takes the default configuration for the architecture
-and the galileo board configuration to compile the kernel.
+上述命令将使用架构的默认配置和 galileo 开发板配置来编译内核。
 
 .. _configuration_snippets:
 
-Merging Configuration Fragments
+合并配置碎片
 ===============================
 
-Configuration file fragment can be merged with the current project
-configuration during the build.
+配置文件碎片可以在编译时与当前过程的配置进行合并。
 
-Developers can provide a configuration file that defines a small subset of
-configuration options.  The subset must contain the specific configuration
-options that differ from the default configuration.
+开发者可以提供一个定义了配置选项子集的配置文件。该子集中必须包含与默认配置不同的相关选项。
 
-The **initconfig** target pulls the default configuration file and merges it
-with the local configuration fragments. For example, the sample application **hello
-world** overrides the base configuration with the configuration fragment in
-:file:`prj.conf`.
+目标 **initconfig** 将拉取默认的配置文件，并将之与本地配置碎片合并。例如，例程 **hello world** 将使用 :file:`prj.conf` 中的配置碎片覆盖基本的配置。
 
 .. caution::
-   Invalid configurations, or configurations that do not comply with
-   the dependencies stated in the Kconfig files, are ignored by the merge process.
-   When adding configuration options through a configuration fragment, ensure that
-   the complete sequence complies with the dependency rules defined in the
-   Kconfig files.
+   合并的过程会忽略无效的配置以及 Kconfig 文件中不符合依赖要求的配置。当通过配置碎片增加依赖选项时，请确保其顺序遵循在 Kconfig 文件中定义的依赖规则。

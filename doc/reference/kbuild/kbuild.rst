@@ -3,14 +3,9 @@
 编译系统用户指南
 #######################
 
-The Zephyr Kernel's build system is based on the Kbuild system used in the
-Linux kernel. This way the kernel embraces the recursive model used in Linux
-and the configuration model implemented using Kconfig.
+Zephyr 内核的编译系统基于 Linux 内核所使用的 Kbuild。这样，内核包含了 Linux 所使用的递归模型和使用 Kconfig 实现的配置模型。
 
-The build process is driven by applications, unlike the Linux Kbuild
-system. Therefore, the build system requires an application to initiate building
-the kernel source code. The build system compiles the kernel and the application
-into a single image.
+与 Linux 的 Kbuild 不同的是，Zephyr 的编译过程是由应用程序触发。因此，该编译系统需要一个应用程序来进行初始化，然后才会编译内核源代码。该系统将内核和应用程序编译为一个单一的镜像。
 
 .. toctree::
    :maxdepth: 1
