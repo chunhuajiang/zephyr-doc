@@ -1,6 +1,6 @@
 .. _device_drivers:
 
-Device Drivers and Device Model
+设备驱动和设备模型
 ###############################
 
 Introduction

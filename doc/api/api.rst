@@ -1,6 +1,6 @@
 .. _api:
 
-API Documentation
+API 文档
 #################
 
 Welcome to the Zephyr Project's :abbr:`API (Application Programing Interface)`

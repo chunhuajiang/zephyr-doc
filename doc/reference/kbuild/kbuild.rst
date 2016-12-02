@@ -1,6 +1,6 @@
 .. _kbuild:
 
-Build System User Guide
+编译系统用户指南
 #######################
 
 The Zephyr Kernel's build system is based on the Kbuild system used in the

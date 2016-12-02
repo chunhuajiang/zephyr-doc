@@ -1,6 +1,6 @@
 .. _application:
 
-Application Development Primer
+应用程序开发原语
 ##############################
 
 This section outlines how to create, build, and run a Zephyr application.
