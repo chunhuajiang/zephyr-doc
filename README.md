@@ -7,4 +7,9 @@
 - 英文版地址：[https://www.zephyrproject.org/doc/](https://www.zephyrproject.org/doc/)
 
 ## 参与翻译：
-`doc`目录下的`.rst`文件是需要翻译的源文件。具体流程请参考 [CONTRIBUTION.md](CONTRIBUTION.md)。
+- `doc`目录下的`.rst`文件是需要翻译的源文件。翻译前求务必阅读 [CONTRIBUTION.md](CONTRIBUTION.md)。
+- 同时也欢迎修您正在阅读时发现的错误，例如错别字、格式错误等。
+- QQ 学习交流群： 580070214
+
+## 翻译进度
+- [PROCESS.md](PROCESS.md)
