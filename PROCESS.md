@@ -402,7 +402,7 @@
 		<td align="center">配置选项参考指导</td>
 		<td align="center">-</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">已领取，待翻译</td>
+		<td align="center">完成</td>
 	</tr>
 	<tr>
 		<td align="center">Makefile</td>
