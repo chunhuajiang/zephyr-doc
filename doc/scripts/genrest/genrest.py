@@ -1,4 +1,5 @@
 # Prints a tree of all items in the configuration
+# -*- coding: utf-8 -*- 
 # vim: tabstop=4 shiftwidth=4 expandtab
 
 import kconfiglib
