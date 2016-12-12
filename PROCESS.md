@@ -97,13 +97,13 @@
 	<tr >
 		<td align="center" rowspan="2">Timing</td>
 		<td align="center">内核时钟</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/ianhom">ianhom</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center">定时器</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/ianhom">ianhom</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center" rowspan="3">内存分配</td>
