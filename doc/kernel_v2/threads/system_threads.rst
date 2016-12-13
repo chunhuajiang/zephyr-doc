@@ -24,10 +24,7 @@
 **空转线程**
     当系统没有其它工作需要执行时，会执行该线程。如果可能，空转线程应当激活板子的电源管理功能，以达到省电的目的；否则，该线程简单地执行一个“do nothing”的循环。空转线程永远不会结束。只要系统一直在运行，它就一直存在。
 
-    空转线程的优先级是系统所配置的最低优先级。The idle thread always uses the lowest configured thread priority.
-    If this makes it a cooperative thread, the idle thread repeatedly
-    yields the CPU to allow the application's other threads to run when
-    they need to.
+    空转线程的优先级是系统所配置的最低优先级。如果它是协作式线程，它会不断地释放 CPU，以使应用程序线程需要运行时能顺利运行。
 
     空转线程也是必须线程，因此如果它被异常终止了也会致命的系统错误。
 
