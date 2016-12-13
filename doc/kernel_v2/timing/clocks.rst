@@ -1,23 +1,21 @@
 .. _clocks_v2:
 
-Kernel Clocks
+内核时钟
 #############
 
-The kernel's clocks are the foundation for all of its time-based services.
+内核时钟是所有时间相关服务的基础The kernel's clocks are the foundation for all of its time-based services.
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-The kernel supports two distinct clocks.
+内核支持两种不同的时钟。
 
-* The 32-bit **hardware clock** is a high precision counter that tracks time
-  in unspecified units called **cycles**. The duration of a cycle is determined
-  by the board hardware used by the kernel, and is typically measured
-  in nanoseconds.
+* 32位的**硬时钟**是一个高精度的计数器，该计数器通过一种称为**周期（cycles）**的单位来
+  度量时间。一个周期的长度取决于内核所使用的板卡硬件，其典型的时间长度为纳秒。
 
 * The 64-bit **system clock** is a counter that tracks the number of
   **ticks** that have elapsed since the kernel was initialized. The duration
