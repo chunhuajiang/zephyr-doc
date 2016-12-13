@@ -3,7 +3,7 @@
 内核时钟
 #############
 
-内核时钟是所有时间相关服务的基础The kernel's clocks are the foundation for all of its time-based services.
+内核时钟是所有时间相关服务的基础。
 
 .. contents::
     :local:
@@ -14,7 +14,7 @@
 
 内核支持两种不同的时钟。
 
-* 32位的**硬时钟**是一个高精度的计数器，该计数器通过一种称为**周期（cycles）**的单位来
+* 32位的 **硬时钟** 是一个高精度的计数器，该计数器通过一种称为 **周期（cycles）** 的单位来
   度量时间。一个周期的长度取决于内核所使用的板卡硬件，其典型的时间长度为纳秒。
 
 * The 64-bit **system clock** is a counter that tracks the number of
@@ -145,17 +145,16 @@ such as :ref:`busy_waiting` or fine-grained time measurements.
     means that counter rollover must be taken into account when taking
     high-precision measurements over an extended period of time.
 
-Configuration
+配置
 *************
 
-Related configuration options:
+相关的配置选项：
 
 * :option:`CONFIG_SYS_CLOCK_TICKS_PER_SEC`
 
 APIs
 ****
-
-The following kernel clock APIs are provided by :file:`kernel.h`:
+内核提供如下的内核时钟APIs，详见 :file:`kernel.h`:
 
 * :cpp:func:`k_uptime_get()`
 * :cpp:func:`k_uptime_get_32()`
