@@ -177,7 +177,7 @@
 	<tr >
 		<td align="center">原子服务</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">已领取，待翻译</td>
+		<td align="center">完成</td>
     </tr>
 	<tr >
 		<td align="center">浮点服务</td>
@@ -197,12 +197,12 @@
 	<tr >
 		<td align="center">标准 C 库</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">已领取，待翻译</td>
+		<td align="center">完成</td>
     </tr>
 	<tr >
 		<td align="center">应用程序的 C++ 支持</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">已领取，待翻译</td>
+		<td align="center">完成</td>
     </tr>
 
 
