@@ -171,38 +171,38 @@
 	<tr >
 		<td align="center" rowspan="7">其它服务</td>
 		<td align="center">中断</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center">原子服务</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center">浮点服务</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center">环形缓冲</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center">内核事件记录器</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center">标准 C 库</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center">应用程序的 C++ 支持</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 
 
