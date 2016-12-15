@@ -1,160 +1,92 @@
 .. _workqueues_v2:
 
-Workqueue Threads
+工作队列（Workqueue）
 #################
 
-A :dfn:`workqueue` is a kernel object that uses a dedicated thread to process
-work items in a first in, first out manner. Each work item is processed by
-calling the function specified by the work item. A workqueue is typically
-used by an ISR or a high-priority thread to offload non-urgent processing
-to a lower-priority thread so it does not impact time-sensitive processing.
+:dfn:`工作队列` 是一个内核对象，它使用专用的线程以先入先出方式处理工作项（work item）。每个工作项由它所指定的函数进行处理。工作队列通常用于 ISR 或者高优先级线程将非紧急的处理任务移交给低优先级线程，因此它不会影响时间敏感的处理任务。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-Any number of workqueues can be defined. Each workqueue is referenced by its
-memory address.
+可以定义任意数量的工作队列。每个工作队列使用其内存地址进行引用。
 
-A workqueue has the following key properties:
+工作队列的关键属性如下：
 
-* A **queue** of work items that have been added, but not yet processed.
+* **队列**：包含若干已经被添加、且还未被处理（译注：在本节后面叫做“挂起的”）工作项。
 
-* A **thread** that processes the work items in the queue. The priority of the
-  thread is configurable, allowing it to be either cooperative or preemptive
-  as required.
+* **线程**：用于处理队列中的工作项。该线程的优先级是可配置的，既可以是协作式也可以是抢占式。
 
-A workqueue must be initialized before it can be used. This sets its queue
-to empty and spawns the workqueue's thread.
+工作队列必须先初始化再使用。初始化时会清空该队列，并创建一个工作队列线程。
 
-Work Item Lifecycle
+工作项的生命周期
 ===================
 
-Any number of **work items** can be defined. Each work item is referenced
-by its memory address.
+可以定义任意数量的 **工作项**。每个工作项通过其内存地址进行引用。
 
-A work item has the following key properties:
+工作项的关键属性如下：
 
-* A **handler function**, which is the function executed by the workqueue's
-  thread when the work item is processed. This function accepts a single
-  argument, which is the address of the work item itself.
+* **处理函数**：当工作项被处理时，工作队列线程会执行该函数。该函数接收一个参数 —— 工作项自身的地址。
 
-* A **pending flag**, which is used by the kernel to signify that the
-  work item is currently a member of a workqueue's queue.
+* **挂起标志**：内核使用该标志表示该工作项当前是否是一个工作队列的队列中的一个成员。
 
-* A **queue link**, which is used by the kernel to link a pending work
-  item to the next pending work item in a workqueue's queue.
+* **队列链接**：内核使用该链接将其链接到工作队列的队列中的下一个工作项。
 
-A work item must be initialized before it can be used. This records the work
-item's handler function and marks it as not pending.
+工作项必须先初始化再使用。初始化时会记录该工作项的处理函数，并将其标记为非挂起。
 
-A work item may be **submitted** to a workqueue by an ISR or a thread.
-Submitting a work item appends the work item to the workqueue's queue.
-Once the workqueue's thread has processed all of the preceding work items
-in its queue the thread will remove a pending work item from its queue and
-invoke the work item's handler function. Depending on the scheduling priority
-of the workqueue's thread, and the work required by other items in the queue,
-a pending work item may be processed quickly or it may remain in the queue
-for an extended period of time.
+ISR 或者线程可以将某个工作项 **提交** 到某个工作队列中。提交工作项时，会将其追加到工作队列的队列中去。当工作队列的线程处理完它队列里面的所有工作项后，该线程会移除一个挂起工作项，并调用该工作项的处理函数。一个挂起的工作项可能很快就会被处理，也可能会在队列中保留一段时间，这依赖于工作队列线程的调度优先级和队列中其它项的工作需求。
 
-A handler function can utilize any kernel API available to threads. However,
-operations that are potentially blocking (e.g. taking a semaphore) must be
-used with care, since the workqueue cannot process subsequent work items in
-its queue until the handler function finishes executing.
 
-The single argument that is passed to a handler function can be ignored if
-it is not required. If the handler function requires additional information
-about the work it is to perform, the work item can be embedded in a larger
-data structure. The handler function can then use the argument value to compute
-the address of the enclosing data structure, and thereby obtain access to the
-additional information it needs.
+处理函数可以利用任何可用的内核 API。不过，使用可能引起阻塞的操作（例如拿取一个信号量）时一定要当心，因为工作队列在它的上一个处理函数完成前不能处理其队列中的其它工作项。
 
-A work item is typically initialized once and then submitted to a specific
-workqueue whenever work needs to be performed. If an ISR or a thread attempts
-to submit a work item that is already pending, the work item is not affected;
-the work item remains in its current place in the workqueue's queue, and
-the work is only performed once.
+如果处理函数不需要参数，可以将接收到的参数直接忽略。如果处理函数需要额外的信息，可以将工作项内嵌到一个更大的数据结构当中。处理函数可以使用这个参数值计算封装后的地址，以此访问额外的信息。
 
-A handler function is permitted to re-submit its work item argument
-to the workqueue, since the work item is no longer pending at that time.
-This allows the handler to execute work in stages, without unduly delaying
-the processing of other work items in the workqueue's queue.
+一个工作项通常会被初始化一次，然后当它的工作需要执行的时候会被提交到工作队列中。如果 ISR 或者线程尝试提交一个已经挂起的工作项，不会有任何效果；提交后，工作项会停留在工作队列中的当前位置，且只会被执行一次。
+
+处理函数可以将工作项重新提交到工作队列中（因为此时工作项已经不再是挂起状态）。这样做的好处是，处理函数可以分阶段执行工作，而不会导致延迟处理工作队列的队列中的其它工作项。
 
 .. important::
-    A pending work item *must not* be altered until the item has been processed
-    by the workqueue thread. This means a work item must not be re-initialized
-    while it is pending. Furthermore, any additional information the work item's
-    handler function needs to perform its work must not be altered until
-    the handler function has finished executing.
 
-Delayed Work
+    一个挂起的工作项在被工作队列线程处理前 **不能** 被改变。这意味着，当工作项处于挂起状态时，它不能被再次初始化。此外，在处理函数执行完成前，处理函数需要的额外信息也不能被改变。
+	
+延迟的工作
 ============
 
-An ISR or a thread may need to schedule a work item that is to be processed
-only after a specified period of time, rather than immediately. This can be
-done by submitting a **delayed work item** to a workqueue, rather than a
-standard work item.
+ISR 或者线程可能需要延迟一段指定的事时间后（而不是立即）再调度一个工作项。向工作队列中提交一个 **延迟的工作项** （而不是标准工作项）就能达到此目的。
 
-A delayed work item is a standard work item that has the following added
-properties:
+延迟工作项比标准工作项新增了如下属性：
 
-* A **delay** specifying the time interval to wait before the work item
-  is actually submitted to a workqueue's queue.
+* **延迟时间**：指明需要延迟多久才将工作项提交到工作队列的队列中。
 
-* A **workqueue indicator** that identifies the workqueue the work item
-  is to be submitted to.
+* **工作队列指示器**：用于标识需要提交到的工作队列。
 
-A delayed work item is initialized and submitted to a workqueue in a similar
-manner to a standard work item, although different kernel APIs are used.
-When the submit request is made the kernel initiates a timeout mechanism
-that is triggered after the specified delay has elapsed. Once the timeout
-occurs the kernel submits the delayed work item to the specified workqueue,
-where it remains pending until it is processed in the standard manner.
+延迟工作项的初始化和提交过程与标准的工作项是类似的，只是所使用的内核 API 略有区别。当发出提交请求时，内核会初始化一个超时机制，当指定的延迟达到时就会触发它。当超时发送时，内核会将延迟工作项提交到指定的工作队列中。之后，它会保持挂起状态，知道被以标准方式处理。
 
-An ISR or a thread may **cancel** a delayed work item it has submitted,
-providing the work item's timeout is still counting down. The work item's
-timeout is aborted and the specified work is not performed.
+ISR 或者线程可以 **取消** 它提交的延迟工作项，但是前提是该工作项的超时计数扔在继续。取消后，超时计数将停止计数，指定的工作也不会被执行。
 
-Attempting to cancel a delayed work item once its timeout has expired has
-no effect on the work item; the work item remains pending in the workqueue's
-queue, unless the work item has already been removed and processed by the
-workqueue's thread. Consequently, once a work item's timeout has expired
-the work item is always processed by the workqueue and cannot be cancelled.
+取消已经到期的延时工作项不会有任何效果；除非工作项被移除并被工作队列的线程处理了，否它将一直保持挂起状态。因此，当工作项的超时服务到期后，它已经被处理过了，所以不能被取消。
 
-System Workqueue
+系统工作队列
 ================
 
-The kernel defines a workqueue known as the *system workqueue*, which is
-available to any application or kernel code that requires workqueue support.
-The system workqueue is optional, and only exists if the application makes
-use of it.
+内核定义了一个叫做 *系统工作队列* 的工作队列。所有的应用程序或者内核代码都可以使用该工作队列。系统工作队列是可选的，且只有当应用程序使用时才存在。
 
 .. important::
-    Additional workqueues should only be defined when it is not possible
-    to submit new work items to the system workqueue, since each new workqueue
-    incurs a significant cost in memory footprint. A new workqueue can be
-    justified if it is not possible for its work items to co-exist with
-    existing system workqueue work items without an unacceptable impact;
-    for example, if the new work items perform blocking operations that
-    would delay other system workqueue processing to an unacceptable degree.
 
-Implementation
+    只有当无法向系统工作队列提交新的工作项时，才去创建额外的工作队列。因为每个新的工作队列都会花费可观的内存占用。如果新工作队列中的工作项无法与系统工作队列中已存在的工作项共存时，可以调整新的工作队列。例如，新的工作项执行了阻塞操作导致其它系统工作队列被延迟到一个不可接受的程序。
+
+实现
 **************
 
-Defining a Workqueue
+定义一个工作队列
 ====================
 
-A workqueue is defined using a variable of type :c:type:`struct k_work_q`.
-The workqueue is initialized by defining the stack area used by its thread
-and then calling :cpp:func:`k_work_q_start()`. The stack area is an array
-of bytes whose size must equal :c:macro:`K_THREAD_SIZEOF` plus the size
-of the thread's stack. The stack area must be defined using the
-:c:macro:`__stack` attribute to ensure it is properly aligned.
+使用类型为 :c:type:`struct k_work_q` 的变量可以定义一个工作队列。初始化工作队列时，需要先定义一个栈区，然后调用函数 :cpp:func:`k_work_q_start()`。栈区是一个数组，其大小（字节）必须等于 :c:macro:`K_THREAD_SIZEOF` 加线程的栈大小之和。定义栈区时必须使用属性 :c:macro:`__stack`，以确保它被正确地对齐。
 
-The following code defines and initializes a workqueue.
+下面的代码定义并初始化了一个工作队列。
 
 .. code-block:: c
 
@@ -167,20 +99,14 @@ The following code defines and initializes a workqueue.
 
     k_work_q_start(&my_work_q, my_stack_area, MY_STACK_SIZE, MY_PRIORITY);
 
-Submitting a Work Item
+提交工作项
 ======================
 
-A work item is defined using a variable of type :c:type:`struct k_work`.
-It must then be initialized by calling :cpp:func:`k_work_init()`.
+使用类型为 :c:type:`struct k_work` 的变量可以定义一个工作项。工作项必须使用函数 :cpp:func:`k_work_init()` 进行初始化。
 
-An initialized work item can be submitted to the system workqueue by
-calling :cpp:func:`k_work_submit()`, or to a specified workqueue by
-calling :cpp:func:`k_work_submit_to_queue()`.
+调用函数 :cpp:func:`k_work_submit()` 可以将已初始化的工作项提交到系统工作队列中；调用函数 :cpp:func:`k_work_submit_to_queue()` 可以将已初始化的工作项提交到指定的工作队列中。
 
-The following code demonstrates how an ISR can offload the printing
-of error messages to the system workqueue. Note that if the ISR attempts
-to resubmit the work item while it is still pending, the work item is left
-unchanged and the associated error message will not be printed.
+下面的代码展示了 ISR 是如何将打印错误消息移交给系统工作队列的过程。注意，如果 ISR 重新提交了一个还处于挂起状态的工作项，该工作项将不会更改，且关联的错误消息不会被打印。
 
 .. code-block:: c
 
@@ -214,37 +140,27 @@ unchanged and the associated error message will not be printed.
     /* install my_isr() as interrupt handler for the device (not shown) */
     ...
 
-Submitting a Delayed Work Item
+提交一个延迟的工作项
 ==============================
 
-A delayed work item is defined using a variable of type
-:c:type:`struct k_delayed_work`. It must then be initialized by calling
-:cpp:func:`k_delayed_work_init()`.
+使用类型为 :c:type:`struct k_delayed_work` 的变量可以定义一个延迟工作项。延迟工作项必须使用函数 :cpp:func:`k_delayed_work_init()` 初始化。
 
-An initialized delayed work item can be submitted to the system workqueue by
-calling :cpp:func:`k_delayed_work_submit()`, or to a specified workqueue by
-calling :cpp:func:`k_delayed_work_submit_to_queue()`. A delayed work item
-that has been submitted but not yet consumed by its workqueue can be cancelled
-by calling :cpp:func:`k_delayed_work_cancel()`.
+调用函数 :cpp:func:`k_delayed_work_submit()` 可以将已初始化的延迟工作项提交到系统工作队列中；调用函数 :cpp:func:`k_delayed_work_submit_to_queue()` 可以将已初始化的延迟工作项提交到指定工作队列中。调用函数 :cpp:func:`k_delayed_work_cancel()` 可以取消一个已提交到工作队列但还未处理的延迟工作项。.
 
-Suggested Uses
+建议的用法
 **************
 
-Use the system workqueue to defer complex interrupt-related processing
-from an ISR to a cooperative thread. This allows the interrupt-related
-processing to be done promptly without compromising the system's ability
-to respond to subsequent interrupts, and does not require the application
-to define an additional thread to do the processing.
+建议使用系统工作队列推迟处理 ISR 或者协作式线程中的复杂任务，这样的好处是不需要牺牲系统的功能就能响应随后的中断，且不需要应用程序定义额外的任务处理线程。
 
-Configuration Options
+配置选项
 *********************
 
-Related configuration options:
+相关的配置选项：
 
 * :option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE`
 * :option:`CONFIG_SYSTEM_WORKQUEUE_PRIORITY`
 
-APIs
+API
 ****
 
 * :cpp:func:`k_work_q_start()`
