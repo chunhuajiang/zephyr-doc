@@ -1,37 +1,23 @@
 .. _apps_overview:
 
-Application Overview
+应用程序概述
 ####################
 
-A Zephyr application is a collection of user-supplied files that can be built
-into an application image that executes on a board.
+Zephyr 是一个用户提供的文件的集合，这个集合可以被编译成一个可在硬件上运行的镜像。
 
-Each application resides in a distinct directory created by the developer.
-The directory has the following structure.
+应用程序位于应用开发者所创建的某个目录下，这个目录具有如下结构：
 
-* **Application source code files**: An application typically provides one
-  or more application-specific files, written in C or assembly language. These
-  files are usually located in a sub-directory called :file:`src`.
+* **应用程序源代码文件**: 应用程序通常会提供一个或多个由 C 语言或者汇编语言编写的应用相关的文件。这些文件通常位于叫做 :file:`src` 的子目录中。
 
-* **Kernel configuration files**: An application typically provides
-  a configuration file (:file:`.conf`) that specifies values for one or more
-  kernel configuration options. If omitted, the application's existing kernel
-  configuration option values are used; if no existing values are provided,
-  the kernel's default configuration values are used.
+* **内核配置文件**: 应用程序通常会提供一个配置文件（:file:`.conf`），用于指定一个或多个内核配置选项的值。如果被忽略，将使用应用程序已存在的内核配置选项值；如果没有提供值，将使用内核的默认配置值。
 
-* **Makefile**: This file typically contains a handful of lines that tell
-  the build system where to find the files mentioned above, as well as
-  the desired target board configuration.
 
-Once the application has been defined, it can be built with a single command.
-The results of the build process are located in a sub-directory
-called :file:`outdir/BOARD`. This directory contains the files generated
-by the build process, the most notable of which are listed below.
+* **Makefile**: 这个文件通常包含有少量的几行代码，用于告诉编译系统怎么去查找上述文件和目标板配置。
 
-* The :file:`.config` file that contains the configuration settings
-  used to build the application.
+应用程序完成以后，您可以使用命令对其进行编译，编辑的结果位于子目录 :file:`outdir/BOARD` 中。这个目录中包含编译过程中产生的文件，其中最值得说明的文件是：
 
-* The various object files (:file:`.o` files and :file:`.a` files) containing
-  custom-built kernel and application-specific code.
+* :file:`.config` 文件，包含了用于编译应用程序的配置设置。
 
-* The :file:`zephyr.elf` file that contains the final application image.
+* 各种目标文件（:file:`.o` 文件和 :file:`.a` 文件），包含了所编译的自定义配置的内核代码和应用程序相关的代码。
+
+* :file:`zephyr.elf` 文件，包含了最终的应用程序镜像。
