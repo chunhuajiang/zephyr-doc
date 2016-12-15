@@ -323,21 +323,21 @@
 	<tr> <td align="center" rowspan="8">应用层开发原语</td>
 		<td align="center">应用程序开发原语</td>
 		<td align="center">-</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 
 	<tr>
 		<td align="center">应用程序概述</td>
 		<td align="center">-</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
 	</tr>
 	<tr>
 		<td align="center">创建应用程序目录</td>
 		<td align="center">-</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
 	</tr>
 	<tr>
 		<td align="center">配置应用程序的内核</td>
@@ -348,26 +348,26 @@
 	<tr>
 		<td align="center">添加应用程序相关的代码</td>
 		<td align="center">-</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
 	</tr>
 	<tr>
 		<td align="center">编译应用程序</td>
 		<td align="center">-</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
 	</tr>
 	<tr>
 		<td align="center">运行应用程序</td>
 		<td align="center">-</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
 	</tr>
 	<tr>
 		<td align="center">通用规则</td>
 		<td align="center">-</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
 	</tr>
 
 	<tr>
