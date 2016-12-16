@@ -37,33 +37,20 @@
 
 如果有需要，运行中的定时器可以在中途被重启，此时：定时器的状态值复位为0，然后定时器以调用者指定的时限和周期继续运行。若某线程正在等待该定时器计时结束，该线程将继续等待。
 
-定时器的状态值可以在任意时间直接读取，以确定自上一次读取该状态值，定时器经历了多少个期满。读取定时器状态值的行为将清零状态值。
-A timer's status can be read directly at any time to determine how many times
-the timer has expired since its status was last read.
-Reading a timer's status resets its value to zero.
-The amount of time remaining before the timer expires can also be read;
-a value of zero indicates that the timer is stopped.
+定时器的状态值可以在任意时间直接读取，以确定自上一次读取该状态值，定时器经历了多少个期满。   
+读取定时器状态值的行为将清零状态值。   
+定时器期满之前的剩余时间也是可读的，若值为0则表示该定时器已经停止。
 
-A thread may read a timer's status indirectly by **synchronizing**
-with the timer. This blocks the thread until the timer's status is non-zero
-(indicating that it has expired at least once) or the timer is stopped;
-if the timer status is already non-zero or the timer is already stopped
-the thread continues without waiting. The synchronization operation
-returns the timer's status and resets it to zero.
+某个线程可能会通过与定时器 **同步** 的方法来间接读取定时器的状态值。这将阻塞该线程直至该定时器的状态值为一个非零值（指示该定时器至少发生过期满）或该定时器被终止；如果改定时器的状态值已经是一个非零值或该定时器已经被终止，则该线程则继续运行而不再等待。同步操作将返回定时器的状态值并重置状态值为0。
 
 .. note::
-    Only a single user should examine the status of any given timer,
-    since reading the status (directly or indirectly) changes its value.
-    Similarly, only a single thread at a time should synchronize
-    with a given timer. ISRs are not permitted to synchronize with timers,
-    since ISRs are not allowed to block.
+    因为在读取状态值（直接或间接）时将会改变其值，所以只能有一个用户可以检查指定定时器的状态值。类似的，在同一时刻只能有一个线程可以同步指定的定时器。因为中断服务程序不允许被阻塞，所以中断服务程序不允许同步定时器。
 
-Timer Limitations
+定时器的局限性
 =================
 
-Since timers are based on the system clock, the delay values specified
-when using a timer are **minimum** values.
-(See :ref:`clock_limitations`.)
+因为定时器是基于系统时钟，所以在使用一个定时器时指定的延时时间都是 **最小** 值。
+(详见 :ref:`clock_limitations`.)
 
 实现
 **************
@@ -71,10 +58,10 @@ when using a timer are **minimum** values.
 定义一个定时器
 ================
 
-A timer is defined using a variable of type :c:type:`struct k_timer`.
-It must then be initialized by calling :cpp:func:`k_timer_init()`.
+通过使用类型为 :c:type:`struct k_timer` 的变量来定义一个定时器。
+该定时器随后必须通过调用 :cpp:func:`k_timer_init()` 来初始化。
 
-The following code defines and initializes a timer.
+如下的代码定义并初始化了一个定时器：
 
 .. code-block:: c
 
@@ -92,7 +79,7 @@ The following code has the same effect as the code segment above.
 
     K_TIMER_DEFINE(my_timer, my_expiry_function, NULL);
 
-使用定时器的“期满函数”Using a Timer Expiry Function
+使用定时器的期满函数
 =============================
 
 The following code uses a timer to perform a non-trivial action on a periodic
@@ -122,11 +109,10 @@ the timer's expiry function submits a work item to the
     /* start periodic timer that expires once every second */
     k_timer_start(&my_timer, K_SECONDS(1), K_SECONDS(1));
 
-Reading Timer Status
+读取定时器状态值
 ====================
 
-The following code reads a timer's status directly to determine
-if the timer has expired on not.
+如下的代码直接读取了一个定时器的状态值，以确定该定时器是否期满。
 
 .. code-block:: c
 
@@ -149,7 +135,7 @@ if the timer has expired on not.
         /* timer is still running */
     }
 
-Using Timer Status Synchronization
+使用定时器状态值同步
 ==================================
 
 The following code performs timer status synchronization to allow a thread
@@ -200,17 +186,17 @@ involving time limits.
    it can read the :ref:`system clock or the hardware clock <clocks_v2>`
    directly, rather than using a timer.
 
-Configuration Options
+配置选项
 *********************
 
-Related configuration options:
+相关的配置选项:
 
-* None.
+* 无。
 
 APIs
 ****
 
-The following timer APIs are provided by :file:`kernel.h`:
+:file:`kernel.h`:文件提供如下的定时器API：
 
 * :c:macro:`K_TIMER_DEFINE`
 * :cpp:func:`k_timer_init()`
