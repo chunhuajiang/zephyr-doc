@@ -1,37 +1,28 @@
 .. _timers_v2:
 
-Timers
+定时器
 ######
 
-A :dfn:`timer` is a kernel object that measures the passage of time
-using the kernel's system clock. When a timer's specified time limit
-is reached it can perform an application-defined action,
-or it can simply record the expiration and wait for the application
-to read its status.
+:dfn:`定时器（Timer）`是一个使用内核系统时钟来计时的内核对象。但一个定时器指定的时间计
+时结束，它将执行一个应用层面已定义的行为，或简单地记录下这个“计时结束”并等待应
+用层读取该状态。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-Any number of timers can be defined. Each timer is referenced by its
-memory address.
+可以定义任意数量的定时器，每个定时使用各自独立的内存地址资源。
 
-A timer has the following key properties:
+每个定时器有以下关键属性：:
 
-* A :dfn:`duration` specifying the time interval before the timer expires
-  for the first time, measured in milliseconds. It must be greater than zero.
+* :dfn:`时限（Duration）` 是指从启动到定时器第一次计时结束之间的时间间隔，单位为毫秒。该值必须大于0。
 
-* A :dfn:`period` specifying the time interval between all timer expirations
-  after the first one, measured in milliseconds. It must be non-negative.
-  A period of zero means that the timer is a one shot timer that stops
-  after a single expiration.
+* :dfn:`周期（Period）`是指在定时器第一次计时结束之后，后续每次计时结束的时间间隔，单位为毫秒。该值不能为负数，若该值为0，则该定时器为一次性计时，并会在单次计时结束后停止工作。
 
-* An :dfn:`expiry function` that is executed each time the timer expires.
-  The function is executed by the system clock interrupt handler.
-  If no expiry function is required a :c:macro:`NULL` function can be specified.
+* :dfn:`计时结束时函数（Expiry function）` 实在定时器每次计时结束时执行的函数，该函数由系统时钟中断处理函数来执行。若在计时结束时无函数需要执行，则该函数指针需要指定为:c:macro:`NULL` 。
 
 * A :dfn:`stop function` that is executed if the timer is stopped prematurely
   while running. The function is executed by the thread that stops the timer.
