@@ -3,9 +3,7 @@
 定时器
 ######
 
-:dfn:`定时器（Timer）`是一个使用内核系统时钟来计时的内核对象。但一个定时器指定的时间计
-时结束，它将执行一个应用层面已定义的行为，或简单地记录下这个“计时结束”并等待应
-用层读取该状态。
+:dfn:`定时器（Timer）` 是一个使用内核系统时钟来计时的内核对象。当一个定时器指定的时间计时结束，它将执行一个应用层面已定义的行为，或简单地记录下这个“期满”事件，并等待应用层读取该状态。
 
 .. contents::
     :local:
@@ -18,45 +16,28 @@
 
 每个定时器有以下关键属性：:
 
-* :dfn:`时限（Duration）` 是指从启动到定时器第一次计时结束之间的时间间隔，单位为毫秒。该值必须大于0。
+* :dfn:`时限（Duration）` 是指从启动到定时器第一次期满之间的时间间隔，单位为毫秒。该值必须大于0。
 
-* :dfn:`周期（Period）`是指在定时器第一次计时结束之后，后续每次计时结束的时间间隔，单位为毫秒。该值不能为负数，若该值为0，则该定时器为一次性计时，并会在单次计时结束后停止工作。
+* :dfn:`周期（Period）` 是指在定时器第一次期满之后，后续每次期满之间的时间间隔，单位为毫秒。该值不能为负数，若该值为0，则该定时器为一次性计时，并会在单次期满后停止工作。
 
-* :dfn:`计时结束时函数（Expiry function）` 实在定时器每次计时结束时执行的函数，该函数由系统时钟中断处理函数来执行。若在计时结束时无函数需要执行，则该函数指针需要指定为:c:macro:`NULL` 。
+* :dfn:`期满函数（Expiry function）` 是在定时器每次期满时所执行的函数，该函数由系统时钟中断处理函数来执行。若在期满时无函数需要执行，则该期满函数需要指定为:c:macro:`NULL` 。
 
-* A :dfn:`stop function` that is executed if the timer is stopped prematurely
-  while running. The function is executed by the thread that stops the timer.
-  If no stop function is required a :c:macro:`NULL` function can be specified.
+* :dfn:`终止函数（Stop function）` 是在定时器运行期间提前终止时所执行的函数。该函数由终止定时器的线程来执行。若在提前终止时无函数需要执行，则该终止函数需要指定为:c:macro:`NULL` 。
 
-* A :dfn:`status` value that indicates how many times the timer has expired
-  since the status value was last read.
+* :dfn:`状态值（status）` 指示了自最后一次读取该状态值后，定时器经历了多少次期满。 
 
-A timer must be initialized before it can be used. This specifies its
-expiry function and stop function values, sets the timer's status to zero,
-and puts the timer into the **stopped** state.
+定时器在使用前必须先初始化。初始化时将设置期满函数和终止函数，清零定时器状态值，并设置定时器为 **停止** 状态。
 
-A timer is **started** by specifying a duration and a period.
-The timer's status is reset to zero, then the timer enters
-the **running** state and begins counting down towards expiry.
+定时器将在指定时限和周期后 **启动**。在定时器状态值清零后，定时器进入 **运行** 状态并开始计时。
 
-When a running timer expires its status is incremented
-and the timer executes its expiry function, if one exists;
-If a thread is waiting on the timer, it is unblocked.
-If the timer's period is zero the timer enters the stopped state;
-otherwise the timer restarts with a new duration equal to its period.
+当一个运行中的定时器发生期满时：其状态值将自增，并执行期满函数（若已设置期满函数）。若某线程正在等待该定时器计时结束，该线程将不再被阻塞。如果定时器的周期为0，则此时定期进入停止状态；否则定时器将重启一个新的与周期时间相等的时限时间。
 
-A running timer can be stopped in mid-countdown, if desired.
-The timer's status is left unchanged, then the timer enters the stopped state
-and executes its stop function, if one exists.
-If a thread is waiting on the timer, it is unblocked.
-Attempting to stop a non-running timer is permitted,
-but has no effect on the timer since it is already stopped.
+如果有需要，运行中的定时器可以在中途被终止，此时：定时器的状态值将保持不变，然后定时器进入停止状态并执行终止函数（若已设置中值函数）。若某线程正在等待该定时器计时结束，该线程将不再被阻塞。   
+尝试终止一个非运行的定时器是允许的，但这不产生任何效果，因为其已经停止了。
 
-A running timer can be restarted in mid-countdown, if desired.
-The timer's status is reset to zero, then the timer begins counting down
-using the new duration and period values specified by the caller.
-If a thread is waiting on the timer, it continues waiting.
+如果有需要，运行中的定时器可以在中途被重启，此时：定时器的状态值复位为0，然后定时器以调用者指定的时限和周期继续运行。若某线程正在等待该定时器计时结束，该线程将继续等待。
 
+定时器的状态值可以在任意时间直接读取，以确定自上一次读取该状态值，定时器经历了多少个期满。读取定时器状态值的行为将清零状态值。
 A timer's status can be read directly at any time to determine how many times
 the timer has expired since its status was last read.
 Reading a timer's status resets its value to zero.
@@ -84,10 +65,10 @@ Since timers are based on the system clock, the delay values specified
 when using a timer are **minimum** values.
 (See :ref:`clock_limitations`.)
 
-Implementation
+实现
 **************
 
-Defining a Timer
+定义一个定时器
 ================
 
 A timer is defined using a variable of type :c:type:`struct k_timer`.
@@ -111,7 +92,7 @@ The following code has the same effect as the code segment above.
 
     K_TIMER_DEFINE(my_timer, my_expiry_function, NULL);
 
-Using a Timer Expiry Function
+使用定时器的“期满函数”Using a Timer Expiry Function
 =============================
 
 The following code uses a timer to perform a non-trivial action on a periodic
@@ -200,7 +181,7 @@ are separated by the specified time interval.
     If the thread had no other work to do it could simply sleep
     between the two protocol operations, without using a timer.
 
-Suggested Uses
+建议的用法
 **************
 
 Use a timer to initiate an asynchronous operation after a specified
