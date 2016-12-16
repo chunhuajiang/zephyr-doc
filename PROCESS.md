@@ -124,39 +124,39 @@
 	<tr >
 		<td align="center" rowspan="3">同步</td>
 		<td align="center">信号量</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center">互斥量</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center">告警</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center" rowspan="6">数据传递</td>
 		<td align="center">FIFO</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center">LIFO</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center">栈</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center">消息队列</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center">邮筒</td>
