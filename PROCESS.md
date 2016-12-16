@@ -108,18 +108,18 @@
 	<tr >
 		<td align="center" rowspan="3">内存分配</td>
 		<td align="center">内存片</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center">内存池</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center">堆内存池</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">已领取，待翻译</td>
     </tr>
 	<tr >
 		<td align="center" rowspan="3">同步</td>
