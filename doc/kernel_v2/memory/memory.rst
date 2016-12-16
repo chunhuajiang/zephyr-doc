@@ -1,10 +1,9 @@
 .. _memory_v2:
 
-Memory Allocation
+内存分配
 #################
 
-This section describes kernel services that allow threads to dynamically
-allocate memory.
+本节描述内核提供的另一个服务：动态分配内存。
 
 .. toctree::
    :maxdepth: 2
