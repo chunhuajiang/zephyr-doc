@@ -1,23 +1,15 @@
 .. _memory_pools_v2:
 
-Memory Pools
+内存池
 ############
 
-A :dfn:`memory pool` is a kernel object that allows memory blocks
-to be dynamically allocated from a designated memory region.
-The memory blocks in a memory pool can be of any size,
-thereby reducing the amount of wasted memory when an application
-needs to allocate storage for data structures of different sizes.
-The memory pool uses a "buddy memory allocation" algorithm
-to efficiently partition larger blocks into smaller ones,
-allowing blocks of different sizes to be allocated and released efficiently
-while limiting memory fragmentation concerns.
+:dfn:`内存池（memory pool）` 是一个内核对象，它允许从指定的内存区域上动态地分配内存块（memory block）。同一个内存池中的内存块的大小是不固定的，这样可以减小由于不同的应用程序需要为大小不同的数据结构分配不同的存储空间所造成的浪费。内存池使用“伙伴（buddy）内存分配”算法，它可以高效地将大块内存分割为小块内存。此外，它还可以在最大限度减小内存碎片的前提下，高效地分配和释放不小不同的内存块。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
 Any number of memory pools can be defined. Each memory pool is referenced
@@ -111,42 +103,28 @@ it is simply marked as a free block in its associated block set.
 The memory pool does not attempt to merge the newly freed block,
 allowing it to be easily reallocated in its existing form.
 
-Implementation
+实现
 **************
 
-Defining a Memory Pool
+定义内存池
 ======================
 
-A memory pool is defined using a variable of type :c:type:`struct k_mem_pool`.
-However, since a memory pool also requires a number of variable-size data
-structures to represent its block sets and the status of its quad-blocks,
-the kernel does not support the run-time definition of a memory pool.
-A memory pool can only be defined and initialized at compile time
-by calling :c:macro:`K_MEM_POOL_DEFINE`.
+使用类型为 :c:type:`struct k_mem_pool` 的变量可以定义一个内存池。不过，由于内存池也需要大量的尺寸可变的数据结构来代表它的块集合和它的 quad-block 的状态，内核不支持在运行时动态地定义内存池。内存池只能使用 :c:macro:`K_MEM_POOL_DEFINE` 在编译时进行定义和初始化。
 
-The following code defines and initializes a memory pool that has 3 blocks
-of 4096 bytes each, which can be partitioned into blocks as small as 64 bytes
-and is aligned to a 4-byte boundary.
-(That is, the memory pool supports block sizes of 4096, 1024, 256,
-and 64 bytes.)
-Observe that the macro defines all of the memory pool data structures,
-as well as its buffer.
+下面的代码定义并初始化了一个内存池，这个内存池有三个大小为 4096 字节的块。这些块也可以被划分为最小为 64 字节的 4 字节对齐的子块。（也就是说，内存池支持的块大小是 4096、1024、256 和 64 字节。）注意，该宏定义了内存池的所有数据结构和它的 buffer。
 
 .. code-block:: c
 
     K_MEM_POOL_DEFINE(my_pool, 64, 4096, 3, 4);
 
-Allocating a Memory Block
+分配内存块
 =========================
 
-A memory block is allocated by calling :cpp:func:`k_mem_pool_alloc()`.
+函数 :cpp:func:`k_mem_pool_alloc()` 用于分配内存块。
 
-The following code builds on the example above, and waits up to 100 milliseconds
-for a 200 byte memory block to become available, then fills it with zeroes.
-A warning is issued if a suitable block is not obtained.
+下面的代码会先等待 100 毫秒，以拿到一个 200 字节的可以内存块，然后将其填充为零。如果没有获得合适的内存块，代码会打印一个警告信息。
 
-Note that the application will actually receive a 256 byte memory block,
-since that is the closest matching size supported by the memory pool.
+注意，应用程序实际会接收到一个大小为 256 字节的内存块，因为这是内存池所支持的最接近的尺寸。
 
 .. code-block:: c
 
@@ -159,14 +137,12 @@ since that is the closest matching size supported by the memory pool.
         printf("Memory allocation time-out");
     }
 
-Releasing a Memory Block
+释放内存块
 ========================
 
-A memory block is released by calling :cpp:func:`k_mem_pool_free()`.
+函数 :cpp:func:`k_mem_pool_free()` 用于释放内存块。
 
-The following code builds on the example above, and allocates a 75 byte
-memory block, then releases it once it is no longer needed. (A 256 byte
-memory block is actually used to satisfy the request.)
+下面的代码基于上面的例程之上，它申请了 75 字节的内存块，并在不再使用时释放。（基于安全考虑，实际上会从堆内存池使用 256 字节的内存块。）
 
 .. code-block:: c
 
@@ -176,7 +152,7 @@ memory block is actually used to satisfy the request.)
     ... /* use memory block */
     k_mem_pool_free(&block);
 
-Manually Defragmenting a Memory Pool
+内存池手工去碎片
 ====================================
 
 This code instructs the memory pool to concatenate unused memory blocks
@@ -189,28 +165,27 @@ occur automatically each time a memory block allocation is requested.
 
     k_mem_pool_defragment(&my_pool);
 
-Suggested Uses
+建议的用法
 **************
 
-Use a memory pool to allocate memory in variable-size blocks.
+当需要分配大小不固定的内存时，可以使用内存池。
 
-Use memory pool blocks when sending large amounts of data from one thread
-to another, to avoid unnecessary copying of the data.
+当一个线程需要给另一个线程发送大量的数据时，可以使用内存池，这样可以避免不必要的数据拷贝。
 
-Configuration Options
+配置选项
 *********************
 
-Related configuration options:
+相关的配置选项：
 
 * :option:`CONFIG_MEM_POOL_SPLIT_BEFORE_DEFRAG`
 * :option:`CONFIG_MEM_POOL_DEFRAG_BEFORE_SPLIT`
 * :option:`CONFIG_MEM_POOL_SPLIT_ONLY`
 
 
-APIs
+API
 ****
 
-The following memory pool APIs are provided by :file:`kernel.h`:
+:file:`kernel.h` 中提供了下列内存池相关的 API：
 
 * :c:macro:`K_MEM_POOL_DEFINE`
 * :cpp:func:`k_mem_pool_alloc()`

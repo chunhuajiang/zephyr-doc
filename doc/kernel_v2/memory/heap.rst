@@ -62,11 +62,11 @@ for an N byte chunk of heap memory requires a block that is at least
 分配
 =================
 
-调用 :cpp:func:`k_malloc()` 可以分配一块堆内存。
+函数 :cpp:func:`k_malloc()` 用于分配一块堆内存。
 
 下面的代码先申请了 200 字节的堆内存空间，然后将其填充为零。如果没有获取到所需的空间，它将打印一条警告消息。
 
-注意，应用程序实际上会分配 256 字节的内存块，因为这是堆内存池所支持的最接近的尺寸。
+注意，应用程序实际会接收到一个大小为 256 字节的内存块，因为这是堆内存池所支持的最接近的尺寸。
 
 .. code-block:: c
 
@@ -83,7 +83,7 @@ for an N byte chunk of heap memory requires a block that is at least
 释放内存
 ================
 
-调用 :cpp:func:`k_free()` 可以释放一块堆内存。
+函数 :cpp:func:`k_free()` 用于释放一块堆内存。
 
 下面的代码申请了 75 字节的内存块，并在不再使用时释放。（基于安全考虑，实际上会从堆内存池使用 256 字节的内存块。）
 

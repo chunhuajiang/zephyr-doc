@@ -3,7 +3,7 @@
 自定义数据
 ###########
 
-线程的 :dfn:`自定义数据` 是由应用程序使用的 32 比特的线程相关的值，它可以用于任何目的。
+线程的 :dfn:`自定义数据（custom data）` 是由应用程序使用的 32 比特的线程相关的值，它可以用于任何目的。
 
 .. contents::
     :local:
@@ -65,7 +65,7 @@
 API
 ****
 
-文件 :file:`kernel.h` 中提供了如下的线程自定义数据相关的 API：
+:file:`kernel.h` 中提供了如下关于线程自定义数据的 API：
 
 * :cpp:func:`k_thread_custom_data_set()`
 * :cpp:func:`k_thread_custom_data_get()`
