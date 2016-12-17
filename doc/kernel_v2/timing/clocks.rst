@@ -37,38 +37,21 @@
     
 任何通过内核API指定的毫秒时间间隔会被视为可发生的 **最小** 延时，所以实际经历的时间可能比设置的要更长。
 
-例如：当尝试获取一个信号量时，指定一个超时延时100ms，即内核在这100ms结束之前将不会终止该操作并报告错误
-For example, specifying a timeout delay of 100 ms when attempting to take
-a semaphore means that the kernel will never terminate the operation
-and report failure before at least 100 ms have elapsed. However,
-it is possible that the operation may take longer than 100 ms to complete,
-and may either complete successfully during the additional time
-or fail at the end of the added time.
+例如：当尝试获取一个信号量时，指定一个超时延时100ms，即内核在这100ms结束之前将不会终止该操作并报告错误。但是，该操作可能需要超过100ms的时间才能完成，并且可能在多出的时间里操作成功或失败。
 
-The amount of added time that occurs during a kernel object operation
-depends on the following factors.
+在一个内核对象操作中，多出的额外时间的长度由如下因素决定：
 
-* The added time introduced by rounding up the specified time interval
-  when converting from milliseconds to ticks. For example, if a tick duration
-  of 10 ms is being used, a specified delay of 25 ms will be rounded up
-  to 30 ms.
+* 在将毫秒转换为嘀嗒数时的舍入，将引入额外的时间。例如：如果使用了一个时长为10ms的嘀嗒，则25ms的延时将舍入为30ms。
 
-* The added time introduced by having to wait for the next tick interrupt
-  before a delay can be properly tracked. For example, if a tick duration
-  of 10 ms is being used, a specified delay of 20 ms requires the kernel
-  to wait for 3 ticks to occur (rather than only 2), since the first tick
-  can occur at any time from the next fraction of a millisecond to just
-  slightly less than 10 ms; only after the first tick has occurred does
-  the kernel know the next 2 ticks will take 20 ms.
+* 因为在延时计时之前需要等待下一次的嘀嗒中断，所以这种情况将引入额外的事件。例如：如果采用了一个时长为10ms的嘀嗒，则设定20ms的延时需要内核等待3个嘀嗒发生（而不是2个），因为第一个嘀嗒可能在任何时刻，而计时点到嘀嗒中断很可能小于10ms；所以只有在第一个嘀嗒发生之后，内核可以通过后续的两个嘀嗒来确定延时了20ms。
 
-Implementation
+实现
 **************
 
-Measuring Time with Normal Precision
+标准精度的测量时间
 ====================================
 
-This code uses the system clock to determine how much time has elapsed
-between two points in time.
+这段代码采用系统时钟来确定两个时间点之间经历了多少时间。
 
 .. code-block:: c
 
@@ -84,11 +67,10 @@ between two points in time.
     /* compute how long the work took (also updates the time stamp) */
     milliseconds_spent = k_uptime_delta(&time_stamp);
 
-Measuring Time with High Precision
+高精度的时间测量
 ==================================
 
-This code uses the hardware clock to determine how much time has elapsed
-between two points in time.
+这段代码采用硬时钟来确定两个时间点之间经历了多少时间。
 
 .. code-block:: c
 
@@ -113,19 +95,13 @@ between two points in time.
 建议的用法
 **************
 
-Use services based on the system clock for time-based processing
-that does not require high precision,
-such as :ref:`timer objects <timers_v2>` or :ref:`thread_sleeping`.
+请使用基于系统时钟的服务来执行不需要高精度的时间相关处理，如 :ref:`timer objects <timers_v2>` or :ref:`thread_sleeping` 。
 
-Use services based on the hardware clock for time-based processing
-that requires higher precision than the system clock can provide,
-such as :ref:`busy_waiting` or fine-grained time measurements.
+请使用基于硬时钟的服务来执行需要精度高于系统时钟的时间相关处理，如 :ref:`busy_waiting` ，或需要时间颗粒度更小的时间相关处理。
 
 .. note::
-    The high frequency of the hardware clock, combined with its 32-bit size,
-    means that counter rollover must be taken into account when taking
-    high-precision measurements over an extended period of time.
-
+    当硬时钟频率很高时，32位计数器更容易计数到最大值并从0开始。所以采用高精度的时间测量时，需要考虑这种超过一个时间周期的情况。
+    
 配置
 *************
 
