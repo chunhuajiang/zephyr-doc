@@ -215,15 +215,30 @@
     </tr>
 
 	<tr>
-		<td align="center" rowspan="6">子系统</td>
-		<td align="center">网络</td>
-		<td align="center">-</td>
+		<td align="center" rowspan="9">子系统</td>
+		<td align="center" rowspan="2">网络</td>
+		<td align="center">networking</td>
 		<td align="center"></td>
 		<td align="center"></td>
     </tr>
 	<tr>
-		<td align="center">蓝牙</td>
-		<td align="center">-</td>
+		<td align="center">buffers</td>
+		<td align="center"></td>
+		<td align="center"></td>
+    </tr>
+	<tr>
+		<td align="center"  rowspan="3">蓝牙</td>
+		<td align="center">bluetooth</td>
+		<td align="center"></td>
+		<td align="center"></td>
+    </tr>
+	<tr>
+		<td align="center">devel</td>
+		<td align="center"></td>
+		<td align="center"></td>
+    </tr>
+	<tr>
+		<td align="center">qualification</td>
 		<td align="center"></td>
 		<td align="center"></td>
     </tr>
