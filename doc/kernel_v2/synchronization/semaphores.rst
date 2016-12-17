@@ -1,57 +1,44 @@
 .. _semaphores_v2:
 
-Semaphores
+信号量
 ##########
 
-A :dfn:`semaphore` is a kernel object that implements a traditional
-counting semaphore.
+:dfn:`信号量（semaphore）` 是一个内核对象，用于实现传统的计数信号量。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-Any number of semaphores can be defined. Each semaphore is referenced
-by its memory address.
+可以定义任意数量的信号量。每个信号量通过其内存地址进行引用。
 
-A semaphore has the following key properties:
+信号量的关键属性如下：
 
-* A **count** that indicates the number of times the semaphore can be taken.
-  A count of zero indicates that the semaphore is unavailable.
+* **计数**： 信号量可以被获取的次数。计数为零表示该信号量不可用。
 
-* A **limit** that indicates the maximum value the semaphore's count
-  can reach.
+* **界限**： 信号量的计数器能达到的最大值。
 
-A semaphore must be initialized before it can be used. Its count must be set
-to a non-negative value that is less than or equal to its limit.
+信号量必须先初始化再使用。信号量的计数必须被初始化为非负值，且小于等于其界限。
 
-A semaphore may be **given** by a thread or an ISR. Giving the semaphore
-increments its count, unless the count is already equal to the limit.
+线程或 ISR 可以 **释放（give）** 一个信号量。释放信号量时其计数会递增（除非计数已等于上限）。
 
-A semaphore may be **taken** by a thread. Taking the semaphore
-decrements its count, unless the semaphore is unavailable (i.e. at zero).
-When a semaphore is unavailable a thread may choose to wait for it to be given.
-Any number of threads may wait on an unavailable semaphore simultaneously.
-When the semaphore is given, it is taken by the highest priority thread
-that has waited longest.
+线程可以 **获取（take）** 信号量。获取信号量时其计数会递减（除非信号量无效，例如为零）。当信号量不可用时，线程可以等待，直到获取到信号量。多个线程可以同时等待某个不可用的信号量。当信号量可用时，它会被优先级最高的、等待时间最久的线程获取到。
 
 .. note::
-    The kernel does allow an ISR to take a semaphore, however the ISR must
-    not attempt to wait if the semaphore is unavailable.
 
-Implementation
+    内核也允许 ISR 去获取信号量，不过如果信号量不可用时，ISR 不能等待。
+
+实现
 **************
 
-Defining a Semaphore
+定义信号量
 ====================
 
-A semaphore is defined using a variable of type :c:type:`struct k_sem`.
-It must then be initialized by calling :cpp:func:`k_sem_init()`.
+使用类型为 :c:type:`struct k_sem` 的变量可以定义一个信号量。信号量定义后必须使用函数 :cpp:func:`k_sem_init()` 进行初始化。
 
-The following code defines a semaphore, then configures it as a binary
-semaphore by setting its count to 0 and its limit to 1.
+下面的代码定义了一个信号量，并通过将其计数设为 0 、界限设为 1，从而形成了一个二元信号量。
 
 .. code-block:: c
 
@@ -59,22 +46,20 @@ semaphore by setting its count to 0 and its limit to 1.
 
     k_sem_init(&my_sem, 0, 1);
 
-Alternatively, a semaphore can be defined and initialized at compile time
-by calling :c:macro:`K_SEM_DEFINE`.
+也可以使用宏 :c:macro:`K_SEM_DEFINE` 在编译时定义并初始化一个信号量。
 
-The following code has the same effect as the code segment above.
+下面的代码与上面的代码段具有系统的效果。
 
 .. code-block:: c
 
     K_SEM_DEFINE(my_sem, 0, 1);
 
-Giving a Semaphore
+释放信号量
 ==================
 
-A semaphore is given by calling :cpp:func:`k_sem_give()`.
+函数 :cpp:func:`k_sem_give()` 用于释放信号量。
 
-The following code builds on the example above, and gives the semaphore to
-indicate that a unit of data is available for processing by a consumer thread.
+下面的代码基于上面的例程之上释放了一个信号量，表面有可供消费者线程处理的数据单元。
 
 .. code-block:: c
 
@@ -86,14 +71,12 @@ indicate that a unit of data is available for processing by a consumer thread.
         ...
     }
 
-Taking a Semaphore
+获取信号量
 ==================
 
-A semaphore is taken by calling :cpp:func:`k_sem_take()`.
+函数 :cpp:func:`k_sem_take()` 用于获取信号量。
 
-The following code builds on the example above, and waits up to 50 milliseconds
-for the semaphore to be given.
-A warning is issued if the semaphore is not obtained in time.
+下面的代码基于上面的例程之上，并等待 50 毫秒以等待信号量被释放。如果在该时间内没有获取到信号量，则打印一条警告消息。
 
 .. code-block:: c
 
@@ -110,25 +93,25 @@ A warning is issued if the semaphore is not obtained in time.
         ...
     }
 
-Suggested Uses
+建议的用法
 **************
 
-Use a semaphore to control access to a set of resources by multiple threads.
+使用信号量控制对多个线程共有的资源的访问。
 
-Use a semaphore to synchronize processing between a producing and consuming
-threads or ISRs.
+使用信号量在线程或 ISR 的生产者和消费者之间同步。
 
-Configuration Options
+配置选项
 *********************
 
-Related configuration options:
+相关的配置选项：
 
-* None.
+* 无。
 
-APIs
+API
 ****
 
-The following semaphore APIs are provided by :file:`kernel.h`:
+
+:file:`kernel.h` 中提供了如下关于信号量的 API：
 
 * :c:macro:`K_SEM_DEFINE`
 * :cpp:func:`k_sem_init()`

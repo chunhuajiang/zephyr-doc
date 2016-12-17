@@ -125,7 +125,7 @@
 		<td align="center" rowspan="3">同步</td>
 		<td align="center">信号量</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">已领取，待翻译</td>
+		<td align="center">完成</td>
     </tr>
 	<tr >
 		<td align="center">互斥量</td>
