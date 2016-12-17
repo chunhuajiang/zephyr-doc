@@ -14,7 +14,7 @@
 
 可以定义任意数量的定时器，每个定时使用各自独立的内存地址资源。
 
-每个定时器有以下关键属性：:
+每个定时器有以下关键属性：
 
 * :dfn:`时限（Duration）` 是指从启动到定时器第一次期满之间的时间间隔，单位为毫秒。该值必须大于0。
 
@@ -26,9 +26,9 @@
 
 * :dfn:`状态值（status）` 指示了自最后一次读取该状态值后，定时器经历了多少次期满。 
 
-定时器在使用前必须先初始化。初始化时将设置期满函数和终止函数，清零定时器状态值，并设置定时器为 **停止** 状态。
+定时器在使用前必须先初始化。初始化时将设置期满函数和终止函数，清零定时器状态值，并设置定时器为**停止**状态。
 
-定时器将在指定时限和周期后 **启动**。在定时器状态值清零后，定时器进入 **运行** 状态并开始计时。
+定时器将在指定时限和周期后**启动**。在定时器状态值清零后，定时器进入**运行**状态并开始计时。
 
 当一个运行中的定时器发生期满时：其状态值将自增，并执行期满函数（若已设置期满函数）。若某线程正在等待该定时器计时结束，该线程将不再被阻塞。如果定时器的周期为0，则此时定期进入停止状态；否则定时器将重启一个新的与周期时间相等的时限时间。
 
@@ -49,7 +49,7 @@
 定时器的局限性
 =================
 
-因为定时器是基于系统时钟，所以在使用一个定时器时指定的延时时间都是 **最小** 值。
+因为定时器是基于系统时钟，所以在使用一个定时器时指定的延时时间都是**最小**值。
 (详见 :ref:`clock_limitations`.)
 
 实现
@@ -58,7 +58,7 @@
 定义一个定时器
 ================
 
-通过使用类型为 :c:type:`struct k_timer` 的变量来定义一个定时器。
+通过使用类型为 :c:type:`struct k_timer` 的变量来定义一个定时器。   
 该定时器随后必须通过调用 :cpp:func:`k_timer_init()` 来初始化。
 
 如下的代码定义并初始化了一个定时器：
@@ -70,10 +70,9 @@
 
     k_timer_init(&my_timer, my_expiry_function, NULL);
 
-Alternatively, a timer can be defined and initialized at compile time
-by calling :c:macro:`K_TIMER_DEFINE`.
+或者，定时器可以在编译阶段通过调用 :c:macro:`K_TIMER_DEFINE` 来定义和初始化。
 
-The following code has the same effect as the code segment above.
+如下的代码与上面的代码效果一致。
 
 .. code-block:: c
 
@@ -82,10 +81,7 @@ The following code has the same effect as the code segment above.
 使用定时器的期满函数
 =============================
 
-The following code uses a timer to perform a non-trivial action on a periodic
-basis. Since the required work cannot be done at interrupt level,
-the timer's expiry function submits a work item to the
-:ref:`system workqueue <workqueues_v2>`, whose thread performs the work.
+如下代码使用定时器周期地执行了一个有意义的操作。因为所需要完成的工作无法再中断层面完成，所以定时器期满函数会提交一项工作到:ref:`system workqueue <workqueues_v2>`，它的线程将执行该项工作。
 
 .. code-block:: c
 
@@ -138,9 +134,7 @@ the timer's expiry function submits a work item to the
 使用定时器状态值同步
 ==================================
 
-The following code performs timer status synchronization to allow a thread
-to do useful work while ensuring that a pair of protocol operations
-are separated by the specified time interval.
+如下的代码执行了一个定时器状态值同步操作，以允许一个线程在确保指定的时间间隔内一对协议操作是独立的情况下，执行一些有用的工作。
 
 .. code-block:: c
 
@@ -164,27 +158,21 @@ are separated by the specified time interval.
     ...
 
 .. note::
-    If the thread had no other work to do it could simply sleep
-    between the two protocol operations, without using a timer.
+    如果一个线程无其它工作可做，该线程将会在两个协议操作之间睡眠，而不使用定时器。
 
 建议的用法
 **************
 
-Use a timer to initiate an asynchronous operation after a specified
-amount of time.
+请使用定时器在指定具体的时间后初始化一个异步操作。
 
-Use a timer to determine whether or not a specified amount of time
-has elapsed.
+请使用定时器来确定是否已经经历过了指定的时间。
 
-Use a timer to perform other work while carrying out operations
-involving time limits.
+请使用定时来在运行涉及时间限制的操作时，执行其它工作。
 
 .. note::
-   If a thread has no other work to perform while waiting for time to pass
-   it should call :cpp:func:`k_sleep()`.
-   If a thread needs to measure the time required to perform an operation
-   it can read the :ref:`system clock or the hardware clock <clocks_v2>`
-   directly, rather than using a timer.
+
+   如果一个线程在等待一个计时器时无其他工作可做，应调用 :cpp:func:`k_sleep()` 。   
+   如果一个线程需要测量一个操作所需要的时间，可以不用使用定时器，而是直接读取 :ref:`system clock or the hardware clock <clocks_v2>` 。
 
 配置选项
 *********************
