@@ -1,54 +1,36 @@
 .. _kbuild_makefiles:
 
-The Makefiles
+Makefile 
 *************
 
-Overview
+概述
 ========
 
-The build system defines a set of conventions for the correct use of Makefiles
-in the kernel source directories. The correct use of Makefiles is driven by the
-concept of recursion.
+为了正确使用内核源码目录中的 Makefile，编译系统做了一系列的约定。Makefile 的核心概念是递归。
 
-In the recursion model, each Makefile within a directory includes the source
-code and any subdirectories to the build process. Each subdirectory follows
-the same principle. Developers can focus exclusively in their own work. They
-integrate their module with the build system by adding a very simple Makefile
-following the recursive model.
+在递归模型中，目录中的每个 Makefile 都包含需要编译的源码和子目录。对于每个子目录也遵循这个原则。开发者可以专注于它们自己的工作。如果需要将某个模块集成到编译系统中，只需要按照递归模型的原则添加一个简单的 Makefle 文件。
 
 .. _makefile_conventions:
 
-Makefile Conventions
+Makefile 规则
 ====================
 
-The following conventions restrict how to add modules and Makefiles to the
-build system. These conventions guard the correct implementation of the
-recursive model.
+下面的约定限定了如何向编译系统中添加模块和 Makefile。这些约定保证了递归模型的正确性。
 
-* Each source code directory must contain a single Makefile. Directories
-  without a Makefile are not considered source code directories.
+* 每个源代码目录必须包含一个 Makefile。没有包含 Makefile 的目录不被认为是源代码目录。
 
-* The scope of every Makefile is restricted to the contents of that directory.
-  A Makefile can only make a direct reference to its own files and subdirectories.
-  Any file outside the directory has to be referenced in its home directory Makefile.
+* 每个 Makefile 的范围仅限于该目录中的内容，且只能直接引用它自己的文件及其子目录。该目录外的其它任何文件必须只能被主目录 Makefile 引用。
 
-* Makefiles list the object files that are included in the link process. The
-  build system finds the source file that generates the object file by matching
-  the file name.
+* Makefile 中列举了链接时需要包含的目标文件。编译系统通过文件名查找、匹配该目标文件的源文件。
 
-* Parent directories add their child directories into the recursion model.
+* 父目录将它们的子目录添加到递归模型中。
 
-* The root Makefile adds the directories in the kernel base directory into the
-  recursion model.
+* 根 Makefile 将内核基本目录中的目录添加到递归模型中。
 
 
-Adding Source Files
+添加源文件
 ===================
-A source file is added to the build system through its home directory Makefile.
-The Makefile must refer the source build indirectly, specifying the object file
-that results from the source file using the :literal:`obj-y` variable. For
-example, if the file that we want to add is a C file named :file:`<file>.c` the
-following line should be added in the Makefile:
+源代码通过其主目录的 Makefile 文件添加到编译系统中。Makefile 通过变量 :literal:`obj-y` 间接地引用目标文件。例如，如果要被添加的 C 文件的文件名是 :file:`<file>.c`，您需要将如下几行添加到 Makefile 中：
 
 .. code-block:: make
 
@@ -56,41 +38,31 @@ following line should be added in the Makefile:
 
 .. note::
 
-   The same method applies for assembly files with .s extension.
+   以 .s 作为扩展名的汇编文件也采用这种方法。
 
-Source files can be added conditionally using configuration options.  For
-example, if the option ``CONFIG_VAR`` is set and it implies that a source
-file must be added in the compilation process, then the following line adds the
-source code conditionally:
+您也可以使用配置选项对源文件进行条件添加。例如，如果选项 ``CONFIG_VAR`` 被设置时表示需要编译一个源文件，您需要将如下几行添加到 Makefile 中：
 
 .. code-block:: none
 
    obj-$(CONFIG_VAR) += <file>.o
 
-Adding Directories
+添加目录
 ==================
 
-Add a subdirectory to the build system by editing the Makefile in its
-directory.  The subdirectory is added using the :literal:`obj-y` variable. The
-correct syntax to add a subdirectory into the recursion is:
+如果您需要将某个子目录添加到编译系统中，您需要编辑 Makefile 中。通过变量 :literal:`obj-y` 可以添加子目录，其语法是：
 
 .. code-block:: make
 
    obj-y += <directory_name>/
 
-The backslash at the end of the directory name signals the build system that a
-directory, and not a file, is being added to the recursion.
+目录名后面的斜线用于给编译系统提供指示，表示需要添加到递归模型中的是一个目录而不是文件。
 
-The conventions require us to add only one directory per line and never to mix
-source code with directory recursion in a single :literal:`obj-y` line. This
-helps keep the readability of the Makefile by making it clear when an item adds
-an additional lever of recursion.
+约定，每一行只能添加一个目录，且单个 :literal:`obj-y` 中不能有文件和目录的混合。这样能增加 Makefile 的可读性，尤其是能看到它的递归层级。
 
-Directories can also be conditionally added:
+目录也可以进行条件添加：
 
 .. code-block:: none
 
    obj-y-$(CONFIG_VAR) += <directory_name>/
 
-The subdirectory must contain its own Makefile following the rules described in
-:ref:`makefile_conventions`.
+子目录必须包含它自己的 Makefile，且其必须遵循 :ref:`makefile_conventions` 中描述的规则。

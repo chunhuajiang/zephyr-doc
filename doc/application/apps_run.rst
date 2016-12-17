@@ -1,58 +1,43 @@
 .. _apps_run:
 
-Run an Application
+运行应用程序
 ##################
 
-An appliction image can be run on real or simulated hardware.
-The kernel's built-in simulator is QEMU. It allows you to run and test
-an application virtually, before (or in lieu of)
-loading and running it on actual target hardware.
+应用程序既可以运行在真实硬件上，也可以运行在模拟硬件上。内核的内建模拟器是 QEMU。这样的好处是，您可以在实际的目标板上加载、运行应用程序前使用模拟器进行测试。
+
 
 .. contents:: Procedures
    :local:
    :depth: 1
 
-Running an Application using QEMU
+使用QEMU 运行应用程序
 =================================
 
-Prerequisites
+需求
 -------------
 
-* Ensure the application can be built successfully using a QEMU-supported
-  board configuration, such as qemu_cortex_m3 or qemu_x86, as described
-  in :ref:`apps_build`.
+* 确保应用程序可以为一个 QEMU 支持的目标板（例如 qemu_cortex_m3 或者 qemu_x86，参考  :ref:`apps_build`）编译成功。
 
-* Ensure the Zephyr environment variables are set for each console terminal;
-  see :ref:`apps_common_procedures`.
+* 确保已在每个控制台终端设置了环境变量，参考 :ref:`apps_common_procedures`。
 
-Steps
+步骤
 -----
 
-#. Open a terminal console and navigate to the application directory
-   :file:`~/appDir`.
+#. 打开终端控制台，并进入目录 :file:`~/appDir`.
 
-#. Enter the following command to build and run the application
-   using a QEMU-supported board configuration,
-   such as qemu_cortex_m3 or qemu_x86.
+#. 输入如下的命令为某个 QEMU 所支持的目标板（例如 qemu_cortex_m3 或者 qemu_x86）编译、运行应用程序
 
    .. code-block:: console
 
        $ make [BOARD=<type> ...] qemu
 
-   The Zephyr build system generates a :file:`zephyr.elf` image file
-   and then begins running it in the terminal console.
+   Zephyr 的编译系统会生成一个 :file:`zephyr.elf` 镜像文件，并直接在终端控制台上运行它。
+   
+#. 输入 :kbd:`Ctrl A, X` 停止运行应用程序。
 
-#. Press :kbd:`Ctrl A, X` to stop the application from running
-   in QEMU.
-
-   The application stops running and the terminal console prompt
-   redisplays.
-
-Loading and Running an Application on Target Hardware
+   应用程序将停止运行，终端控制台的提示符会重新显示出来。
+   
+在目标板上加载、运行应用程序
 =====================================================
 
-The procedure required to load an application image (:file:`zephyr.elf`)
-on a target depends on the functionality available on its hardware,
-and is often unique to that target board.
-For this reason, loading instructions reside with the board-specific
-documentation; see :ref:`board`.
+加载应用程序镜像（:file:`zephyr.elf`）所需的步骤依赖于具体的硬件，且不同的硬件平台的步骤各有区别。基于这个原因，您可以在板子相关的文档中查看相关指令；具体请参考 :ref:`board`。

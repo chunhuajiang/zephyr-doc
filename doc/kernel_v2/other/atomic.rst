@@ -1,53 +1,43 @@
 .. _atomic_v2:
 
-Atomic Services
+原子服务
 ###############
 
-An :dfn:`atomic variable` is a 32-bit variable that can be read and modified
-by threads and ISRs in an uninterruptible manner.
+:dfn:`原子变量` 是一个 32 比特的变量。线程或者 ISR 可以以不可打断的方式对其进行读取和修改。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-Any number of atomic variables can be defined.
+您可以定义任意数量的原子变量。
 
-Using the kernel's atomic APIs to manipulate an atomic variable
-guarantees that the desired operation occurs correctly,
-even if higher priority contexts also manipulate the same variable.
+对原子变量的操作需要使用内核提供的原子相关的 API，这样才能保证所需要的操作能正确执行（即使高优先级的上下文也操作了同一变量）。
 
-The kernel also supports the atomic manipulation of a single bit
-in an array of atomic variables.
+内核也支持在一个原子变量数组中对单一比特进行原子操作。
 
-Implementation
+实现
 **************
 
-Defining an Atomic Variable
+定义原子变量
 ===========================
 
-An atomic variable is defined using a variable of type :c:type:`atomic_t`.
+原子变量使用类型 :c:type:`atomic_t` 进行定义。
 
-By default an atomic variable is initialized to zero. However, it can be given
-a different value using :c:macro:`ATOMIC_INIT`:
+默认情况下，原子变量被初始化为 0。不过，您也可以使用宏 :c:macro:`ATOMIC_INIT` 将其初始化为其它值：
 
 .. code-block:: c
 
     atomic_t flags = ATOMIC_INIT(0xFF);
 
-Manipulating an Atomic Variable
+操作原子变量
 ===============================
 
-An atomic variable is manipulated using the APIs listed at the end of
-this section.
+您可以使用本节后面列举的 API 操作原子变量。
 
-The following code shows how an atomic variable can be used to keep track
-of the number of times a function has been invoked. Since the count is
-incremented atomically, there is no risk that it will become corrupted
-in mid-increment if a thread calling the function is interrupted if
-by a higher priority context that also calls the routine.
+下面的代码向您展示了如何利用原子变量记录某个函数被调用的次数。由于 count 是原子递增的，因此可以避免这样的风险：当线程正在调用该函数时，对递增操作只进行了一半，此时有一个更高优先级的上下文抢占了该线程，且也调用了这个函数，从而导致递增值的错误。
 
 .. code-block:: c
 
@@ -62,18 +52,14 @@ by a higher priority context that also calls the routine.
         ...
     }
 
-Manipulating an Array of Atomic Variables
+操作原子变量数组
 =========================================
 
-An array of 32-bit atomic variables can be defined in the conventional manner.
-However, you can also define an N-bit array of atomic variables using
-:c:macro:`ATOMIC_DEFINE`.
+您可以以常规的方式定义一个原子变量数组（每个元素 32 比特）。不过，您也可以使用宏 :c:macro:`ATOMIC_DEFINE` 来定义一个 N 比特的原子数组。
 
-A single bit in array of atomic variables can be manipulated using
-the APIs listed at the end of this section that end with :cpp:func:`_bit`.
+本节最后面以 :cpp:func:`_bit` 结尾的 API 可以用来操作原子数组中的某一个比特。
 
-The following code shows how a set of 200 flag bits can be implemented
-using an array of atomic variables.
+下面的代码展示了如何通过原子数组的方式实现设置 200 个标志比特的方法。
 
 .. code-block:: c
 
@@ -87,24 +73,20 @@ using an array of atomic variables.
         return (int)atomic_set_bit(flag_bits, bit_position);
     }
 
-Suggested Uses
+建议的用法
 **************
 
-Use an atomic variable to implement critical section processing that only
-requires the manipulation of a single 32-bit value.
+当只需要操作一个 32 比特的值时，使用一个原子变量即可。
 
-Use multiple atomic variables to implement critical section processing
-on a set of flag bits in a bit array longer than 32 bits.
+当需要操作的标志比特位数超过 32 比特时，使用多个原子变量。
 
 .. note::
-    Using atomic variables is typically far more efficient than using
-    other techniques to implement critical sections such as using a mutex
-    or locking interrupts.
+    相对于其它方法，例如互斥量或者锁中断，原子变量通常更高效。
 
-Configuration Options
+配置选项
 *********************
 
-Related configuration options:
+相关配置选项：
 
 * :option:`CONFIG_ATOMIC_OPERATIONS_BUILTIN`
 * :option:`CONFIG_ATOMIC_OPERATIONS_CUSTOM`
@@ -113,7 +95,7 @@ Related configuration options:
 APIs
 ****
 
-The following atomic operation APIs are provided by :file:`atomic.h`:
+文件 :file:`atomic.h` 中提供了如下关于原子操作的 API：
 
 * :c:macro:`ATOMIC_INIT`
 * :c:macro:`ATOMIC_DEFINE`

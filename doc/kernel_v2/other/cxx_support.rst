@@ -1,35 +1,27 @@
 .. _cxx_support_v2:
 
-C++ Support for Applications
+应用程序的 C++ 支持
 ############################
 
-The kernel supports applications written in both C and C++. However, to
-use C++ in an application you must configure the kernel to include C++
-support and the build system must select the correct compiler.
+内核支持使用 C 和 C++ 混合编写的应用程序。不过，如果要是使用 C++，您必须对内核进行配置，让其包括对 C++ 的支持，且必须为编译系统选择一个合适的编译器。
 
-The build system selects the C++ compiler based on the suffix of the files.
-Files identified with either a **cxx** or a **cpp** suffix are compiled using
-the C++ compiler. For example, :file:`myCplusplusApp.cpp` is compiled using C++.
+编译系统根据文件的前缀选择编译器。以 **cxx** 或者 **cpp** 作为扩展名的文件将会使用 C++ 编译器进行编译。例如，:file:`myCplusplusApp.cpp` 会被当 C++ 进行编译。
 
-The kernel currently provides only a subset of C++ functionality. The
-following features are *not* supported:
+内核当前仅支持 C++ 功能的一个子集。下列特性 *不* 支持：
 
-* Dynamic object management with the **new** and **delete** operators
+* 使用 **new** 和 **delete** 操作符进行动态对象管理
 * :abbr:`RTTI (run-time type information)`
-* Exceptions
-* Static global object destruction
+* 异常
+* 静态全局对象销毁
 
-While not an exhaustive list, support for the following functionality is
-included:
+内核当前支持如下功能（未详尽列举所有功能）：
 
-* Inheritance
-* Virtual functions
+* 继承
+* 虚函数
 * Virtual tables
-* Static global object constructors
+* 静态全局对象构建
 
-Static global object constructors are initialized after the drivers are
-initialized but before the application :c:func:`main()` function. Therefore,
-use of C++ is restricted to application code.
+静态全局对象构建器是在驱动程序初始化后、进入应用程序的 :c:func:`main()` 函数前进行的初始化。因此，仅限于在应用程序代码中能够使用 C++。
 
 .. note::
-    Do not use C++ for kernel, driver, or system initialization code.
+    不要在内核、驱动或者子系统初始化代码中使用 C++。

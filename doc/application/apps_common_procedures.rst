@@ -1,37 +1,33 @@
 .. _apps_common_procedures:
 
-Common Procedures
+通用规程
 #################
 
-Instructions that are common to many procedures are provided here
-and referred to from the procedures that require them.
+这里提供了许多规程所通用的指令。
 
-Procedures
+规程
 **********
 
 .. _set_environment_variables:
 
-Setting Environment Variables
+设置环境变量
 =============================
 
-Set environment variables every time you open a terminal console to work on
-applications.
+当您每次打开终端时，都需要设置环境变量。
 
-Steps
+步骤
 -----
 
-1. In a shell terminal console, enter an :command:`export` command that is
-   consistent with your toolchain.
+1. 在 Shell 终端控制台输入与您工具链相符的 :command:`export` 目录
 
-   For the Zephyr SDK:
+   对于Zephyr SDK:
 
      .. code-block:: console
 
       $ export ZEPHYR_GCC_VARIANT=zephyr
       $ export ZEPHYR_SDK_INSTALL_DIR=<yocto-installation-path>
 
-2. To set the environment variable :envvar:`\$ZEPHYR_BASE`, navigate to the
-   kernel's installation directory and enter:
+2. 设置环境变量 :envvar:`\$ZEPHYR_BASE`。进入内核的安装目录，输入：
 
       .. code-block:: console
 

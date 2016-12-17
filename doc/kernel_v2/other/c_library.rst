@@ -1,12 +1,8 @@
 .. _c_library_v2:
 
-Standard C Library
+标准 C 库
 ##################
 
-The kernel currently provides only the minimal subset of the
-standard C library required to meet the kernel's own needs,
-primarily in the areas of string manipulation and display.
+为了满足内核的需求，Zephyr 当前提供了标准 C 库的一个最小子集，主要用于字符串的操作和显示。
 
-Applications that require a more extensive C library can either submit
-contributions that enhance the existing library or substitute
-a replacement library.
+如果您的应用程序需要扩展的 C 库，您可以提交贡献的代码以扩展 C 库，或者用其它的库作为替代。

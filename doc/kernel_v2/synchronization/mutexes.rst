@@ -1,102 +1,67 @@
 .. _mutexes_v2:
 
-Mutexes
+互斥量
 #######
 
-A :dfn:`mutex` is a kernel object that implements a traditional
-reentrant mutex. A mutex allows multiple threads to safely share
-an associated hardware or software resource by ensuring mutually exclusive
-access to the resource.
+:dfn:`互斥量（mutex）`是一个内核对象，它实现了一个传统的可重入互斥量。互斥量允许多个线程安全地共享一个关联的软件或者硬件资源。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-Any number of mutexes can be defined. Each mutex is referenced by its memory
-address.
+可以定义任意数量的互斥量。每个互斥量通过其内存地址进行引用。
 
-A mutex has the following key properties:
+互斥量的关键属性如下：
 
-* A **lock count** that indicates the number of times the mutex has be locked
-  by the thread that has locked it. A count of zero indicates that the mutex
-  is unlocked.
+* **锁计数**：表示锁定该互斥量的线程对该互斥量锁定的次数。0 表示该互斥量没有被锁定。
 
-* An **owning thread** that identifies the thread that has locked the mutex,
-  when it is locked.
+* **拥有线程**： 用来标识当互斥量被锁定时锁定该互斥量的线程。
 
-A mutex must be initialized before it can be used. This sets its lock count
-to zero.
+互斥量必须先初始化再使用。初始化时会将其锁计数设为 0。
 
-A thread that needs to use a shared resource must first gain exclusive rights
-to access it by **locking** the associated mutex. If the mutex is already locked
-by another thread, the requesting thread may choose to wait for the mutex
-to be unlocked.
+当一个线程想使用共享资源时，它必须先通过 **锁定** 关联的互斥量以获得专有的访问权限。如果该互斥量已被另一个线程锁定，请求线程可以等待该互斥量被解锁。
 
-After locking a mutex, the thread may safely use the associated resource
-for as long as needed; however, it is considered good practise to hold the lock
-for as short a time as possible to avoid negatively impacting other threads
-that want to use the resource. When the thread no longer needs the resource
-it must **unlock** the mutex to allow other threads to use the resource.
+锁定互斥量后，线程可以长时间地安全地使用相关联的资源；不过，时间尽可能短地持有互斥量总是一个好的实践做法，因为它能尽量避免对其它需要使用这些资源的线程造成影响。当线程不再需要使用资源时，它必须将互斥量 **解锁**，以允许其它线程可以使用该资源。
 
-Any number of threads may wait on a locked mutex simultaneously.
-When the mutex becomes unlocked it is then locked by the highest-priority
-thread that has waited the longest.
+
+多个线程可以同时等待某个被锁定的互斥量。当该互斥量被解锁后，它会被优先级最高的、等待时间最久的线程所使用。
 
 .. note::
-    Mutex objects are *not* designed for use by ISRs.
 
-Reentrant Locking
-=================
+    互斥量对象 *不是* 为 ISR 设计的。
 
-A thread is permitted to lock a mutex it has already locked.
-This allows the thread to access the associated resource at a point
-in its execution when the mutex may or may not already be locked.
+可重入锁（Reentrant Locking）
+==================================
 
-A mutex that is repeatedly locked by a thread must be unlocked an equal number
-of times before the mutex becomes fully unlocked so it can be claimed
-by another thread.
+线程可以锁定一个它已经锁定的互斥量。这样做的好处是线程可以在它执行的某个时刻（互斥量可能被锁定也可能未被锁定）访问该互斥量所关联的资源。
 
-Priority Inheritance
+互斥量被一个线程多次锁定后，它必须被解锁相同的次数后才能被其它线程所获取到。
+
+优先级继承
 ====================
 
-The thread that has locked a mutex is eligible for :dfn:`priority inheritance`.
-This means the kernel will *temporarily* elevate the thread's priority
-if a higher priority thread begins waiting on the mutex. This allows the owning
-thread to complete its work and release the mutex more rapidly by executing
-at the same priority as the waiting thread. Once the mutex has been unlocked,
-the unlocking thread resets its priority to the level it had before locking
-that mutex.
+已锁定互斥量的线程具有:dfn:`优先级继承（priority inheritance）` 的能力。这意味着，如果有一个高优先级的线程开始等待这个互斥量，内核将 *临时* 提升该线程的优先级。这样做的好处是，占用互斥量的线程可以以与等待线程相同的优先级继续执行而不会被其抢占，因此可以更快速地执行它的工作并释放互斥量。互斥量一旦被解锁后，该线程的优先级会被恢复至锁定该互斥量前的优先级。
 
 .. note::
-    The :option:`CONFIG_PRIORITY_CEILING` configuration option limits
-    how high the kernel can raise a thread's priority due to priority
-    inheritance. The default value of 0 permits unlimited elevation.
+    
+    内核由于优先级继承而提升线程的优先级时，配置选项 :option:`CONFIG_PRIORITY_CEILING` 会限制其所能提升的最大优先级。默认值 0 允许内核可以对其进行无限制的提升。
 
-When two or more threads wait on a mutex held by a lower priority thread, the
-kernel adjusts the owning thread's priority each time a thread begins waiting
-(or gives up waiting). When the mutex is eventually unlocked, the unlocking
-thread's priority correctly reverts to its original non-elevated priority.
+当两个或多个线程等待一个被低优先级锁定的互斥量时，内核会在这些线程每次开始等待（或者放弃等待）时调整互斥量占用线程的优先级。当这个互斥量最终被解锁后，解锁的线程的优先级会被恢复到它原先未被提升时的优先级。
 
-The kernel does *not* fully support priority inheritance when a thread holds
-two or more mutexes simultaneously. This situation can result in the thread's
-priority not reverting to its original non-elevated priority when all mutexes
-have been released. It is recommended that a thread lcok only a single mutex
-at a time when multiple mutexes are shared between threads of different
-priorities.
+当一个线程同时占用了两个或者多个互斥量时，内核 *不会* 完全支持优先级继承。这种情形会导致当所有的互斥量被释放后该线程的优先级不能恢复到它原先未被提升时的优先级。因此，当多个互斥量在不同的优先级的线程之间共享时，建议每个线程在同一时刻只锁定一个互斥量。
 
-Implementation
+实现
 **************
 
-Defining a Mutex
+定义互斥量
 ================
 
-A mutex is defined using a variable of type :c:type:`struct k_mutex`.
-It must then be initialized by calling :cpp:func:`k_mutex_init()`.
+使用类型为 :c:type:`struct k_mutex`  的变量可以定义互斥量。互斥量定以后必须使用函数 :cpp:func:`k_mutex_init()` 对其进行初始化。
 
-The following code defines and initializes a mutex.
+下面的代码定义并初始化了一个互斥量。
 
 .. code-block:: c
 
@@ -104,29 +69,26 @@ The following code defines and initializes a mutex.
 
     k_mutex_init(&my_mutex);
 
-Alternatively, a mutex can be defined and initialized at compile time
-by calling :c:macro:`K_MUTEX_DEFINE`.
+也可以使用宏 :c:macro:`K_MUTEX_DEFINE` 在编译时定义并初始化一个互斥量。
 
-The following code has the same effect as the code segment above.
+下面的代码与上面的代码段具有系统的效果。
 
 .. code-block:: c
 
     K_MUTEX_DEFINE(my_mutex);
 
-Locking a Mutex
+锁定互斥量
 ===============
 
-A mutex is locked by calling :cpp:func:`k_mutex_lock()`.
+函数 :cpp:func:`k_mutex_lock()` 用于锁定互斥量。
 
-The following code builds on the example above, and waits indefinitely
-for the mutex to become available if it is already locked by another thread.
+下面的代码基于上面的例程之上。如果该互斥量已被另一个线程锁定，则会等待一段不确定的时间，直到互斥量有效。
 
 .. code-block:: c
 
     k_mutex_lock(&my_mutex, K_FOREVER);
 
-The following code waits up to 100 milliseconds for the mutex to become
-available, and gives a warning if the mutex does not become availablee.
+下面的代码会最多等待 100 毫秒。如果互斥量依然无效，将打印一条警告消息。
 
 .. code-block:: c
 
@@ -136,35 +98,33 @@ available, and gives a warning if the mutex does not become availablee.
         printf("Cannot lock XYZ display\n");
     }
 
-Unlocking a Mutex
+解锁互斥量
 =================
 
-A mutex is unlocked by calling :cpp:func:`k_mutex_unlock()`.
+函数 :cpp:func:`k_mutex_unlock()` 用于解锁互斥量。
 
-The following code builds on the example above,
-and unlocks the mutex that was previously locked by the thread.
+下面的代码基于上面的例程之上，它会对线程所锁定的互斥量进行解锁。
 
 .. code-block:: c
 
     k_mutex_unlock(&my_mutex);
 
-Suggested Uses
+建议的用法
 **************
 
-Use a mutex to provide exclusive access to a resource, such as a physical
-device.
+使用互斥量提供对资源（例如物理设备）的专有访问。
 
-Configuration Options
+配置选项
 *********************
 
-Related configuration options:
+相关配置选项：
 
 * :option:`CONFIG_PRIORITY_CEILING`
 
-APIs
+API
 ****
 
-The following mutex APIs are provided by :file:`kernel.h`:
+:file:`kernel.h`中提供了如下与互斥量相关的 API：
 
 * :c:macro:`K_MUTEX_DEFINE`
 * :cpp:func:`k_mutex_init()`
