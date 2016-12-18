@@ -1,68 +1,46 @@
 .. _fifos_v2:
 
-Fifos
+Fifo
 #####
 
-A :dfn:`fifo` is a kernel object that implements a traditional
-first in, first out (FIFO) queue, allowing threads and ISRs
-to add and remove data items of any size.
+:dfn:`fifo` 是一个内核对象，它实现了传统的先进先出（first in first  out）队列，允许线程 和 ISR 添加、移除任意尺寸的数据项。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-Any number of fifos can be defined. Each fifo is referenced
-by its memory address.
+可以定义任意数量的 fifo。每个 fifo 通过其内存地址进行引用。
 
-A fifo has the following key properties:
+fifo 的关键属性包括：
 
-* A **queue** of data items that have been added but not yet removed.
-  The queue is implemented as a simple linked list.
+* **队列**：它里面包含了已被添加但还未被移除的数据项。队列是使用一个简单的单链表实现的。
 
-A fifo must be initialized before it can be used. This sets its queue to empty.
+fifo 必须先添加再使用。初始化时会将队列设为空。
 
-Fifo data items must be aligned on a 4-byte boundary, as the kernel reserves
-the first 32 bits of an item for use as a pointer to the next data item in
-the queue. Consequently, a data item that holds N bytes of application data
-requires N+4 bytes of memory.
+fifo 的数据项必须在 4 字节边界上对齐，这是因为每个数据项的前 32 比特是内核保留的，它（被当做指针）用来指向队列中的下一个数据项。因此，如果应用程序需要 N 字节的数据项时，实际需要 N+4 字节的内存。
 
-A data item may be **added** to a fifo by a thread or an ISR.
-The item is given directly to a waiting thread, if one exists;
-otherwise the item is added to the fifo's queue.
-There is no limit to the number of items that may be queued.
+数据项可以被线程或者 ISR **添加** 到 fifo 中。如果有线程在等待从这个 fifo 中取数据，这个数据项则直接被给予这个线程；否则，该项会被直接添加到 fifo 的队列中去。对可入队的数据项的数量没有任何限制。
 
-A data item may be **removed** from a fifo by a thread. If the fifo's queue
-is empty a thread may choose to wait for a data item to be given.
-Any number of threads may wait on an empty fifo simultaneously.
-When a data item is added, it is given to the highest priority thread
-that has waited longest.
+数据项可以被线程从 fifo 中 **移除**。如果该 fifo 的队列为空，线程在这个 fifo 上进行等待。多个线程可以同时在某个空 fifo 上等待，当一个新的数据项被添加时，它会被给予优先级最高的、等待时间最久的线程。
 
 .. note::
-    The kernel does allow an ISR to remove an item from a fifo, however
-    the ISR must not attempt to wait if the fifo is empty.
+    
+    ISR 虽然也可以从 fifo 中移除数据，但是如果 fifo 为空，ISR 不能进行等待。
 
-If desired, **multiple data items** can be added to a fifo in a single operation
-if they are chained together into a singly-linked list. This capability can be
-useful if multiple writers are adding sets of related data items to the fifo,
-as it ensures the data items in each set are not interleaved with other data
-items. Adding multiple data items to a fifo is also more efficient than adding
-them one at a time, and can be used to guarantee that anyone who removes
-the first data item in a set will be able to remove the remaining data items
-without waiting.
+如果有需要，链接为单链表的 **多个数据项** 可以一次性添加到 fifo 中。当多个写者正在添加一系列相关的数据项（集合）到 fifo 中时，能体现处这种做法的好处，因为这能确保每个被添加到 fifo 中的同一个集合中的数据项不能被其它集合的数据项交错开。一个性添加多个数据项比每次添加一个数据项的效率更高，且能保证移除集合中第一个数据项的线程或者 ISR 不需要等待就能移除该集合中剩余的数据项。
 
-Implementation
+实现
 **************
 
-Defining a Fifo
+定义 fifo
 ===============
 
-A fifo is defined using a variable of type :c:type:`struct k_fifo`.
-It must then be initialized by calling :cpp:func:`k_fifo_init()`.
+使用类型为 :c:type:`struct k_fifo` 的变量可以定义一个 fifo。fifo 定义后必须使用函数 :cpp:func:`k_fifo_init()` 进行初始化。
 
-The following code defines and initializes an empty fifo.
+下面的代码定义并初始化了一个空 fifo。
 
 .. code-block:: c
 
@@ -70,22 +48,20 @@ The following code defines and initializes an empty fifo.
 
     k_fifo_init(&my_fifo);
 
-Alternatively, an empty fifo can be defined and initialized at compile time
-by calling :c:macro:`K_FIFO_DEFINE`.
+也可以使用宏 :c:macro:`K_FIFO_DEFINE` 在编译时定义并初始化一个 fifo。
 
-The following code has the same effect as the code segment above.
+下面的代码与上面的代码段具有相同的效果。
 
 .. code-block:: c
 
     K_FIFO_DEFINE(my_fifo);
 
-Writing to a Fifo
+向 fifo 中写
 =================
 
-A data item is added to a fifo by calling :cpp:func:`k_fifo_put()`.
+函数 :cpp:func:`k_fifo_put()` 可用于向 fifo 中写数据。
 
-The following code builds on the example above, and uses the fifo
-to send data to one or more consumer threads.
+下面的代码基于上面的例程之上，它使用 fifo 给一个或多个消费者线程发送数据。
 
 .. code-block:: c
 
@@ -109,17 +85,14 @@ to send data to one or more consumer threads.
         }
     }
 
-Additionally, a singly-linked list of data items can be added to a fifo
-by calling :cpp:func:`k_fifo_put_list()` or :cpp:func:`k_fifo_put_slist()`.
+函数 :cpp:func:`k_fifo_put_list()` 或者 :cpp:func:`k_fifo_put_slist()` 可用于将一个单链表数据项添加到 fifo 中。
 
-Reading from a Fifo
+从 fifo 中读
 ===================
 
-A data item is removed from a fifo by calling :cpp:func:`k_fifo_get()`.
+函数 :cpp:func:`k_fifo_get()` 可用于从 fifo 中读取数据。
 
-The following code builds on the example above, and uses the fifo
-to obtain data items from a producer thread,
-which are then processed in some manner.
+下面的代码基于上面的例程之上，它使用 fifo 从一个消费者线程获取数据项。
 
 .. code-block:: c
 
@@ -135,23 +108,22 @@ which are then processed in some manner.
         }
     }
 
-Suggested Uses
+建议的用法
 **************
 
-Use a fifo to asynchronously transfer data items of arbitrary size
-in a "first in, first out" manner.
+使用 fifo 以先进先出的方式异步传输任意大小的数据项。
 
-Configuration Options
+配置选项
 *********************
 
-Related configuration options:
+相关的配置选项：
 
-* None.
+* 无。
 
-APIs
+API
 ****
 
-The following fifo APIs are provided by :file:`kernel.h`:
+:file:`kernel.h` 中提供了如下关于 fifo 的 API：
 
 * :c:macro:`K_FIFO_DEFINE`
 * :cpp:func:`k_fifo_init()`
