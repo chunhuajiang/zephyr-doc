@@ -1,98 +1,71 @@
 .. _alerts_v2:
 
-Alerts
+告警
 ######
 
-An :dfn:`alert` is a kernel object that allows an application to perform
-asynchronous signalling when a condition of interest occurs.
+:dfn:`告警（alert）` 是一个内核对象，当用户感兴趣的条件发生时，它允许应用程序执行一个异步信号。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-Any number of alerts can be defined. Each alert is referenced by
-its memory address.
 
-An alert has the following key properties:
+可以定义任意数量的告警。每个告警通过其内存地址进行引用。
 
-* An **alert handler**, which specifies the action to be taken
-  when the alert is signalled. The action may instruct the system workqueue
-  to execute a function to process the alert, mark the alert as pending
-  so it can be processed later by a thread, or ignore the alert.
+告警的关键属性如下：
 
-* An **pending count**, which records the number of pending alerts
-  that have yet to be received.
+* **告警处理者**：用于指明当捕捉到告警信号时应采取的动作。这个动作可能会指示系统工作队列去执行一个处理函数，将告警标记为挂起，以使其随后能被线程处理或忽略。
 
-* An **count limit**, which specifies the maximum number of pending alerts
-  that will be recorded.
+* **挂起计数**：记录被挂起的、未被接收的告警数量。
 
-An alert must be initialized before it can be used. This establishes
-its alert handler and sets the pending count to zero.
+* **计数界限**：挂起计数的最大值。
 
-Alert Lifecycle
+告警必须先初始化再使用。初始化时会建立一个告警处理者，并将挂机计数设为零。
+
+告警的生命周期
 ===============
 
-An ISR or a thread signals an alert by **sending** the alert
-when a condition of interest occurs that cannot be handled by the detector.
+当某个感兴趣的但又不能被检测者处理的条件发生时，ISR 或者线程可以 **发送** 告警信号。
 
-Each time an alert is sent, the kernel examines its alert handler
-to determine what action to take.
+每次有告警被发出时，内核都会检查它的告警处理函数，以决定采取何种动作。
 
-* :c:macro:`K_ALERT_IGNORE` causes the alert to be ignored.
+* :c:macro:`K_ALERT_IGNORE` 将导致告警被忽略。
 
-* :c:macro:`K_ALERT_DEFAULT` causes the pending count to be incremented,
-  unless this would exceed the count limit.
+* :c:macro:`K_ALERT_DEFAULT` 将导致挂起的告警计数递增（除非计数已达上限）。
 
-* Any other value is assumed to be the address of an alert handler function,
-  and is invoked by the system workqueue thread. If the function returns
-  zero, the signal is deemed to have been consumed; otherwise the pending
-  count is incremented, unless this would exceed the count limit.
+* 其它任何值都会被认为是一个告警处理函数的地址，并会被系统工作队列线程调用。如果该函数返回零，则认为该信号已经被消费；否则，挂起的告警计数递增（除非计数已达上限）。
 
-  The kernel ensures that the alert handler function is executed once
-  for each time an alert is sent, even if the alert is sent multiple times
-  in rapid succession.
+  内核假设，每次告警被发送时，告警处理函数会被执行一次。（即使在连续的时间内告警被多次发送）。
 
-A thread accepts a pending alert by **receiving** the alert.
-This decrements the pending count. If the pending count is currently zero,
-the thread may choose to wait for the alert to become pending.
-Any number of threads may wait for a pending alert simultaneously;
-when the alert is pended it is accepted by the highest priority thread
-that has waited longest.
+内核可以 **接收** 告警而接受一个挂起的告警。如果当前的挂起计数是零，线程可以等待该告警被挂起。多个线程可以同时等待一个挂起告警；当告警被挂起时，它会被优先级最高的、等待时间最久的线程所接受。
 
 .. note::
-    A thread must processes pending alerts one at a time. The thread
-    cannot receive multiple pending alerts in a single operation.
+   
+    线程在同一个时刻只能处理一个挂起告警。线程在一个操作中不能接收多个挂起告警。
 
-Comparison to Unix-style Signals
+与 Unix 风格的信号的比较
 ================================
 
-Zephyr alerts are somewhat akin to Unix-style signals, but have a number of
-significant differences. The most notable of these are:
+Zephyr 的告警在某种程度上类似于 Unix 风格的信号，但是也有一些显著的区别，最主要包括：
 
-* A Zephyr alert cannot be blocked; it is always delivered to its alert
-  handler immediately.
+* Zephyr 告警不能被锁定；它总是立即被传递给告警处理者。
 
-* A Zephyr alert pends *after* it has been delivered to its alert handler,
-  and only if an alert handler function does not consume the alert.
+* Zephyr 告警被传递给告警处理者 *后* 会处于挂起状态，直到告警处理函数消费了该告警。
 
-* Zephyr has no pre-defined alerts or actions. All alerts are application
-  defined, and all have a default action that pends the alert.
+* Zephyr 没有预定义的告警或行为。所有的告警都是由应用程序定义的，其默认行为是挂起告警。
 
-Implementation
+实现
 **************
 
-Defining an Alert
+定义告警
 =================
 
-An alert is defined using a variable of type :c:type:`struct k_alert`.
-It must then be initialized by calling :cpp:func:`k_alert_init()`.
+使用类型为 :c:type:`struct k_alert` 的变量可以定义告警。告警在被定义后必须使用函数 :cpp:func:`k_alert_init()` 进行初始化。
 
-The following code defines and initializes an alert. The alert allows
-up to 10 unreceived alert signals to pend before it begins to ignore
-new pending alerts.
+下面的代码定义并初始化了一个告警。该告警在开始忽略新的挂起告警前，最多能够允许 10 个未接收的告警信号被挂起。
 
 .. code-block:: c
 
@@ -102,10 +75,9 @@ new pending alerts.
 
     k_alert_init(&my_alert, my_alert_handler, 10);
 
-Alternatively, an alert can be defined and initialized at compile time
-by calling :c:macro:`K_ALERT_DEFINE`.
+也可以使用宏 :c:macro:`K_ALERT_DEFINE` 在编译时定义并初始化一个告警。
 
-The following code has the same effect as the code segment above.
+下面的代码与上面的代码段具有系统的效果。
 
 .. code-block:: c
 
@@ -113,13 +85,12 @@ The following code has the same effect as the code segment above.
 
     K_ALERT_DEFINE(my_alert, my_alert_handler, 10);
 
-Signaling an Alert
+发出告警
 ==================
 
-An alert is signalled by calling :cpp:func:`k_alert_send()`.
+函数 :cpp:func:`k_alert_send()` 可用于发出告警。
 
-The following code illustrates how an ISR can signal an alert
-to indicate that a key press has occurred.
+下面的代码展示了当有新的按键发生时 ISR 是如何发出告警信号的。
 
 .. code-block:: c
 
@@ -134,11 +105,11 @@ to indicate that a key press has occurred.
         ...
     }
 
-Handling an Alert
+处理告警
 =================
 
-An alert handler function is used when a signalled alert should not be ignored
-or immediately pended. It has the following form:
+当接收到的告警信号不能被忽略或者理解挂起时，内核会使用告警处理函数。告警处理函数的格式如下：
+
 
 .. code-block:: c
 
@@ -149,8 +120,7 @@ or immediately pended. It has the following form:
         ...
     }
 
-The following code illustrates an alert handler function that processes
-key presses detected by an ISR (as shown in the previous section).
+下面的代码描述了当 ISR 检测到按键被按下时的告警处理函数。
 
 .. code-block:: c
 
@@ -166,17 +136,14 @@ key presses detected by an ISR (as shown in the previous section).
         return 0;
     }
 
-Accepting an Alert
+接受告警
 ==================
 
-A pending alert is accepted by a thread by calling :cpp:func:`k_alert_recv()`.
 
-The following code is an alternative to the code in the previous section.
-It uses a dedicated thread to do very complex processing
-of key presses that would otherwise monopolize the system workqueue.
-The alert handler function is now used only to filter out unwanted key press
-alerts, allowing the dedicated thread to wake up and process key press alerts
-only when a numeric key is pressed.
+函数 :cpp:func:`k_alert_recv()` 可用于让线程接受一个挂起的告警。
+
+
+下面的代码是对上一节的功能的另一种实现形式。它使用一个专用的线程去做复杂的按键处理（否则会独占系统工作队列）。告警处理函数只用于过滤未知的按键告警，这样可以使专用线程去唤醒并处理已知按键的告警。
 
 .. code-block:: c
 
@@ -210,29 +177,27 @@ only when a numeric key is pressed.
         }
     }
 
-Suggested Uses
+建议的用法
 **************
 
-Use an alert to minimize ISR processing by deferring interrupt-related
-work to a thread to reduce the amount of time interrupts are locked.
+使用告警将 ISR 中中断相关的工作推迟到线程中，这样可以最简化 ISR 的处理工作，从而减小了中断被锁定的时间。
 
-Use an alert to allow the kernel's system workqueue to handle an alert,
-rather than defining an application thread to handle it.
+可以让内核的系统工作队列去处理告警，而不需要应用程序线程去处理。
 
-Use an alert to allow the kernel's system workqueue to pre-process an alert,
-prior to letting an application thread handle it.
+可以让内核的系统工作队列去预处理告警，抢在应用程序线程处理之前。
 
-Configuration Options
+配置选项
 *********************
 
-Related configuration options:
+相关的配置选项：
 
-* None.
+* 无。
 
-APIs
+API
 ****
 
-The following alert APIs are provided by :file:`kernel.h`:
+
+:file:`kernel.h` 中提供了如下与告警相关的 API：
 
 * :c:macro:`K_ALERT_DEFINE`
 * :cpp:func:`k_alert_init()`
