@@ -181,13 +181,13 @@
     </tr>
 	<tr >
 		<td align="center">浮点服务</td>
-		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">已领取，待翻译</td>
+		<td align="center"></a></td>
+		<td align="center"></a></td>
     </tr>
 	<tr >
 		<td align="center">环形缓冲</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">已领取，待翻译</td>
+		<td align="center">完成</td>
     </tr>
 	<tr >
 		<td align="center">内核事件记录器</td>
