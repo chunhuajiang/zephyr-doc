@@ -160,8 +160,8 @@
     </tr>
 	<tr >
 		<td align="center">邮筒</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">计划12.20完成</td>
     </tr>
 	<tr >
 		<td align="center">管道</td>
@@ -181,8 +181,8 @@
     </tr>
 	<tr >
 		<td align="center">浮点服务</td>
-		<td align="center"></a></td>
-		<td align="center"></a></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">计划12.20完成</td>
     </tr>
 	<tr >
 		<td align="center">环形缓冲</td>
@@ -192,7 +192,7 @@
 	<tr >
 		<td align="center">内核事件记录器</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">已领取，待翻译</td>
+		<td align="center">计划12.21完成</td>
     </tr>
 	<tr >
 		<td align="center">标准 C 库</td>
@@ -210,8 +210,8 @@
 		<td align="center">设备驱动和设备模型</td>
 		<td align="center">-</td>
 		<td align="center">-</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">计划12.21完成</td>
     </tr>
 
 	<tr>
@@ -224,55 +224,55 @@
 	<tr>
 		<td align="center">buffers</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">已领取，待翻译</td>
+		<td align="center">计划12.21完成</td>
     </tr>
 	<tr>
 		<td align="center"  rowspan="3">蓝牙</td>
 		<td align="center">bluetooth</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">计划12.22完成</td>
     </tr>
 	<tr>
 		<td align="center">devel</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">计划12.22完成</td>
     </tr>
 	<tr>
 		<td align="center">qualification</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">计划12.22完成</td>
     </tr>
 	<tr>
 		<td align="center">USB 设备栈</td>
 		<td align="center">-</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">计划12.22完成</td>
     </tr>
 	<tr>
 		<td align="center">传感器驱动</td>
 		<td align="center">-</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">计划12.22完成</td>
     </tr>
 	<tr>
 		<td align="center">电源管理</td>
 		<td align="center">-</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">计划12.23完成</td>
     </tr>
 	<tr>
 		<td align="center">Zephyr OS Shell</td>
 		<td align="center">-</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">计划12.23完成</td>
     </tr>
 
 	<tr>
 		<td align="center" rowspan="11">API 文档</td>
 		<td align="center">-</td>
 		<td align="center">-</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">计划12.23完成</td>
     </tr>
 	<tr>
 		<td align="center">概述</td>
@@ -352,25 +352,26 @@
 		<td align="center">创建应用程序目录</td>
 		<td align="center">-</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">已领取，待翻译</td>
+		<td align="center">计划12.24完成</td>
 	</tr>
 	<tr>
 		<td align="center">配置应用程序的内核</td>
 		<td align="center">-</td>
-		<td align="center"></td>
-		<td align="center"></td>
+		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
+		<td align="center">计划12.24完成</td>
 	</tr>
 	<tr>
 		<td align="center">添加应用程序相关的代码</td>
 		<td align="center">-</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">已领取，待翻译</td>
+		<td align="center">计划12.24完成</td>
+	</tr>
 	</tr>
 	<tr>
 		<td align="center">编译应用程序</td>
 		<td align="center">-</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">已领取，待翻译</td>
+		<td align="center">计划12.24完成</td>
 	</tr>
 	<tr>
 		<td align="center">运行应用程序</td>
@@ -398,7 +399,7 @@
 		<td align="center">架构移植指导</td>
 		<td align="center">-</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">已领取，待翻译</td>
+		<td align="center">计划12.24完成</td>
 	</tr>
 	<tr>
 		<td align="center" rowspan="5">编译系统用户指南</td>
@@ -429,6 +430,6 @@
 		<td align="center">开发应用程序和编译系统</td>
 		<td align="center">-</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">已领取，待翻译</td>
+		<td align="center">计划12.24完成</td>
 	</tr>
 </table>
