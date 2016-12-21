@@ -161,8 +161,7 @@
 	<tr >
 		<td align="center">邮筒</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">计划12.20完成</td>
-    </tr>
+		<td align="center">完成</td> </tr>
 	<tr >
 		<td align="center">管道</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
