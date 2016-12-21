@@ -181,7 +181,7 @@
 	<tr >
 		<td align="center">浮点服务</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">计划12.20完成</td>
+		<td align="center">完成</td>
     </tr>
 	<tr >
 		<td align="center">环形缓冲</td>
