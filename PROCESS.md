@@ -191,7 +191,7 @@
 	<tr >
 		<td align="center">内核事件记录器</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">计划12.21完成</td>
+		<td align="center">完成</td>
     </tr>
 	<tr >
 		<td align="center">标准 C 库</td>
