@@ -1,21 +1,17 @@
-USB device stack
+USB 设备栈
 ################
 
-The USB device stack is split into three layers:
-   * USB Device Controller drivers (hardware dependent)
-   * USB device core driver (hardware independent)
-   * USB device class drivers (hardware independent)
+USB 设备栈分为如下三层：
+   * USB 设备控制器驱动（硬件相关的）
+   * USB 设备核心驱动（硬件无关的）
+   * USB 设备类驱动（硬件无关的）
 
-USB device controller drivers
+USB 设备控制器驱动
 *****************************
 
-The Device Controller Driver Layer implements the low level control routines
-to deal directly with the hardware. All device controller drivers should
-implement the APIs described in file usb_dc.h. This allows the integration of
-new USB device controllers to be done without changing the upper layers.
-For now only Quark SE USB device controller (Designware IP) is supported.
+设备控制器驱动层实现了直接与底层硬件打交道的逻辑。所有的设备控制器驱动都应当实现 usb_dc.h 中描述的 API。这样做的好处是当新的 USB 设备集成到系统中时不需要修改上层内容。目前只支持 Quark SE 的 USB 设备控制器（Designware IP）。
 
-Structures
+结构体
 ==========
 
 .. code-block:: c
@@ -26,13 +22,11 @@ Structures
       enum usb_dc_ep_type ep_type;
    };
 
-Structure containing the USB endpoint configuration.
-   * ep_addr: endpoint address, the number associated with the EP in the device
-     configuration structure.
+这个结构体中包含 USB 终点配置。
+   * ep_addr: 终点地址，在设备配置结构中与 EP 关联的数量。
      IN  EP = 0x80 | <endpoint number>. OUT EP = 0x00 | <endpoint number>
-   * ep_mps: Endpoint max packet size.
-   * ep_type: Endpoint type, may be Bulk, Interrupt or Control. Isochronous
-     endpoints are not supported for now.
+   * ep_mps: 终点最大包尺寸。
+   * ep_type: 终点类型，可以是 Bulk、Interrupt 或者 Control。当前不支持同步终点。
 
 .. code-block:: c
 
@@ -47,15 +41,15 @@ Structure containing the USB endpoint configuration.
       USB_DC_UNKNOWN
    };
 
-Status codes reported by the registered device status callback.
-   * USB_DC_ERROR: USB error reported by the controller.
-   * USB_DC_RESET: USB reset.
-   * USB_DC_CONNECTED: USB connection established - hardware enumeration is completed.
-   * USB_DC_CONFIGURED: USB configuration done.
-   * USB_DC_DISCONNECTED: USB connection lost.
-   * USB_DC_SUSPEND: USB connection suspended by the HOST.
-   * USB_DC_RESUME: USB connection resumed by the HOST.
-   * USB_DC_UNKNOWN: Initial USB connection status.
+由注册的设备状态回调函数返回的状态码。
+   * USB_DC_ERROR: 控制器返回的 USB 错误。
+   * USB_DC_RESET: USB 复位。
+   * USB_DC_CONNECTED: USB 连接已建立 - 硬件枚举已完成。
+   * USB_DC_CONFIGURED: USB 配置完成。
+   * USB_DC_DISCONNECTED: USB 连接丢失。
+   * USB_DC_SUSPEND: USB 连接被主机挂起。
+   * USB_DC_RESUME: USB 连接被主机恢复。
+   * USB_DC_UNKNOWN: 初始化的 USB 连接状态。
 
 .. code-block:: c
 
@@ -65,125 +59,114 @@ Status codes reported by the registered device status callback.
       USB_DC_EP_DATA_IN,
    };
 
-Status Codes reported by the registered endpoint callback.
+由注册的终点回调函数返回的状态码。
    * USB_DC_EP_SETUP: SETUP packet received.
    * USB_DC_EP_DATA_OUT: Out transaction on this endpoint. Data is available
      for read.
    * USB_DC_EP_DATA_IN: In transaction done on this endpoint.
 
-APIs
+API
 ====
 
-The following APIs are provided by the device controller driver:
+下列 API 是由设备控制器驱动程序提供的：
 
 :c:func:`usb_dc_attach()`
-   This function attaches USB for device connection. Upon success, the USB PLL
-   is enabled, and the USB device is now capable of transmitting and receiving
-   on the USB bus and of generating interrupts.
+   
+   该函数负责附着（连接） USB 设备。附着成功后，USB 的 PLL 被使能，且 USB 设备能够在 USB 总线上收发数据、产生中断。
+   
 
 :c:func:`usb_dc_detach()`
-   This function detaches the USB device. Upon success the USB hardware PLL is
-   powered down and USB communication is disabled.
-
+   该函数用于卸载 USB 设备。卸载成功后，USB 的 PLL 被关电，且 USB 通信功能被禁止。
+   
 :c:func:`usb_dc_reset()`
-   This function returns the USB device to it's initial state.
-
+   
+   该函数用于将 USB 设备返回到初始化状态。
+   
 :c:func:`usb_dc_set_address()`
-   This function sets USB device address.
-
+   
+   该函数用于设置 USB 设备的地址。
+   
 :c:func:`usb_dc_set_status_callback()`
-   This function sets USB device controller status callback. The registered
-   callback is used to report changes in the status of the device controller.
-   The status code are described by the usb_dc_status_code enumeration.
-
+   
+   该函数用于设置 USB 设备控制器的状态回调。所注册的回调函数用于报告设备控制器产生的状态变化。状态码由枚举 usb_dc_status_code 进行描述。
+   
 :c:func:`usb_dc_ep_configure()`
-   This function configures an endpoint. usb_dc_ep_cfg_data structure provides
-   the endpoint configuration parameters: endpoint address, endpoint maximum
-   packet size and endpoint type.
+
+   该函数用于配置一个终点。结构体 usb_dc_ep_cfg_data 用于提供终点配置参数：终点地址、终点最大包尺寸和终点类型。
+   
 
 :c:func:`usb_dc_ep_set_stall()`
-   This function sets stall condition for the selected endpoint.
-
+   
+   该函数用于为所选定的终点设置 stall 条件。
+   
 :c:func:`usb_dc_ep_clear_stall()`
-   This functions clears stall condition for the selected endpoint
 
+   该函数用于为所选定的终点清除 stall 条件。
+   
 :c:func:`usb_dc_ep_is_stalled()`
-   This function check if selected endpoint is stalled.
 
+   该函数用于检查所选终点是否被 install。
+   
 :c:func:`usb_dc_ep_halt()`
-   This function halts the selected endpoint
 
+   该函数用于停止（halt）所选终点。
+   
 :c:func:`usb_dc_ep_enable()`
-   This function enables the selected endpoint. Upon success interrupts are
-   enabled for the corresponding endpoint and the endpoint is ready for
-   transmitting/receiving data.
+
+   该函数用于使能所选终点。使能成功后，相应终点的中断会被使能，并且收发数据已就绪。
 
 :c:func:`usb_dc_ep_disable()`
-   This function disables the selected endpoint. Upon success interrupts are
-   disabled for the corresponding endpoint and the endpoint is no longer able
-   for transmitting/receiving data.
+
+   该函数用于禁止所选终点。禁止成功后，相应终点的终点被禁止，且不能够再收发数据。
 
 :c:func:`usb_dc_ep_flush()`
-   This function flushes the FIFOs for the selected endpoint.
 
+   该函数用于冲刷所选终点的 FIFO。
+   
 :c:func:`usb_dc_ep_write()`
-   This function writes data to the specified endpoint. The supplied
-   usb_ep_callback function will be called when data is transmitted out.
 
+   该函数用于向指定的终点写数据。当数据传输出去后，所设置的回调函数 usb_ep_callback 会被调用。
+   
 :c:func:`usb_dc_ep_read()`
-   This function is called by the Endpoint handler function, after an OUT
-   interrupt has been received for that EP. The application must only call this
-   function through the supplied usb_ep_callback function.
 
+   当某个点接收到 OUT 中断胡，终点处理函数会调用该函数。应用程序只能使用所提供的 usb_ep_callback 函数间接调用本函数。
+   
 :c:func:`usb_dc_ep_set_callback()`
-   This function sets callback function for notification of data received
-   and available to application or transmit done on the selected endpoint.
-   The callback status code is described by usb_dc_ep_cb_status_code.
 
-USB device core layer
+   当接收到数据，且该数据对应用程序有效是，或者所选终点的传输完成时，调用该函数设置回调函数。
+   
+USB 设备核心层
 *********************
 
-The USB Device core layer is a hardware independent interface between USB
-device controller driver and USB device class drivers or customer applications.
-It's a port of the LPCUSB device stack. It provides the following
-functionalities:
+USB 设备核心层是介于 USB 设备控制器驱动和 USB 设备类驱动或应用层之间的与硬件无关的接口。它是 LPCUSB 设备栈的一部分。它提供下面的功能：
 
-   * Responds to standard device requests and returns standard descriptors,
-     essentially handling 'Chapter 9' processing, specifically the standard
-     device requests in table 9-3 from the universal serial bus specification
-     revision 2.0.
-   * Provides a programming interface to be used by USB device classes or
-     customer applications. The APIs are described in the usb_device.h file.
-   * Uses the APIs provided by the device controller drivers to interact with
-     the USB device controller.
+   * 响应标准设备请求并返回标准描述符，从根本上处理‘第 9 章’过程，尤其是通用串行规范 2.0 的表 9-3。
+   * 提供 USB 设备类或者应用程序所用的编程接口。这些 API 在文件 usb_device.h 中进行描述。
+   * 使用设备控制器驱动提供的 API 与 USB 设备控制器交互。
 
-Structures
+结构体
 ==========
 
 .. code-block:: c
 
    typedef void (*usb_status_callback)(enum usb_dc_status_code status_code);
 
-Callback function signature for the device status.
+设备状态的回调函数签名。
 
 .. code-block:: c
 
    typedef void (*usb_ep_callback)(uint8_t ep,
       enum usb_dc_ep_cb_status_code cb_status);
 
-Callback function signature for the USB Endpoint.
+USB 终点的回调函数签名。
 
 .. code-block:: c
 
    typedef int (*usb_request_handler) (struct usb_setup_packet *setup,
       int *transfer_len, uint8_t **payload_data);
 
-Callback function signature for class specific requests. For host to device
-direction the 'len' and 'payload_data' contain the length of the received data
-and the pointer to the received data respectively. For device to host class
-requests, 'len' and 'payload_data' should be set by the callback function
-with the length and the address of the data to be transmitted buffer
-respectively.
+类指定请求的回调函数签名。从主机到设备方向，‘len’表示所接收数据的长度，‘payload_data’指向所接收的数据。从设备到主机类请求，回调函数应当将‘len’和‘payload_data’设置为所传输缓冲的数据长度和地址。
+
 
 .. code-block:: c
 
@@ -192,12 +175,9 @@ respectively.
       uint8_t ep_addr;
    };
 
-This structure contains configuration for a certain endpoint.
-   * ep_cb: callback function for notification of data received and available
-     to application or transmit done, NULL if callback not required by
-     application code.
-   * ep_addr: endpoint address. The number associated with the EP in the device
-     configuration structure.
+这个结构体包含了终端的配置。
+   * ep_cb: 接收到数据且对应用程序有效时，或传输完成时进行通知的回调函数。NULL 表示应用程序不需要回调。
+   * ep_addr: 终点地址。终点地址，在设备配置结构中与 EP 关联的数量。
 
 .. code-block:: c
 
@@ -207,16 +187,11 @@ This structure contains configuration for a certain endpoint.
       uint8_t *payload_data;
    };
 
-This structure contains USB interface configuration.
-   * class_handler: handler for USB Class specific Control (EP 0)
-     communications.
-   * custom_handler: the custom request handler gets a first
-     chance at handling the request before it is handed over to the
-     'chapter 9' request handler.
-   * payload_data: this data area, allocated by the application, is used to
-     store class specific command data and must be large enough to store the
-     largest payload associated with the largest supported Class' command set.
-
+这个结构体包含 USB 接口配置。
+   * class_handler: USB 类相关控制（EP 0）通信的处理者。
+   * custom_handler: 自定义请求处理者最先有机会在被移交给‘第 9 章’的请求处理者前处理请求。
+   * payload_data: 这段由应用程序分配的数据区用于存放类相关的命令，它必须能够容纳与所支持的最大命令集相关联的最大载荷。
+   
 .. code-block:: c
 
    struct usb_cfg_data {
@@ -227,55 +202,48 @@ This structure contains USB interface configuration.
       struct usb_ep_cfg_data *endpoint;
    };
 
-This structure contains USB device configuration.
-   * usb_device_description: USB device description, see
-     http://www.beyondlogic.org/usbnutshell/usb5.shtml#DeviceDescriptors
-   * cb_usb_status: callback to be notified on USB connection status change
-   * interface:  USB class handlers and storage space.
-   * num_endpoints: number of individual endpoints in the device configuration
-   * endpoint: pointer to an array of endpoint configuration structures
-     (usb_cfg_data) of length equal to the number of EP associated with the
-     device description, not including control endpoints.
+这个结构体包含 USB 设备配置。
+   * usb_device_description: USB 设备描述，参考 http://www.beyondlogic.org/usbnutshell/usb5.shtml#DeviceDescriptors。
+   * cb_usb_status: USB 连接状态改变时被通知的回调。
+   * interface:  USB 类处理者和存储空间。
+   * num_endpoints: 设备配置中终点的数量。
+   * endpoint: 指向一个的终点配置结构体的数组，该数组的长度等于与设备描述相关联的终点数量。不包括控制终点。
 
-The class drivers instantiates this with given parameters using the
-"usb_set_config" function.
+类驱动程序使用 "usb_set_config" 所给的参数来实例化它。
 
-APIs
+API
 ====
 
 :c:func:`usb_set_config()`
-   This function configures USB device.
 
+   该函数用于配置 USB 设备。
+   
 :c:func:`usb_deconfig()`
-   This function returns the USB device back to it's initial state
 
+   该函数用于将 USB 设备返回到初始状态。
+   
 :c:func:`usb_enable()`
-   This function enable USB for host/device connection. Upon success, the USB
-   module is no longer clock gated in hardware, it is now capable of
-   transmitting and receiving on the USB bus and of generating interrupts.
 
+   该函数用于使能 USB 主机/设备连接。使能成功后，USB 模型在硬件上的时钟会开启，之后能够在 USB 总线上收发数据，且能够产生中断。
+   
 :c:func:`usb_disable()`
-   This function disables the USB device. Upon success, the USB module clock
-   is gated in hardware and it is no longer capable of generating interrupts.
-
+   该函数用于禁止 USB 是被。禁止成功后，USB 模块的始终在硬件上被关闭，之后就不能产生中断。
+   
 :c:func:`usb_write()`
-   write data to the specified endpoint. The supplied usb_ep_callback will be
-   called when transmission is done.
-
+   
+   向指定终点写数据。当传输完成时会调用所提供的 usb_ep_callback。
+   
 :c:func:`usb_read()`
-   This function is called by the endpoint handler function after an OUT
-   interrupt has been received for that EP. The application must only call
-   this function through the supplied usb_ep_callback function.
+   
+   当 OUT 中断被终点接收首，终点处理函数会调用该函数。应用程序只能通过所提供的函数 usb_ep_callback 间接调用该函数。
+   
 
-
-USB device class drivers
+USB 设备类驱动
 ************************
 
-To initialize the device class driver instance the USB device class driver
-should call usb_set_config() passing as parameter the instance's configuration
-structure.
+初始化设备类驱动实例时，USB 设备类驱动程序应当 usb_set_config()，作为参数传递实例的配置结构。
 
-For example, for CDC_ACM sample application:
+例如，对于 CDC_ACM 例程应用：
 
 .. code-block:: c
 
@@ -453,7 +421,7 @@ For example, for CDC_ACM sample application:
       return ret;
    }
 
-To enable the USB device for host/device connection:
+要使能 USB 设备主机/设备连接：
 
 .. code-block:: c
 
@@ -463,11 +431,7 @@ To enable the USB device for host/device connection:
       return ret;
    }
 
-The class device requests are forwarded by the USB stack core driver to the
-class driver through the registered class handler.
-For the CDC ACM sample class driver, 'cdc_acm_class_handle_req' processes
-the SET_LINE_CODING, CDC_SET_CONTROL_LINE_STATE and CDC_GET_LINE_CODING
-class requests:
+类设备请求被 USB 栈核心驱动程序通过所注册的类处理者转发给类驱动程序。对于 CDC_ACM 例程类驱动程序，‘cdc_acm_class_handle_req’ 处理 SET_LINE_CODING、CDC_SET_CONTROL_LINE_STATE 和 CDC_GET_LINE_CODING 类请求：
 
 .. code-block:: c
 
@@ -510,18 +474,10 @@ class requests:
       return 0;
    }
 
-The class driver should wait for the USB_DC_CONFIGURED device status code
-before transmitting any data.
+类驱动程序在传输数据区应当等待 USB_DC_CONFIGURED 设备状态码。
 
-To transmit data to the host, the class driver should call usb_write().
-Upon completion the registered endpoint callback will be called. Before
-sending another packet the class driver should wait for the completion of
-the previous transfer.
+数据传输给主机时，类驱动程序应当调用 usb_write()。完成后，所注册的终点回调函数会被调用。在发送另一个包前，类驱动程序应当等待之前的传输完成。
 
-When data is received, the registered endpoint callback is called.
-usb_read() should be used for retrieving the received data. It must
-always be called through the registered endpoint callback. For CDC ACM
-sample driver this happens via the OUT bulk endpoint handler (cdc_acm_bulk_out)
-mentioned in the endpoint array (cdc_acm_ep_data).
+当数据被接收后，所注册的终点回调函数会被调用。usb_read() 会被用于恢复接收到的数据。它必须总是通过所注册的终点回调函数被调用。对于 CDC ACM 例程驱动程序，这是通过终点数组（cdc_acm_ep_data）中所提到的 OUT bluk 终点处理者完成的。
 
-Only CDC ACM and DFU class driver examples are provided for now.
+当前只提供了 CDC ACM 和 DFU 类驱动例程。
