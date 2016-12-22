@@ -214,7 +214,7 @@
     </tr>
 
 	<tr>
-		<td align="center" rowspan="9">子系统</td>
+		<td align="center" rowspan="8">子系统</td>
 		<td align="center" rowspan="2">网络</td>
 		<td align="center">networking</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
@@ -226,15 +226,15 @@
 		<td align="center">完成</td>
     </tr>
 	<tr>
-		<td align="center"  rowspan="3">蓝牙</td>
+		<td align="center"  rowspan="2">蓝牙</td>
 		<td align="center">bluetooth</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">计划12.22完成</td>
+		<td align="center">完成</td>
     </tr>
 	<tr>
 		<td align="center">devel</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">计划12.22完成</td>
+		<td align="center">完成</td>
     </tr>
 	<tr>
 		<td align="center">USB 设备栈</td>
@@ -246,7 +246,7 @@
 		<td align="center">传感器驱动</td>
 		<td align="center">-</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">计划12.22完成</td>
+		<td align="center">完成</td>
     </tr>
 	<tr>
 		<td align="center">电源管理</td>
