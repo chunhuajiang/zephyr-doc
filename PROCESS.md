@@ -229,7 +229,7 @@
 		<td align="center"  rowspan="3">蓝牙</td>
 		<td align="center">bluetooth</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">计划12.22完成</td>
+		<td align="center">完成</td>
     </tr>
 	<tr>
 		<td align="center">devel</td>
