@@ -15,6 +15,7 @@ Zephyr 的开发分支的文档位于 https://www.zephyrproject.org/doc/。
 .. toctree::
    :maxdepth: 1
 
+   preface/preface.rst
    introduction/introducing_zephyr.rst
    getting_started/getting_started.rst
    board/board.rst
