@@ -1,25 +1,18 @@
 .. _testing:
 
-Zephyr testing framework
+Zephyr 测试框架
 ########################
 
-Ztest provides a simple testing framework intended to be used during
-development.
-It provides basic assertion macros and a generic test structure.
+Ztest 提供了一个简单的测试框架，用于在开发时进行测试。它提供了基本的断言宏以及一个通用的测试结构体。
 
-The framework can be used in two ways, either as a generic framework for
-integration testing, or for unit testing specific modules.
+该框架可以以两种方式进行使用，既可以作为集成测试的通用框架，也可以用作指定模块的单元测试。
 
-Quick start - Integration testing
+快速开始 - 集成框架
 *********************************
 
-A simple working base is located at `samples/testing/integration`. Just copy the
-files to `tests/` and edit them for your needs. The test will then be
-automatically built and run by the sanitycheck script. If you are testing the `bar`
-component of `foo`, you should copy the sample folder to tests/foo/bar. It can
-then be tested with `./scripts/sanitycheck -s tests/foo/bar/test`.
+一个简单的工作基石位于 `samples/testing/integration` 。您只需要拷贝文件到 `tests/` 中并根据自己的需要进行编辑。sanitycheck 脚本会自动编译并运行该测试。如果您需要测 `foo` 的 `bar` 组件，您应当将例程文件夹拷贝至 test/foo/bar。然后，您就可以使用 `./scripts/sanitycheck -s tests/foo/bar/test` 进行测试。
 
-The sample contains the following files:
+例程包含下面的文件：
 
 Makefile
 
@@ -56,26 +49,16 @@ src/main.c
    :local:
    :backlinks: top
 
-Quick start - Unit testing
+快速开始 - 单元测试
 **************************
 
-Ztest can be used for unit testing. This means that rather than including the
-entire Zephyr OS for testing a single function, you can focus the testing
-efforts into the specific module in question. This will speed up testing since
-only the module will have to be compiled in, and the tested functions will be
-called directly.
+Ztest 可以用于单元测试。这意味着您测试某个单一的功能时不必包含整个 Zephyr OS 工程，您只需要专注于某个指定模块的效果。这样会加速测试，因为只有该模块会被编译，且被测试函数会被直接调用。
 
-Since you won't be including basic kernel data structures that most code
-depends on, you have to provide function stubs in the test. Ztest provides
-some helpers for mocking functions, as demonstrated below.
+由于没有包含依赖的基本内核数据结构体，您必须在测试时提供函数桩。Ztest 为 mocking 函数提供了一些有用的帮助，请参考后面的介绍。
 
-In a unit test, mock objects can simulate the behavior of complex real objects
-and are used to decide whether a test failed or passed by verifying whether an
-interaction with an object occurred, and if required, to assert the order of
-that interaction.
+在单元测试中，mock 对象可用于仿真真实的复杂对象的行为，还可以通过判断某个对象是否有交互作用而判断测试是否成功。如果有需要，还可以断言交互的顺序。
 
-The `samples/testing/unit` folder contains an example for testing
-the net-buf api of Zephyr.
+`samples/testing/unit` 文件夹中包含了测试 Zephyr 的 net-buf 的 API 的例程。
 
 Makefile
 
@@ -95,27 +78,23 @@ main.c
    :language: c
    :linenos:
 
-API reference
+API 参考
 *************
 
-Running tests
+运行
 -------------
 
 .. doxygengroup:: ztest_test
    :project: Zephyr
    :content-only:
 
-Assertions
+断言
 ----------
 
-These macros will instantly fail the test if the related assertion fails.
-When an assertion fails, it will print the current file, line and function,
-alongside a reason for the failure and an optional message. If the config
-option `CONFIG_ZTEST_ASSERT_VERBOSE=0`, the assertions will only print the
-file and line numbers, reducing the binary size of the test.
+如果相关的断言失败，这些宏将立即失败。当断言失败后，它会打印当前文件、行数和函数，以及失败的原因和可选消息。如果配置选项 `CONFIG_ZTEST_ASSERT_VERBOSE=0` ，断言时只会打印文件和行数，从而可以减小测试镜像的尺寸。
 
-Example output for a failed macro from
-`assert_equal(buf->ref, 2, "Invalid refcount")`:
+
+`assert_equal(buf->ref, 2, "Invalid refcount")` 测试失败时的输出是这样的：
 
 .. code-block:: none
 
@@ -129,14 +108,9 @@ Example output for a failed macro from
 Mocking
 -------
 
-These functions allow abstracting callbacks and related functions and
-controlling them from specific tests. You can enable the mocking framework by
-setting `CONFIG_ZTEST_MOCKING=y` in the configuration file of the test.
-The amount of concurrent return values and expected parameters is
-limited by `ZTEST_PARAMETER_COUNT`.
+这些功能允许对回调函数和相关函数进行抽象化，并在测试中进行控制。您可以修改测试的配置文件中的选项 `CONFIG_ZTEST_MOCKING=y` 来使能 mocking 框架。并发返回值和期待的参数的数量由  `ZTEST_PARAMETER_COUNT` 进行限制。
 
-Here is an example for configuring the function `expect_two_parameters` to
-expect the values `a=2` and `b=3`, and telling `returns_int` to return `5`:
+下面是一个例程，它希望函数 `expect_two_parameters` 的 `a=2` 和 `b=3`，然后 `returns_int` 返回 `5`：
 
 .. literalinclude:: mocking.c
    :language: c

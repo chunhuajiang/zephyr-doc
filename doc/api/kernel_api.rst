@@ -88,7 +88,7 @@
 互斥量
 *******
 
-互斥量提供了带有基础优先级继承的传统可重入互斥量功能。（参考 :ref:`mutexs_v2` ）
+互斥量提供了带有基础优先级继承的传统可重入互斥量功能。（参考 :ref:`mutexes_v2` ）
 
 .. doxygengroup:: mutex_apis
    :project: Zephyr
