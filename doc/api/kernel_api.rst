@@ -1,213 +1,175 @@
 .. _kernel_apis:
 
-Kernel APIs
+内核 API
 ###########
 
-This section contains APIs for the kernel's core services,
-as described in the :ref:`kernel_v2`.
+本节包含内核核心服务（参考 :ref:`kernel_v2` ）的 API。
 
 .. important::
-    Unless otherwise noted these APIs can be used by threads, but not by ISRs.
+    除非特别注释，这些 API 只能被线程使用，不能被 ISR 使用。
 
 .. contents::
    :depth: 1
    :local:
    :backlinks: top
 
-Threads
+线程
 *******
 
-A thread is an independently scheduled series of instructions that implements
-a portion of an application's processing. Threads are used to perform processing
-that is too lengthy or too complex to be performed by an ISR.
-(See :ref:`threads_v2`.)
+线程是用于实现应用程序部分功能的独立可调度指令的集合。线程用于处理由于执行时间太长或者太复杂而不能在 ISR 内执行的任务。（参考 :ref:`threads_v2` ）
 
 .. doxygengroup:: thread_apis
    :project: Zephyr
    :content-only:
 
-Workqueues
+工作队列
 **********
 
-A workqueue processes a series of work items by executing the associated
-functions in a dedicated thread. Workqueues are typically used by an ISR
-or high-priority thread to offload non-urgent processing.
-(See :ref:`workqueues_v2`.)
+工作队列通过执行一个专有线程里的相关函数来处理一系列的工作项。工作队列通常用于将 ISR 或者高优先级线程的非紧急任务移交到低优先级线程。（参考 :ref:`threads_v2` ）
 
 .. doxygengroup:: workqueue_apis
    :project: Zephyr
    :content-only:
 
-Clocks
+时钟
 ******
 
-Kernel clocks enable threads and ISRs to measure the passage of time
-with either normal and high precision.
-(See :ref:`clocks_v2`.)
+内核时钟使线程或者 ISR 能够用常规精度和高精度来测量经过了多少时间。（参考 :ref:`clocks_v2` ）
 
 .. doxygengroup:: clock_apis
    :project: Zephyr
    :content-only:
 
-Timers
+定时器
 ******
 
-Timers enable threads to measure the passage of time, and to optionally execute
-an action when the timer expires.
-(See :ref:`timers_v2`.)
+定时器时线程能够测量经过了多少时间，并在时间到期后执行某个动作（可选）。（参考 :ref:`timers_v2` ）
 
 .. doxygengroup:: timer_apis
    :project: Zephyr
    :content-only:
 
-Memory Slabs
+内存片
 ************
 
-Memory slabs enable the dynamic allocation and release of fixed-size
-memory blocks.
-(See :ref:`memory_slabs_v2`.)
+内存片能够用来动态地分配和释放固定尺寸的内存块。（参考 :ref:`memory_slabs_v2` ）
 
 .. doxygengroup:: mem_slab_apis
    :project: Zephyr
    :content-only:
 
-Memory Pools
+内存池
 ************
 
-Memory pools enable the dynamic allocation and release of variable-size
-memory blocks.
-(See :ref:`memory_pools_v2`.)
+内存池能够用来动态地分配和释放可变尺寸的内存块。（参考 :ref:`memory_pools_v2` ）
 
 .. doxygengroup:: mem_pool_apis
    :project: Zephyr
    :content-only:
 
-Heap Memory Pool
+堆内存池
 ****************
 
-The heap memory pools enable the dynamic allocation and release of memory
-in a :cpp:func:`malloc()`-like manner.
-(See :ref:`heap_v2`.)
+堆内存池能够用来像 :cpp:func:`malloc` 那样动态地分配和释放内存块。（参考 :ref:`heap_v2` ）
 
 .. doxygengroup:: heap_apis
    :project: Zephyr
    :content-only:
 
-Semaphores
+信号量
 **********
 
-Semaphores provide traditional counting semaphore capabilities.
-(See :ref:`semaphores_v2`.)
+信号量提供了传统的计数信号量功能。（参考 :ref:`semaphores_v2` ）
 
 .. doxygengroup:: semaphore_apis
    :project: Zephyr
    :content-only:
 
-Mutexes
+互斥量
 *******
 
-Mutexes provide traditional reentrant mutex capabilities
-with basic priority inheritance.
-(See :ref:`mutexes_v2`.)
+互斥量提供了带有基础优先级继承的传统可重入互斥量功能。（参考 :ref:`mutexs_v2` ）
 
 .. doxygengroup:: mutex_apis
    :project: Zephyr
    :content-only:
 
-Alerts
+告警
 ******
 
-Alerts enable an application to perform asynchronous signalling,
-somewhat akin to Unix-style signals.
-(See :ref:`alerts_v2`.)
+告警使应用程序能够执行异步信号，在这某种程度上类似于 Unix 风格的信号。（参考 :ref:`alerts_v2` ）
 
 .. doxygengroup:: alert_apis
    :project: Zephyr
    :content-only:
 
-Fifos
+FIFO
 *****
 
-Fifos provide traditional first in, first out (FIFO) queuing of data items
-of any size.
-(See :ref:`fifos_v2`.)
+FIFO 提供了传统的适用于任意尺寸数据的先进先出的功能。（参考 :ref:`fifos_v2` ）
 
 .. doxygengroup:: fifo_apis
    :project: Zephyr
    :content-only:
 
-Lifos
+LIFO
 *****
 
-Lifos provide traditional last in, first out (LIFO) queuing of data items
-of any size.
-(See :ref:`lifos_v2`.)
+LIFO 提供了传统的适用于任意尺寸数据的后进先出的功能。（参考 :ref:`lifos_v2` ）
 
 .. doxygengroup:: lifo_apis
    :project: Zephyr
    :content-only:
 
-Stacks
+栈
 ******
 
-Stacks provide traditional last in, first out (LIFO) queuing of 32-bit
-data items.
-(See :ref:`stacks_v2`.)
+栈提供了传统的以 32 比特为单位的数据项的后进线程的功能。（参考 :ref:`stacks_v2` ）
 
 .. doxygengroup:: stack_apis
    :project: Zephyr
    :content-only:
 
-Message Queues
+消息队列
 **************
 
-Message queues provide a simple message queuing mechanism
-for fixed-size data items.
-(See :ref:`message_queues_v2`.)
+消息队列提供了一个简单的适用于尺寸固定的数据项的消息队列机制。（参考 :ref:`message_queues_v2` ）
 
 .. doxygengroup:: msgq_apis
    :project: Zephyr
    :content-only:
 
-Mailboxes
+邮筒
 *********
 
-Mailboxes provide an enhanced message queuing mechanism
-for variable-size messages.
-(See :ref:`mailboxes_v2`.)
+邮筒提供了一个适用于尺寸可变的消息的消息排队机制。（参考 :ref:`mailboxes_v2` ）
 
 .. doxygengroup:: mailbox_apis
    :project: Zephyr
    :content-only:
 
-Pipes
+管道
 *****
 
-Pipes provide a traditional anonymous pipe mechanism for sending
-variable-size chunks of data, in whole or in part.
-(See :ref:`pipes_v2`.)
+管道提供了可发送尺寸可变的数据块的匿名管道机制。（参考 :ref:`pipes_v2` ）
 
 .. doxygengroup:: pipe_apis
    :project: Zephyr
    :content-only:
 
-Interrupt Service Routines (ISRs)
+中断服务例程（ISR）
 *********************************
 
-An interrupt service routine is a series of instructions that is
-executed asynchronously in response to a hardware or software interrupt.
-(See :ref:`interrupts_v2`.)
+ISR 是为响应硬件或者软件中断而异步执行的一些列指令。（参考 :ref:`interrupts_v2` ）
 
 .. doxygengroup:: isr_apis
    :project: Zephyr
    :content-only:
 
-Atomic Services
+原子服务
 ***************
 
-The atomic services enable multiple threads and ISRs to read and modify
-32-bit variables in an uninterruptible manner.
-(See :ref:`atomic_v2`.)
+原子服务使多个线程和 ISR 能够以不可中断的方式读取和修改 32 比特的变量。（参考 :ref:`atomic_v2` ）
 
 .. important::
     All atomic services APIs can be used by both threads and ISRs.
@@ -216,23 +178,19 @@ The atomic services enable multiple threads and ISRs to read and modify
    :project: Zephyr
    :content-only:
 
-Floating Point Services
+浮点服务
 ***********************
 
-The floating point services enable threads to use a board's floating point
-registers.
-(See :ref:`float_v2`.)
+浮点服务使线程能够利用开发板的浮点寄存器。（参考 :ref:`float_v2` ）
 
 .. doxygengroup:: float_apis
    :project: Zephyr
    :content-only:
 
-Ring Buffers
+环形缓冲
 ************
 
-Ring buffers enable simple first in, first out (FIFO) queuing
-of variable-size data items.
-(See :ref:`ring_buffers_v2`.)
+缓冲缓冲使尺寸可变的数据项能够以先进先出的方式进行排队。（参考 :ref:`ring_buffers_v2` ）
 
 .. doxygengroup:: ring_buffer_apis
    :project: Zephyr
