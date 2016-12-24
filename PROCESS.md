@@ -365,7 +365,7 @@
 		<td align="center">编译应用程序</td>
 		<td align="center">-</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">计划12.24完成</td>
+		<td align="center">完成</td>
 	</tr>
 	<tr>
 		<td align="center">运行应用程序</td>
