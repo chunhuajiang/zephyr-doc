@@ -358,7 +358,7 @@
 		<td align="center">添加应用程序相关的代码</td>
 		<td align="center">-</td>
 		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">计划12.24完成</td>
+		<td align="center">完成</td>
 	</tr>
 	</tr>
 	<tr>
