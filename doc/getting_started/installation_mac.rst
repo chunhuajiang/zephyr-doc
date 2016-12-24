@@ -15,7 +15,7 @@
 使用三方工具链
 ***************************
 
-如果你想使用的架构已经有工具链，您可以参考 :ref:`third_party_x_compilers` 使用它。
+如果您想使用的架构已经有工具链，您可以参考 :ref:`third_party_x_compilers` 使用它。
 
 例如，对于 Coretex-M 家族的核心，您可以使用三方工具链 GCC ARM Embedded。
 
