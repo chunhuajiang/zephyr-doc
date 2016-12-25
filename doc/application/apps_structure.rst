@@ -73,7 +73,7 @@
 
       $ touch Makefile
 
-2. 使用文本编辑器打开 :file:`Makefile` 并添加下面的命令实体。
+2. 使用文本编辑器打开 :file:`Makefile` 并添加下面的命令条目。
 
    .. note::
 
@@ -93,7 +93,7 @@
 
          CONF_FILE ?= kernel_configuration_name
 
-      如果默认的内核配置文件的名字叫做 :file:`prj.conf` ，则该实体可以忽略。如果您的默认板级配置的内核设置足够用于您的应用程序，该实体也可以忽略。
+      如果默认的内核配置文件的名字叫做 :file:`prj.conf` ，则该条目可以忽略。如果您的默认板级配置的内核设置足够用于您的应用程序，该条目也可以忽略。
 
    c) 在新的一行包含顶层的 :file:`Makefile` 碎片：
 
