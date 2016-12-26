@@ -127,7 +127,7 @@ html_theme_path = ['./themes']
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = "Zephyr Project Documentation"
+html_title = "Zephyr Project 中文文档"
 
 # This value determines the text for the permalink; it defaults to "¶".
 # Set it to None or the empty string to disable permalinks.
@@ -219,6 +219,12 @@ htmlhelp_basename = 'zephyrdoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
+	'preamble': '''
+		\\hypersetup{unicode=true}
+	\\usepackage{CJKutf8}
+	\\AtBeginDocument{\\begin{CJK}{UTF8}{gbsn}}
+	\\AtEndDocument{\\end{CJK}}
+	'''
 # The paper size ('letterpaper' or 'a4paper').
 #'papersize': 'letterpaper',
 
@@ -236,7 +242,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'zephyr.tex', u'Zephyr Project Documentation',
+  (master_doc, 'zephyr.tex', u'Zephyr OS 中文文档',
    u'many', 'manual'),
 ]
 
