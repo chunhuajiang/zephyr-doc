@@ -64,7 +64,7 @@ Zephyr 项目及其内核遵循 Apache License, version 2.0。
 :dfn:`开发板`
    一个带有一系列设备和功能的目标系统，它可以加载、执行应用程序镜像。它既可以是实际的硬件系统，也可以是运行在 QEMU 下的仿真系统。
 
-   Zephyr 内核支持  :ref:`variety of boards <board>`.
+   Zephyr 内核支持  :ref:`大量的开发板 <board>`.
 
 :dfn:`开发板配置`
    一系列的内核配置选项，指定内核如何利用开发板上的设备。

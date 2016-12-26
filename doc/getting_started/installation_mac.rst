@@ -9,8 +9,7 @@
 
 * Mac OS X 10.11 (El Capitan)
 
-在 OS X 上开发 Zephyr 需要您自己编译工具链。不过，如果您的目标架构已经有 OS X 
-的工具链了，您可以直接使用它。
+在 OS X 上开发 Zephyr 需要您自己编译工具链。不过，如果您的目标架构已经有 OS X 的工具链了，您可以直接使用它。
 
 使用三方工具链
 ***************************
@@ -32,8 +31,7 @@
 
 在进行编译前，请先确保您的系统已经更新到最新了。
 
-首先，您需要安装 :program:`Homebrew` （OS X 默认未安装该包）。Homebrew 是一个免费、开源
-的软件包管理系统，能简化苹果 OS X 操作系统上安装软件的过程。
+首先，您需要安装 :program:`Homebrew` （OS X 默认未安装该包）。Homebrew 是一个免费、开源的软件包管理系统，能简化苹果 OS X 操作系统上安装软件的过程。
 
 请访问 `Homebrew site`_ 并按照该网站的安装指示安装 :program:`Homebrew`
 
@@ -55,8 +53,7 @@
 
    $ brew install crosstool-ng
 
-您也可以从源码安装最新版的 :program:`crosstool-ng`。从 `crosstool-ng site`_ 下载最新版。
-最新版通常支持最新发布的编译器。
+您也可以从源码安装最新版的 :program:`crosstool-ng`。从 `crosstool-ng site`_ 下载最新版。最新版通常支持最新发布的编译器。
 
 .. code-block:: console
 
@@ -81,8 +78,7 @@
 创建一个大小写敏感的文件系统
 =====================================
 
-编译编译器需要一个大小写敏感的文件系统。使用程序 :program:`diskutil` 创建一个 8 GB 的空白
-镜像，且选择大小写敏感的文件系统（OS X 扩展（大小写敏感，日志式）），然后挂在它。
+编译编译器需要一个大小写敏感的文件系统。使用程序 :program:`diskutil` 创建一个 8 GB 的空白镜像，且选择大小写敏感的文件系统（OS X 扩展（大小写敏感，日志式）），然后挂在它。
 
 您也可以直接使用下面的脚本创建镜像：
 
@@ -109,8 +105,7 @@
 设置工具链选项
 =============================
 
-在 Zephyr 内核源码树下，我们为 ARM 和 X86 提供了两种配置，可用于预选择编译工具链的选项。
-配置文件位于 :file:`${ZEPHYR_BASE}/scripts/cross_compiler/`。
+在 Zephyr 内核源码树下，我们为 ARM 和 X86 提供了两种配置，可用于预选择编译工具链的选项。配置文件位于 :file:`${ZEPHYR_BASE}/scripts/cross_compiler/`。
 
 .. code-block:: console
 
@@ -154,8 +149,7 @@
 
    $ ct-ng build
 
-上面的过程需要一定的事件。当编译完成后，工具链将位于 :file:`/Volumes/CrossToolNG/x-tools`
- 目录下。
+上面的过程需要一定的事件。当编译完成后，工具链将位于 :file:`/Volumes/CrossToolNG/x-tools` 目录下。
 
 如果您还需要在您的环境中支持其它架构，请重复上面的步骤。
 

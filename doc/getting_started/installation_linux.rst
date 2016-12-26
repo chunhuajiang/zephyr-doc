@@ -14,14 +14,12 @@
 
 安装主机操作系统
 **************************************
-Zephyr 项目的软件组件（包括内核）已经在 Ubuntu 和 Fedora 上面测试通过了。
-安装 Ubuntu 和 Fedora 的方法不在本文档的讨论范围内。
+Zephyr 项目的软件组件（包括内核）已经在 Ubuntu 和 Fedora 上面测试通过了。安装 Ubuntu 和 Fedora 的方法不在本文档的讨论范围内。
 
 更新您的操作系统
 ****************************
 
-在进行编译前，请先确保您的操作系统已经更新到最新了。对于 Ubuntu，您需要先
-更新可用软件包的本地数据库列表：
+在进行编译前，请先确保您的操作系统已经更新到最新了。对于 Ubuntu，您需要先更新可用软件包的本地数据库列表：
 
 .. code-block:: console
 
@@ -59,9 +57,7 @@ Zephyr 项目的软件组件（包括内核）已经在 Ubuntu 和 Fedora 上面
 安装 Zephyr 软件开发套件（SDK）
 ==============================================
 
-Zephyr 的 :abbr:`SDK (Software Development Kit)` 中包含为其支持的所有架构编译内核
-所需的工具和交叉编译器。此外，它还包括主机上的工具，例如定制的 QEMU 以及编译主机
-工具的主机编译器。SDK 支持如下架构：
+Zephyr 的 :abbr:`SDK (Software Development Kit)` 中包含为其支持的所有架构编译内核所需的工具和交叉编译器。此外，它还包括主机上的工具，例如定制的 QEMU 以及编译主机工具的主机编译器。SDK 支持如下架构：
 
 * :abbr:`IA-32 (Intel Architecture 32 bits)`
 
@@ -75,7 +71,7 @@ Zephyr 的 :abbr:`SDK (Software Development Kit)` 中包含为其支持的所有
 
    访问 `Zephyr SDK archive`_ 可查找到所有可有的（包括最新的） SDK。
 
-   您也可以使用下面的摩纳哥咯来现在所需的版本，其中需要将 <version> 替换为您想下载的版本号。
+   您也可以使用下面的命令来下载所需的版本，其中需要将 <version> 替换为您想下载的版本号。
 
    .. code-block:: console
 
@@ -91,8 +87,7 @@ Zephyr 的 :abbr:`SDK (Software Development Kit)` 中包含为其支持的所有
 
    如果将 SDK 按照到用户的 home 目录，则没有必要是使用 `sudo` 权限。
 
-#. 遵循屏幕上提上的指令进行操作。工具链的默认安装路径位于 :file:`/opt/zephyr-sdk/`。如果要
-   安装到默认路径，您需要使用 sudo。推荐将 SDK 安装到您的 home 目录，而不是系统目录。
+#. 按照屏幕上提上的指令进行操作。工具链的默认安装路径位于 :file:`/opt/zephyr-sdk/`。如果要安装到默认路径，您需要使用 sudo。推荐将 SDK 安装到您的 home 目录，而不是系统目录。
 
 #. 要使用 Zephyr SDK，您还需要 export 如下的环境变量，并指明 SDK 的安装路径，输入：
 
