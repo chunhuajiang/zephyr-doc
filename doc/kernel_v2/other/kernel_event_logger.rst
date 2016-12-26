@@ -135,24 +135,16 @@
 添加自定义事件类型
 ==========================
 
-A custom event type must use an integer type ID that does not duplicate
-an existing type ID. The type IDs for the pre-defined events can be found
-in :file:`include/misc/kernel_event_logger.h`. If dynamic recording of
-events is enabled, the event type ID must not exceed 32.
+自定义事件类型必须使用一个与已存在类型 ID 不同的整型类型 ID。您可以在 :file:`include/misc/kernel_event_logger.h` 中找到预定义的事件类型 ID。如果事件的动态记录被使能，事件的类型 ID 不能超过 32。
 
-Custom events can be written to the kernel event logger using the following
-APIs:
+下列 API 可用于将自定义事件写入内核事件日志器中。
 
 * :cpp:func:`sys_k_event_logger_put()`
 * :cpp:func:`sys_k_event_logger_put_timed()`
 
-Both of these APIs record an event as long as there is room in the kernel
-event logger's ring buffer. To enable dynamic recording of a custom event type,
-the application must first call :cpp:func:`sys_k_must_log_event()` to determine
-if event recording is currently active for that event type.
+只要内核事件日志器的环形缓冲还有空间，上面的 API 就会记录事件。如果要使能对自定义事件类型的动态记录，应用程序必须调用:cpp:func:`sys_k_must_log_event()` 来判断该事件类型的事件记录是否是活跃的。
 
-The following code illustrates how an application can write a custom
-event consisting of two 32-bit words to the kernel event logger.
+下面的代码展示了应用程序是如何将多个 32 比特字的自定义事件写入内核事件日志器中的。
 
 .. code-block:: c
 
@@ -168,8 +160,7 @@ event consisting of two 32-bit words to the kernel event logger.
         sys_k_event_logger_put(MY_CUSTOM_EVENT_ID, data, ARRAY_SIZE(data));
     }
 
-The following code illustrates how an application can write a custom event
-that records just a timestamp using a single 32-bit word.
+下面的代码展示了应用程序是如何将单个 32 比特字的自定义事件（仅仅记录时间戳）写入内核事件日志器的。
 
 .. code-block:: c
 
