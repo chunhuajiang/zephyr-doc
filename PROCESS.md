@@ -392,8 +392,8 @@
 		<td align="center">移植指导</td>
 		<td align="center">架构移植指导</td>
 		<td align="center">-</td>
-		<td align="center"><a href="https://github.com/tidyjiang8">tidyjiang8</a></td>
-		<td align="center">计划12.24完成</td>
+		<td align="center">-</td>
+		<td align="center">-</td>
 	</tr>
 	<tr>
 		<td align="center" rowspan="5">编译系统用户指南</td>
