@@ -9,8 +9,10 @@ Zephyr Project 文档
 
 Zephyr 的开发分支的文档位于 https://www.zephyrproject.org/doc/。
 
+文档的 PDF 版本，请访问 http://iot-fans.xyz/zephyr/doc/v1.6.0/zephyr-doc-v1.6.0.pdf
+
 .. toctree::
-   :maxdepth: 5
+   :maxdepth: 1
 
    preface/preface.rst
    introduction/introducing_zephyr.rst
