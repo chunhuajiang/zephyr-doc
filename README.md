@@ -1,4 +1,4 @@
-# 《Zephyr Project 文档 - 中文版》
+﻿# 《Zephyr Project 文档 - 中文版》
 
 - 本分支是 Zephyr v1.7.0 版的中文版
 
@@ -18,6 +18,7 @@
 
 **报名列表**：
 - [tidyjiang8](https://github.com/tidyjiang8)
+- [Jxzx](https://github.com/Jxzx)
 
 ## 学习交流
 
