@@ -2,6 +2,8 @@
 
 本分支是 Zephyr v1.6.0 版的中文版
 
+> **还有两个月 Zephyr 就发布 v1.7.0 了，招募小伙伴一起翻译。具体信息请切换到分支 [v1.7.0](https://github.com/tidyjiang8/zephyr-doc/tree/v1.7.0)**。
+
 ## 在线阅读：
 - 中文版地址：[http://iot-fans.xyz/zephyr/doc/v1.6.0](http://iot-fans.xyz/zephyr/doc/v1.6.0)
 - 英文版地址：[https://www.zephyrproject.org/doc/](https://www.zephyrproject.org/doc/)

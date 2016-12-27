@@ -17,7 +17,7 @@
 开始之前
 ----------------
 
-* 确保你的 Linux 主机满足 :ref:`getting_started` 中所说的最小需求。
+* 确保您的 Linux 主机满足 :ref:`getting_started` 中所说的最小需求。
 
 * 确保您的环境变量配置正确了。参考 :ref:`apps_common_procedures`。
 

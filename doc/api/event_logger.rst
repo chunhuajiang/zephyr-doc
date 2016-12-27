@@ -1,6 +1,6 @@
 .. _event_logger:
 
-Event Logging APIs
+事件日志 API
 ##################
 
 .. contents::
@@ -8,22 +8,19 @@ Event Logging APIs
    :local:
    :backlinks: top
 
-Event Logger
+事件日志器
 ************
 
-An event logger is an object that can record the occurrence of significant
-events, which can be subsequently extracted and reviewed.
+事件日志器是一个对象，它可以记录重要事件的发生，以便随后被抽取并检查。
 
 .. doxygengroup:: event_logger
    :project: Zephyr
    :content-only:
 
-Kernel Event Logger
+内核事件日志器
 *******************
 
-The kernel event logger records the occurrence of significant kernel events,
-which can be subsequently extracted and reviewed.
-(See :ref:`kernel_event_logger_v2`.)
+内核事件日志器记录了内核中重要事件的发生，以便随后被抽取并检查。（参考 :ref:`kernel_event_logger_v2` ）
 
 .. doxygengroup:: kernel_event_logger
    :project: Zephyr

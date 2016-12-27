@@ -109,9 +109,9 @@
 
 * :option:`CONFIG_SYS_CLOCK_TICKS_PER_SEC`
 
-APIs
+API
 ****
-:file:`kernel.h`文件提供了如下的内核时钟API:
+:file:`kernel.h` 文件提供了如下的内核时钟 API:
 
 * :cpp:func:`k_uptime_get()`
 * :cpp:func:`k_uptime_get_32()`

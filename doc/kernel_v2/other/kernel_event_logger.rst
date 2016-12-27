@@ -1,70 +1,48 @@
 .. _kernel_event_logger_v2:
 
-Kernel Event Logger
+内核事件日志器
 ###################
 
-The kernel event logger records the occurrence of certain types of kernel
-events, allowing them to be subsequently extracted and reviewed.
-This capability can be helpful in profiling the operation of an application,
-either for debugging purposes or for optimizing the performance the application.
+内核事件日志器记录了指定类型的内核事件的发生情况，这样的好处是可以在随后抽取并检查这些事件。这种功能有助于概括应用程序的所有操作，既可以用于调试目的，又可以用于优化应用程序的性能。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-The kernel event logger does not exist unless it is configured for an
-application. The capacity of the kernel event logger is also configurable.
-By default, it has a ring buffer that can hold up to 128 32-bit words
-of event information.
+内核事件日志器的功能是可配置的，默认未开启。在默认情况下，它包括一个最多可以容纳 128 个 32 比特字的环形缓冲。每一个 32 比特字可以代表一个事件信息。
 
-The kernel event logger is capable of recording the following pre-defined
-event types:
+内核事件日志器具有记录如下事件类型的能力：
 
-* Interrupts.
-* Ccontext switching of threads.
-* Kernel sleep events (i.e. entering and exiting a low power state).
+* 中断。
+* 线程的上下文切换。
+* 内核睡眠事件（进入、退出低功耗状态）。
 
-The kernel event logger only records the pre-defined event types it has been
-configured to record. Each event type can be enabled independently.
+内核事件日志器只能记录所配置的预定义事件类型。每种事件类型可以被单独使能。
 
-An application can also define and record custom event types.
-The information recorded for a custom event, and the times
-at which it is recorded, must be implemented by the application.
+应用程序也可以定义并记录自定义的事件类型。应用程序必须实现用于记录自定义事件的信息和被记录的事件。
 
-All events recorded by the kernel event logger remain in its ring buffer
-until they are retrieved by the application for review and analysis. The
-retrieval and analysis logic must be implemented by the application.
+内核事件日志器记录的所有事件都驻留在日志器的环形缓冲中，直到被应用程序恢复出来检查和分析。应用程序必须实现恢复和分析逻辑。
 
 .. important::
-    An application must retrieve the events recorded by the kernel event logger
-    in a timely manner, otherwise new events will be dropped once the event
-    logger's ring buffer becomes full. A recommended approach is to use
-    a cooperative thread to retrieve the events, either on a periodic basis
-    or as its sole responsibility.
-
-By default, the kernel event logger records all occurrences of all event types
-that have been enabled. However, it can also be configured to allow an
-application to dynamically start or stop the recording of events at any time,
-and to control which event types are being recorded. This permits
-the application to capture only the events that occur during times
-of particular interest, thereby reducing the work needed to analyze them.
+    
+    应用程序必须及时地抽恢复并分析内核所记录的事件，否则当事件日志器的环形缓冲满时会丢弃新事件。推荐的做法是使用一个协作式线程周期性地恢复事件。
+    
+默认情况下，内核事件日志器会记录被使能的所有事件类型的发生情况。不过这要是可配置的，可以让应用程序在任何时间开始或者结束记录事件，以及控制记录哪些事件。这样能够让应用程序只在感兴趣的时间段内采集感兴趣的事件，减小了分析事件的工作量。
 
 .. note::
-    The kernel event logger can also be instructed to ignore context switches
-    involving a single specified thread. This can be used to avoid recording
-    context switch events involving the thread that retrieves the events
-    from the kernel event logger.
 
-Event Formats
+    内核事件日志器也可被指示去忽略调用某个指定线程的上下文切换，这样可以避免记录从内核事件日志器恢复事件的线程的上下文切换。
+
+事件的格式
 =============
 
-Each event recorded by the kernel event logger consists of one or more
-32-bit words of data that describe the event.
+内核事件日志器记录的每个事件都由一到多个用于描述事件的 32 比特字的数据组成。
 
-An **interrupt event** has the following format:
+
+**中断事件** 具有如下格式：
 
 .. code-block:: c
 
@@ -73,7 +51,7 @@ An **interrupt event** has the following format:
         uint32_t interrupt_id;     /* ID of interrupt */
     };
 
-A **context-switch event** has the following format:
+**上下文切换事件** 具有如下格式：
 
 .. code-block:: c
 
@@ -82,7 +60,7 @@ A **context-switch event** has the following format:
         uint32_t context_id;       /* ID of thread that was switched out */
     };
 
-A **sleep event** has the following format:
+**睡眠事件** 具有如下格式：
 
 .. code-block:: c
 
@@ -92,50 +70,30 @@ A **sleep event** has the following format:
         uint32_t interrupt_id;     /* ID of interrupt that woke CPU */
     };
 
-A **custom event** must have a type ID that does not conflict with
-any existing pre-defined event type ID. The format of a custom event
-is application-defined, but must contain at least one 32-bit data word.
-A custom event may utilize a variable size, to allow different events
-of a single type to record differing amounts of information.
+**自定义事件** 必须具有一个与已存在的预定义事件的类型 ID 不冲突的类型 ID。自定义事件的格式由应用程序定义，但是它必须至少包含一个 32 比特数据字。自定义事件可以利用可变尺寸来让单一类型的不同事件记录消息的不同数量。
 
-Timestamps
+时间戳
 ==========
 
-By default, the timestamp recorded with each pre-defined event is obtained from
-the kernel's :ref:`hardware clock <clocks_v2>`. This 32-bit clock counts up
-extremely rapidly, which means the timestamp value wraps around frequently.
-(For example, the Lakemont APIC timer for Quark SE wraps every 134 seconds.)
-This wraparound must be accounted for when analyzing kernel event logger data.
-In addition, care must be taken when tickless idle is enabled, in case a sleep
-duration exceeds 2^32 clock cycles.
+默认情况下，每个预定义事件的时间戳由内核的 :ref:`hardware clock <clocks_v2>` 中获取。这个 32 比特的始终计数非常快，也就是说时间戳的值会快速地溢出。（例如， Quark SE 的 Lakemont APIC 定时器每隔 134 秒就会溢出一次。）当分析内核事件日志器的时候必须将这个溢出考虑在内。此外，在无滴答空转被使能时也需要当心，在这种情况下，一个睡眠时期超过了 2^32 个时钟周期。
 
-If desired, the kernel event logger can be configured to record
-a custom timestamp, rather than the default timestamp.
-The application registers the callback function that generates the custom 32-bit
-timestamp at run-time by calling :cpp:func:`sys_k_event_logger_set_timer()`.
+如果有需要，可以通过配置让内核事件日志器使用自定义的时间戳，而不使用默认时间戳。应用程序通过调用函数 :cpp:func:`sys_k_event_logger_set_timer()` 在运行时产生自定义的 32 比特的时间戳。
 
-Implementation
+实现
 **************
 
-Retrieving An Event
+恢复事件
 ===================
 
-An event can be retrieved from the kernel event logger in a blocking or
-non-blocking manner using the following APIs:
+可以使用下列 API 以阻塞方式或者非阻塞方式从内核事件日志器中恢复事件：
 
 * :cpp:func:`sys_k_event_logger_get()`
 * :cpp:func:`sys_k_event_logger_get_wait()`
 * :cpp:func:`sys_k_event_logger_get_wait_timeout()`
 
-In each case, the API also returns the type and size of the event, as well
-as the event information itself. The API also indicates how many events
-were dropped between the occurrence of the previous event and the retrieved
-event.
+在每种情形下，API 都会返回事件的类型和尺寸，以及事件信息本身。API 也可以指示在先前的事件也被恢复的事件之间有多少个事件被丢弃了。
 
-The following code illustrates how a thread can retrieve the events
-recorded by the kernel event logger.
-A sample application that shows how to collect kernel event data
-can also be found at :file:`samples/kernel_event_logger`.
+下面的代码演示了线程时如何恢复内核事件日志器所记录的事件的。例程 :file:`samples/kernel_event_logger` 也演示了如何收集内核事件数据。
 
 .. code-block:: c
 
@@ -174,27 +132,19 @@ can also be found at :file:`samples/kernel_event_logger`.
         }
     }
 
-Adding a Custom Event Type
+添加自定义事件类型
 ==========================
 
-A custom event type must use an integer type ID that does not duplicate
-an existing type ID. The type IDs for the pre-defined events can be found
-in :file:`include/misc/kernel_event_logger.h`. If dynamic recording of
-events is enabled, the event type ID must not exceed 32.
+自定义事件类型必须使用一个与已存在类型 ID 不同的整型类型 ID。您可以在 :file:`include/misc/kernel_event_logger.h` 中找到预定义的事件类型 ID。如果事件的动态记录被使能，事件的类型 ID 不能超过 32。
 
-Custom events can be written to the kernel event logger using the following
-APIs:
+下列 API 可用于将自定义事件写入内核事件日志器中。
 
 * :cpp:func:`sys_k_event_logger_put()`
 * :cpp:func:`sys_k_event_logger_put_timed()`
 
-Both of these APIs record an event as long as there is room in the kernel
-event logger's ring buffer. To enable dynamic recording of a custom event type,
-the application must first call :cpp:func:`sys_k_must_log_event()` to determine
-if event recording is currently active for that event type.
+只要内核事件日志器的环形缓冲还有空间，上面的 API 就会记录事件。如果要使能对自定义事件类型的动态记录，应用程序必须调用:cpp:func:`sys_k_must_log_event()` 来判断该事件类型的事件记录是否是活跃的。
 
-The following code illustrates how an application can write a custom
-event consisting of two 32-bit words to the kernel event logger.
+下面的代码展示了应用程序是如何将多个 32 比特字的自定义事件写入内核事件日志器中的。
 
 .. code-block:: c
 
@@ -210,8 +160,7 @@ event consisting of two 32-bit words to the kernel event logger.
         sys_k_event_logger_put(MY_CUSTOM_EVENT_ID, data, ARRAY_SIZE(data));
     }
 
-The following code illustrates how an application can write a custom event
-that records just a timestamp using a single 32-bit word.
+下面的代码展示了应用程序是如何将单个 32 比特字的自定义事件（仅仅记录时间戳）写入内核事件日志器的。
 
 .. code-block:: c
 
@@ -221,10 +170,10 @@ that records just a timestamp using a single 32-bit word.
         sys_k_event_logger_put_timed(MY_CUSTOM_TIME_ONLY_EVENT_ID);
     }
 
-Configuration Options
+配置选项
 *********************
 
-Related configuration options:
+相关的配置选项：
 
 * :option:`CONFIG_KERNEL_EVENT_LOGGER`
 * :option:`CONFIG_KERNEL_EVENT_LOGGER_CONTEXT_SWITCH`
@@ -234,11 +183,10 @@ Related configuration options:
 * :option:`CONFIG_KERNEL_EVENT_LOGGER_DYNAMIC`
 * :option:`CONFIG_KERNEL_EVENT_LOGGER_CUSTOM_TIMESTAMP`
 
-APIs
+API
 ****
 
-The following kernel event logger APIs are provided by
-:file:`kernel_event_logger.h`:
+:file:`kernel_event_logger.h` 中提供了如下与内核事件日志器相关的 API：
 
 * :cpp:func:`sys_k_event_logger_register_as_collector()`
 * :cpp:func:`sys_k_event_logger_get()`

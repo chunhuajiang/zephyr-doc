@@ -26,8 +26,8 @@
 堆内存池定义了一个包含整个堆的单一的最大尺寸块；即单一块的大小是 256、1024、4096 或 16384 字节。堆内存池也定义了一个最小尺寸块 —— 64 字节。下表展示了堆内存池在每种块尺寸下所能支持的块的数量。
 
 +-------+---------+----------+-----------+-----------+------------+
-| heap  | 64 byte | 256 byte | 1024 byte | 4096 byte | 16384 byte |
-| size  | blocks  | blocks   | blocks    | blocks    | blocks     |
+| 堆    | 64 字节 | 256 字节 | 1024 字节 | 4096 字节 | 16384 字节 |
+| 尺寸  | 的块    | 的块     | 的块      | 的块      | 的块       |
 +=======+=========+==========+===========+===========+============+
 | 256   | 4       | 1        | 0         | 0         | 0          |
 +-------+---------+----------+-----------+-----------+------------+
@@ -43,11 +43,6 @@
     对于某个给定的尺寸的内存块，能同时分配到的数量通常小于上面的表所列举的结果。例如，每当从大小为 1024 字节的堆内存中分配一个大小为 256 字节的块后，所能分配到的大小为 64 字节的块的数量就会减 4。内存池 buffer 中的碎片也会进一步减小可用块的数量。
 
 内存块被分配后，它的前 16 个字节将被内核用于记录块描述符。内核随后会使用该描述符释放块。因此，如果应用程序请求的堆内存大小是 N 字节，实际至少会使用 N+16 字节。
-The kernel uses the first 16 bytes of any memory block allocated
-from the heap memory pool to save the block descriptor information
-it needs to later free the block. Consequently, an application's request
-for an N byte chunk of heap memory requires a block that is at least
-(N+16) bytes long.
 
 实现
 **************

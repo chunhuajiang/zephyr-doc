@@ -27,15 +27,15 @@ Zephyr 项目支持如下操作系统：
 匿名检出源代码
 ========================================
 
-Zephyr 托管在 Linux 基金会的 Gerrit 后台上，且支持通过 git 匿名克隆。
+Zephyr 托管在 Linux 基金会的 Gerrit 后台上，支持通过 git 匿名克隆。
 
-匿名克隆仓库，请输入：
+要匿名克隆 Zephyr 的代码仓库，请输入：
 
 .. code-block:: console
 
    $ git clone https://gerrit.zephyrproject.org/r/zephyr zephyr-project
 
-这样，您将在您的本地机器上成功地检出源代码的副本。
+然后，您将在您的本地机器上成功地检出源代码的副本。
 
 如果您打算贡献代码，请先到 `Gerrit Accounts`_ 创建一个 Linux 基金会账户。
 
@@ -83,25 +83,21 @@ OS，请使用该操作系统所对应的命令。
 
       $ make
 
-上面的 make 命令将使用在应用程序 Makefile 中的定义编译 hello_world 例程。
-您可以通过指定变量 BOARD 为不同的开发板编译不同的程序，例如：
+上面的 make 命令将使用在应用程序 Makefile 中的定义编译 hello_world 例程。您可以通过指定变量 BOARD 为不同的开发板编译不同的程序，例如：
 
 .. code-block:: console
 
    $ make BOARD=arduino_101
 
-关于 Zephyr 所支持的开发板，请参考 :ref:`这里 <board>`。您也可以输入以下命令
-查看 Zephyr 所支持的开发板。
+关于 Zephyr 所支持的开发板，请参考 :ref:`这里 <board>`。您也可以输入以下命令查看 Zephyr 所支持的开发板。
 
 .. code-block:: console
 
    $ make help
 
-目录 :file:`$ZEPHYR_BASE/samples` 下包含了 Zephyr 各种功能特性的例程工程。当应用程序
-编译成功后，您可以在应用程序根目录下的 :file:`outdir` 子目录中看到编译生成的文件。
+目录 :file:`$ZEPHYR_BASE/samples` 下包含了 Zephyr 各种功能特性的例程工程。当应用程序编译成功后，您可以在应用程序根目录下的 :file:`outdir` 子目录中看到编译生成的文件。
 
-编译系统默认会生成名为 :file:`zephyr.elf` 的可执行文件。您也可以在应用程序的配置文件中
-进行配置，为不同的硬件和开发板指定不同的可执行文件名字。
+编译系统默认会生成名为 :file:`zephyr.elf` 的可执行文件。您也可以在应用程序的配置文件中进行配置，为不同的硬件和开发板指定不同的可执行文件名字。
 
 .. _third_party_x_compilers:
 
@@ -110,8 +106,7 @@ OS，请使用该操作系统所对应的命令。
 
 为了便于使用，Zephyr 提供了一套软件开发工具（SDK）。Zephyr SDK 为所有所支持的操作系统都提供了交叉编译器，因此您无需进行额外的配置。
 
-如果您想使用自定义的交叉编译器，或者如果您想使用厂家提供的 SDK，
-您可以按照下列步骤进行设置：
+如果您想使用自定义的交叉编译器，或者如果您想使用厂家提供的 SDK，您可以按照下列步骤进行设置：
 
 #. 为了避免与 Zephyr SDK 冲突，先输入如下命令：
 
@@ -121,8 +116,7 @@ OS，请使用该操作系统所对应的命令。
 
       $ unset ZEPHYR_SDK_INSTALL_DIR
 
-#. 我们以 `GCC ARM Embedded`_ 编译器为例。从 `GCC ARM Embedded`_ 下载一个适合您的操作系统的
-   软件包，然后将其解压到您的文件系统中。假设该编译器被解压到： :file:`~/gcc-arm-none-eabi-5_3-2016q1/`。
+#. 我们以 `GCC ARM Embedded`_ 编译器为例。从 `GCC ARM Embedded`_ 下载一个适合您的操作系统的软件包，然后将其解压到您的文件系统中。假设该编译器被解压到： :file:`~/gcc-arm-none-eabi-5_3-2016q1/`。
 
 #. 进入项目主目录：
 
@@ -165,8 +159,7 @@ OS，请使用该操作系统所对应的命令。
 在 QEMU 中运行应用程序例程
 ====================================
 
-为了在开发环境中进行快速测试，您可以使用能够 qemu 仿真器。qemu 仿真器支持 x86 和 ARM Cortex-M3。
-进行 qemu 仿真非常简单，您只需要在编译应用程序时指定一个目标，编译系统会自动调用 QEMU 进行编译。
+为了在开发环境中进行快速测试，您可以使用能够 qemu 仿真器。qemu 仿真器支持 x86 和 ARM Cortex-M3。进行 qemu 仿真非常简单，您只需要在编译应用程序时指定一个目标，编译系统会自动调用 QEMU 进行编译。
 
 如果要使用 x86 qemu 仿真开发板配置(qemu_x86)编译应用程序，输入：
 

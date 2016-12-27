@@ -3,8 +3,7 @@
 子系统
 ##########
 
-This section contains information about subsystem and the API they expose
-to applications.
+本章介绍子系统以及子系统暴露给应用程序的 API。
 
 .. toctree::
    :maxdepth: 1

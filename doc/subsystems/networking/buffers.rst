@@ -1,14 +1,12 @@
-Network Buffers
+网络缓冲
 ###############
 
-Network buffers are a core concept of how the networking stack
-(as well as the Bluetooth stack) pass data around. The API for them is
-defined in ``include/net/buf.h``.
+网络缓冲（Network Buffer）是理解网络协议栈（以及蓝牙协议栈）中数据是传递过程的核心概念。相关的 API 位于 ``include/net/buf.h`` 。
 
-Creating buffers
+创建缓冲
 ================
 
-Network buffers are created by first declaring a pool of them:
+创建网络缓冲时需要先申明一个缓冲池：
 
 .. code-block:: c
 
@@ -16,41 +14,34 @@ Network buffers are created by first declaring a pool of them:
    static NET_BUF_POOL(pool_name, buf_count, buf_size, &free_fifo, NULL,
                        user_data_size);
 
-Before operating on the pool it also needs to be initialized at runtime:
+在进行相关操作前，还需要在运行时对其进行初始化：
 
 .. code-block:: c
 
    net_buf_pool_init(pool_name);
 
-Once the pool has been initialized the available buffers are managed
-with the help of a nano_fifo object and can be acquired with:
+完成初始化后，协议栈将使用 nano_fifo 对象来管理可用的 buffer。可以这样获得 buffer：
 
 .. code-block:: c
 
    buf = net_buf_get(&free_fifo, reserve_headroom);
 
-In addition to actual protocol data and generic parsing context, network
-buffers may also contain protocol-specific context, known as user data.
-Both the maximum data and user data capacity of the buffers is
-compile-time defined when declaring the buffer pool.
+除实际的协议数据和通用解析上下文之外，网络缓冲还包含协议相关的上下文（被叫做用户数据）。缓冲的最大数据容量和用户数据功能都是在声明缓冲池的时候进行定义的。
 
+由于空闲缓冲使用 nano_fifo 进行管理，
 Since the free buffers are managed with the help of a nano_fifo it means
 the buffers have native support for being passed through other nano_fifos
 as well. This is a very practical feature when the buffers need to be
 passed from one fiber to another.
 
-Common Operations
+通用操作
 =================
 
-The network buffer API provides some useful helpers for encoding and
-decoding data in the buffers. To fully understand these helpers it's
-good to understand the basic names of operations used with them:
+网络缓冲 API 对将数据编码到缓冲中/从缓冲中解码数据提供了有用的帮助。要完全理解这些帮帮助，最好能理解这些操作中所使用到的基本术语：
 
-Add
-  Add data to the end of the buffer. Modifies the data length value
-  while leaving the actual data pointer intact. Requires that there is
-  enough tailroom in the buffer. Some examples of APIs for adding data:
-
+添加
+  将数据添加到缓冲的末尾。修改数据长度值；保持实际的数据指针不动。确保缓冲的尾部有足够的空间。利用 API 添加数据的一些例子：
+  
   .. code-block:: c
 
      void *net_buf_add(struct net_buf *buf, size_t len);
@@ -59,10 +50,9 @@ Add
      void net_buf_add_le32(struct net_buf *buf, uint32_t value);
 
 Push
-  Prepend data to the beginning of the buffer. Modifies both the data
-  length value as well as the data pointer. Requires that there is
-  enough headroom in the buffer. Some examples of APIs for pushing data:
-
+  
+  追加数据到缓冲的头部。既修改数据的长度值，又修改数据指针。确保缓冲的头部有足够的空间。利用 API push 数据的一些例子：
+  
   .. code-block:: c
 
      void *net_buf_push(struct net_buf *buf, size_t len);
@@ -70,9 +60,7 @@ Push
      uint32_t net_buf_pull_le32(struct net_buf *buf);
 
 Pull
-  Remove data from the beginning of the buffer. Modifies both the data
-  length value as well as the data pointer. Some examples of APIs for
-  pulling data:
+  从缓冲的头部移除数据。既修改数据的长度值，又修改数据指针。利用 API pull 数据的一些例子：
 
   .. code-block:: c
 
@@ -80,15 +68,9 @@ Pull
      uint8_t net_buf_pull_u8(struct net_buf *buf);
      uint16_t net_buf_pull_le16(struct net_buf *buf);
 
-The Add and Push operations are used when encoding data into the buffer,
-whereas Pull is used when decoding data from a buffer.
+添加和 push 操作用于将数据编码到缓冲中；pull 操作用于从缓冲中解码数据。
 
-Reference Counting
+引用计数
 ==================
 
-Each network buffer is reference counted. The buffer is initially
-acquired from a free buffers pool by calling :c:func:`net_buf_get()`,
-resulting in a buffer with reference count 1. The reference count can be
-incremented with :c:func:`net_buf_ref()` or decremented with
-:c:func:`net_buf_unref()`. When the count drops to zero the buffer is
-automatically placed back to the free buffers pool.
+每个网络缓冲都有一个引用计数。调用函数  :c:func:`net_buf_get()` 可以从空闲缓冲池中请求并初始化一个缓冲，此时该缓冲的引用计数是 1。函数 :c:func:`net_buf_ref()` 用于将引用计数递增；函数 :c:func:`net_buf_unref()` 用于将引用计数递减。到计数降至 0，该缓冲会被自动放回空闲缓冲池中。

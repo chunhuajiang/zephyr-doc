@@ -1,40 +1,33 @@
 .. _apps_structure:
 
-Create an Application Directory
+创建应用程序目录
 ###############################
 
-Each application resides in a uniquely-named application
-directory created by the developer, typically in the developer's
-workspace directory. The application developer also creates a
-:file:`src` directory for the application's source code.
+每个应用程序都位于一个由开发者创建的唯一命名的应用程序目录下。应用程序开发者也为应用程序的源代码创建了一个 :file:`src` 目录。
+
 
 .. contents:: Procedures
    :local:
    :depth: 1
 
-Creating an Application and Source Code Directory
+创建应用程序和源代码目录
 =================================================
 
-Create one directory for your application and a sub-directory for the
-application's source code; this makes it easier to organize directories
-and files in the structure that the kernel expects.
+为您的应用程序创建一个目录，为应用程序的源代码创建一个子目录。这样能更简单地按照内核所期待的形式组织目录和文件。
 
-Before You Begin
+开始前
 ----------------
 
-* Ensure the Zephyr environment variables are set for each console terminal;
-  see :ref:`apps_common_procedures`.
+* 确保为每个控制台终端都设置了 Zephyr 环境变量。参考 :ref:`apps_common_procedures` 。
 
-Steps
+步骤
 -----
 
-1. Create an application directory structure outside of the kernel's
-   installation directory tree. Often this is your workspace directory.
+1. 在内核的安装目录树外创建一个应用程序目录结构。这通常就是您的工作目录。
 
- a) In a console terminal, navigate to a location where you want your
-    application to reside.
+ a) 从一个控制台终端进入您创建的用于存放应用程序的目录。
 
- b) Create the application's directory, enter:
+ b) 创建应用程序目录，输入：
 
    .. code-block:: console
 
@@ -42,10 +35,9 @@ Steps
 
    .. note::
 
-      This directory and the path to it, are referred to in the documentation
-      as :file:`~/appDir`.
+      这个目录在本文当中叫做 :file:`~/appDir` 。
 
-2. Create a source code directory in your :file:`~/appDir`, enter:
+2. 在 :file:`~/appDir` 下创建源码目录，输入：
 
    .. code-block:: console
 
@@ -58,70 +50,60 @@ Steps
       -- appDir
          |-- src
 
-Creating an Application Makefile
+创建应用程序的 Makefile
 ================================
 
-Create an application Makefile to define basic information,
-such as the board configuration used by the application.
-The build system uses the Makefile to build a :file:`zephyr.elf` image
-that contains both the application and the kernel libraries.
+您需要为应用程序创建一个 Makefile 来定义一些基本信息，例如应用程序使用的板级配置。此外，编译系统还需要利用 Makefile 编译一个包含应用程序和内核库的 :file:`zephyr.elf` 镜像文件。
 
-Before You Begin
+开始前
 ----------------
 
-* Be familiar with the standard GNU Make language.
+* 熟悉标志 GNU Make 语法
 
-* Be familiar with the board configuration used for your application
-  and, if it is a custom board configuration, where it is located.
+* 熟悉用于您的应用程序的板级配置。
 
-* Ensure the Zephyr environment variables are set for each console terminal;
-  see :ref:`apps_common_procedures`.
+* 确保为每个控制台终端都设置了 Zephyr 环境变量。参考 :ref:`apps_common_procedures` 。
 
-Steps
+步骤
 -----
 
-1. In the :file:`appDir` directory, create a Makefile. Enter:
+1. 在 :file:`appDir` 目录下创建一个 Makefile 文件，输入：
 
    .. code-block:: bash
 
       $ touch Makefile
 
-2. Open the :file:`Makefile` and add the following mandatory
-   entries using any standard text editor.
+2. 使用文本编辑器打开 :file:`Makefile` 并添加下面的命令条目。
 
    .. note::
 
-      Ensure that there is a space after each ``=``.
+      确保在每个 ``=`` 后有一个空格。
 
-   a) Add the name of the default board configuration for your application on a
-      new line:
+   a) 在新的一行为您的应用程序添加一个默认板级配置：
 
       .. code-block:: make
 
          BOARD ?= board_configuration_name
 
-      The supported boards can be found in :ref:`board`.
+      所支持的开发板位于 :ref:`board` 。
 
-   b) Add the name of the default kernel configuration file for your
-      application on a new line:
+   b) 在新的一行为您的应用程序添加默认内核配置的名字：
 
       .. code-block:: make
 
          CONF_FILE ?= kernel_configuration_name
 
-      The default kernel configuration file entry may be omitted if the file
-      is called :file:`prj.conf`. It may also be omitted if the default board
-      configuration's kernel settings are sufficient for your application.
+      如果默认的内核配置文件的名字叫做 :file:`prj.conf` ，则该条目可以忽略。如果您的默认板级配置的内核设置足够用于您的应用程序，该条目也可以忽略。
 
-   c) Include the mandatory :file:`Makefile` fragments on a new line:
+   c) 在新的一行包含顶层的 :file:`Makefile` 碎片：
 
       .. code-block:: make
 
          include ${ZEPHYR_BASE}/Makefile.inc
 
-3. Save and close the :file:`Makefile`.
+3. 保存、关闭 :file:`Makefile`.
 
-Example Makefile
+Makefile 举例
 ----------------
 
 .. code-block:: make
@@ -130,37 +112,23 @@ Example Makefile
    CONF_FILE ?= prj.conf
    include ${ZEPHYR_BASE}/Makefile.inc
 
-Support for building third-party library code
+支持编译第三方库
 =============================================
 
-When building library code it is important that both application and library
-code targets the same Application Binary Interface (ABI). On most architectures
-there are compiler flags that control the ABI targeted, making it important
-that both libraries and applications have certain compiler flags in common. It
-may also be useful for glue code to have access to Zephyr kernel header files.
+当编译库文件时需要牢记一点，即库文件和应用程序最终会被编译到同一个镜像（应用程序二进制接口，ABI）中。大多数架构的编译器中都有用于控制 ABI 的编译标志。同时需要注意的是，库文件和应用程序应当具有相同的编译器标志。
 
-To make it easier to integrate third-party components, the Zephyr project
-build system includes a special build target, ``outputexports``, that takes a
-number of critical variables from the Zephyr project build system and copies
-them into :file:`Makefile.export`. This allows the critical variables to be
-included by wrapper code for use in a third-party build system.
+为了更方便地集成第三方组件，Zephyr 项目的编译系统包含了一个特殊的编译目标 —— ``outputexports``，它会从 Zephyr 项目的编译系统中拿取很多关键变量，并将它们拷贝到 :file:`Makefile.export` 中。这样可以让关键变量很方便地封装到第三方的编译系统中。
 
-The following variables are recommended for use within the third-party build (see
-:file:`Makefile.export` for the complete list of exported variables):
 
-* ``CROSS_COMPILE``, together with related convenience variables to call the
-  cross-tools directly (including ``AR``, ``AS``, ``CC``, ``CXX``, ``CPP``
-  and ``LD``).
+推荐将下列变量用于第三方的编译中（参考 :file:`Makefile.export` 查看所导出的变量的完整列表）：
 
-* ``ARCH`` and ``BOARD``, together with several variables that identify the
-  Zephyr kernel version.
+* ``CROSS_COMPILE`` 以及相关的调用交叉编译器的变量（包括 ``AR``, ``AS``, ``CC``, ``CXX``, ``CPP``
+  and ``LD``）。
 
-* ``KBUILD_CFLAGS``, ``NOSTDINC_FLAGS`` and ``ZEPHYRINCLUDE`` all of which
-  should normally be added, in that order, to ``CFLAGS`` (or
-  ``CXXFLAGS``).
+* ``ARCH``，``BOARD`` 以及一些标识 Zephyr 内核版本的变量。
 
-* All kconfig variables, allowing features of the library code to be
-  enabled/disabled automatically based on the Zephyr kernel configuration.
+* ``KBUILD_CFLAGS``, ``NOSTDINC_FLAGS``， ``ZEPHYRINCLUDE`` 应当按顺序添加到 ``CFLAGS`` 或者 ``CXXFLAGS`` 中。
 
-:file:`samples/static_lib` is a sample project that demonstrates
-some of these features.
+* 所有的 Kconfig 变量，允许基于 Zephyr 内核版本的库代码的功能被自动使能/禁止。
+
+:file:`samples/static_lib` 是一个用于演示这些特性的例程项目。

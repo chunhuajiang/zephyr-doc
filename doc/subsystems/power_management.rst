@@ -1,119 +1,84 @@
 .. _power_management:
 
-Power Management
+电源管理
 ################
 
-The power management infrastructure consists of interfaces exported by the
-power management subsystem.  This subsystem exports interfaces that a
-:abbr:`Power Management Application (PMA)` uses to implement power management
-policies.
+电源管理部分由电源管理子系统所暴露的接口组成。:abbr:`电源管理应用 (PMA)` 使用该接口实现电源管理策略。
 
-Terminology
+术语
 ***********
 
 :dfn:`PMA`
 
-   The system integrator provides the :abbr:`PMA (Power Manager
-   Application)`. The PMA maintains any power management policies and
-   executes the power management actions based on those policies.
-   The PMA must be integrated into the main Zephyr application.
+   系统集成者提供 :abbr:`PMA (电源管理应用)` 。PMA 负责维护所有电源管理相关的策略并基于这些策略执行电源管理相关的动作。PMA 必须被集成到 Zephyr 主应用程序中。
 
 :dfn:`LPS`
 
-   :abbr:`LPS (Low Power States)` refers to any one of the low power states supported by the CPU.
+   :abbr:`LPS (低功耗状态)` 指的是 CPU 提供的任何一个低功耗状态。
 
-:dfn:`SoC Power State`
+:dfn:`SoC 功耗状态`
 
-   An SoC Power State describes processor and device power statuses
-   implemented at the SoC level.
+   Soc 功耗状态描述处理器和设备在 SoC 级实现的功耗状态。
 
-:dfn:`Hook function`
+:dfn:`钩子函数`
 
-   A Hook function is a callback function that one component implements and
-   another component calls. For example, the PMA implements functions that
-   the kernel calls.
+   钩子函数是由一个组件实现另一个组件调用的回调函数。例如，PMA 实现的由内核调用的函数。
 
-Architecture and SoC dependent Power States:
+架构和 SoC 相关的电源状态
 ============================================
 
-On x86:
--------
+x86 
+---------------
 
-   `Active`
-      The CPU is active and running in the hardware defined C0 C-state.
+   `活跃`
+      CPU 是活跃的，且正运行在硬件定义的 C0 C-状态。
 
-   `Idle`
-      The CPU is not active but continues to be powered.
-      The CPU may be in one of any lower C-states: C1, C2, etc.
+   `空转`
+      CPU 不是活跃的，但是继续处于上电状态。CPU 可能正处于某个更低的 C-状态：C1、C2等。
 
-   `Deep Sleep`
-      The Power is off to the processor and system clock. RAM is retained.
+   `深度睡眠`
+      处理器和系统时钟的电源被关闭，但是 RAM 被保留。
 
-On ARM
+ARM
 ------
 
-    `Active`
-        The CPU is active and running.
+    `活跃`
+        CPU 是活跃的，且正在运行。
 
-    `Idle`
-        Stops the processor clock. The ARM documentation describes
-        this as *Sleep*.
+    `空转`
+        停止处理器时钟。ARM 的文档将这种状态描述未 *睡眠*。
 
-    `Deep Sleep`
-        Stops the system clock and switches off the PLL and flash
-        memory. RAM is retained.
+    `深度睡眠`
+        停止系统时钟并关闭 PLL 和 flash 内存，但是 RAM 被保留。
 
-On ARC
+ARC
 ------
 
-    `Active`
-        The CPU is currently active and running in the SS0 state.
+    `活跃`
+        CPU 当前是活跃的，且运行在 SS0 状态。
 
-    `Idle`
-        Defined as the SS1 and SS2 states.
+    `空转`
+        定义为 SS1 和 SS2 状态。
+	
+这里描述的电源状态是通用术语，它们与基于上面三种架构的处理器和 SoC 所支持的电源状态是对应的。当编写 PMA 代码时，请参考 SoC 的数据手册去获取关于每种功耗状态的详细描述。
 
-The power states described here are generic terms that map to the power
-states commonly supported by processors and SoCs based on the three
-architectures. When coding a PMA, please refer to the data sheet of the SoC
-to get details on each power state.
-
-Overview
+概述
 ********
 
-The Zephyr power management subsystem provides interfaces that a system
-integrator can use to create a PMA. The PMA then enforces any policies
-needed. The design is based on the philosophy of not enforcing any policies
-in the kernel giving full flexibility to the PMA.
+Zephyr 电源管理子系统提供了可供系统集成者用于创建 PMA 的接口。然后，PMA 执行任何所需策略。电源管理的设计哲学是不再内核中执行任何策略，将所有权完全交给 PMA。
 
-The provided infrastructure has an architecture independent interface.
-The kernel notifies the PMA when it is about to
-enter or exit a system idle state. The PMA can perform the power management
-policy operations during these notifications.
+Zephyr 所提供的基础设置有一个与架构无关的接口。当内核将要进入或退出空转状态时，它会通知 PMA。PMA 可以在这些通知期间执行能执行电源管理策略。
 
-Policies
+策略
 ********
 
-When the power management subsystem notifies the PMA that the kernel is about
-to enter a system idle state, it specifies the period of time the system
-intends to stay idle. The PMA performs any power management operations during
-this time. The PMA can perform various operations. For example, put the
-processor or the SoC in a low power state, turn off some or all of the
-peripherals, and gate device clocks. Using combinations of these operations,
-the PMA can create fine grain custom power management policies.
+当内核即将进入系统空转状态时，电源管理子系统会通知 PMA，并指定系统将会处于空转状态的时间。PMA 可以在这期间执行任何电源管理操作。PMA 可以执行各种操作，例如让处理器或 SoC 进入低功耗状态，关闭部分或全部外设，关闭设备时钟。通过对这些操作进行组合，PMA 可以创建一个多元的自定义电源管理策略。
 
-Different levels of power savings and different wake latencies characterize
-these fine grain policies. In general, operations that save more power have a
-higher wake latency. When making policy decisions, the PMA chooses the
-policy that saves the most power. At the same time, the policy's total
-execution time must fit well within the idle time allotted by the power
-management subsystem.
 
-The Zephyr power management subsystem classifies policies into categories
-based on relative power savings and the corresponding wake latencies. These
-policies also loosely map to common processor and SoC power states in the
-supported architectures. The PMA should map the fine grain custom policies to
-the policy categories of the power management subsystem. The power management
-subsystem defines three categories:
+不同的节电等级和不同的唤醒延迟都是这些多元策略的特征。通常，节电更多的操作都会导致更多的唤醒延迟。当做策略决定时，PMA 选择节电最多的策略。同时，策略的总执行时间必须在电源管理子系统所分摊的空转时间内。
+
+
+Zephyr 的电源管理策略根据相对的节电效果和相应的唤醒延迟将策略进行分类。这些策略大致映射为所支持架构的通用处理器和 SoC 的电源状态。PMA 应当将细的自定义策略映射到电源管理子系统的策略分类中。电源管理子系统定义了三种策略。
 
 * SYS_PM_LOW_POWER_STATE
 * SYS_PM_DEEP_SLEEP
@@ -122,187 +87,121 @@ subsystem defines three categories:
 SYS_PM_LOW_POWER_STATE
 ======================
 
-In this policy category, the PMA performs power management operations on some
-or all devices and puts the processor into a low power state. The device
-power management operations can involve turning off peripherals and gating
-device clocks. When any of those operations causes the device registers to
-lose their state, then those states must be saved and restored. The PMA
-should map fine grain policies with relatively less wake latency to this
-category. Policies with larger wake latency should be mapped to the
-`SYS_PM_DEEP_SLEEP`_ category. Policies in this category exit from an
-external interrupt, a wake up event set by the PMA, or when the idle time
-alloted by the power management subsystem expires.
+在这种类策略中，PMA 在部分或全部设备上执行电源管理操作，且让处理器进入一个低功耗状态。设备管理操作可能关闭外设、切断设备时钟。当任何操作有可能导致设备的寄存器状态改变时，这些状态必须被保存并在将来被恢复。PMA 应当映射延迟相对较少的细策略到这种分类。唤醒延迟更对的策略应当映射到 SYS_PM_DEEP_SLEEP`_ 。当 PMA 设置了一个唤醒事件，或者电源管理子系统分配的空转时间到期，或者发生了外部中断，这种分类的策略退出都将退出。
 
 SYS_PM_DEEP_SLEEP
 =================
 
-In this policy category, the PMA puts the system into the deep sleep power
-states supported by SoCs. In this state, the system clock is turned off. The
-processor is turned off and loses its state. RAM is expected to be retained
-and can save and restore processor states. Only the devices necessary to wake
-up the system from the deep sleep power state stay on. The SoC turns off the
-power to all other devices. Since this causes device registers to lose their
-state, they must be saved and restored. The PMA should map fine grain
-policies with the highest wake latency to this policy category. Policies in
-this category exit from SoC dependent wake events.
+在这种类策略中，PMA 让系统进入 SoC 所支持的深度睡眠状态。在这种状态下，系统时钟被关闭。处理器被关闭，并丢失状态。RAM 应当被保留，以便存储并恢复状态。只有需要将系统从深度睡眠状态中唤醒的设备保持开启；其它所有设备的电源都被 SoC 关闭。由于这样会导致设备的寄存器丢失，它们的状态必须被存储并恢复。PMA 应当将唤醒延迟最高的细策略映射到此策略。当发生 SoC 相关的唤醒事件时，这种分类的策略退出。
 
 SYS_PM_DEVICE_SUSPEND_ONLY
 ==========================
 
-In this policy category, the PMA performs power management operations on some
-devices but none that result in a processor or SoC power state transition.
-The PMA should map its fine grain policies that have the lowest wake latency
-to this policy category. Policies in this category exit from an external
-interrupt or when the idle time alloted by the power management subsystem
-expires.
+在这种策略中，PAM 在某些设备上执行电源管理操作，但是该操作不对导致处理器或 SoC 的电源状态转换。PAM 应当将唤醒延时最小的细策略映射到此策略。当发生外部中断时，或者电源管理子系统分配的空转时间到期时，这种分类的策略都将退出。
 
-Some policy categories names are similar to the power states of processors or
-SoCs, for example, :code:`SYS_PM_DEEP_SLEEP`. However, they must be seen
-as policy categories and do not indicate any specific processor or SoC power
-state by themselves.
+某些策略分类与处理器或 SoC 的电源状态相似，例如 :code:`SYS_PM_DEEP_SLEEP` 。不过，它们必须被看着策略分类，且不指示任何相相关的处理器或 SoC 电源状态。
 
 .. _pm_hook_infra:
 
-Power Management Hook Infrastructure
+电源管理钩子基础设施
 ************************************
 
-This infrastructure consists of the hook functions that the PMA implemented.
-The power management subsystem calls these hook functions when the kernel
-enters and exits the idle state, in other words, when the kernel has nothing
-to schedule. This section provides a general overview and general concepts of
-the hook functions. Refer to :ref:`power_management_api` for the detailed
-description of the APIs.
+这个基础设施由 PMA 实现的钩子函数组成。当内核进入和退出空转状态时（换句话说，内核没有需要调度的线程），电源管理子系统会调用这些钩子函数。本节对钩子函数的概念做一个概述，关于其 API 的具体描述请参考 :ref:`power_management_api` 。
 
-Suspend Hook function
+挂起钩子函数
 =====================
 
 .. code-block:: c
 
    int _sys_soc_suspend(int32_t ticks);
 
-When the kernel is about to go idle, the power management subsystem calls the
-:code:`_sys_soc_suspend()` function, notifying the PMA that the kernel is
-ready to enter the idle state.
+当内核即将进入空转状态时，电源管理子系统调用函数 :code:`_sys_soc_suspend()` 通知 PMA。
 
-At this point, the kernel has disabled interrupts and computed the maximum
-number of ticks the system can remain idle. The function passes the time that
-the system can remain idle to the PMA along with the notification. When
-notified, the PMA selects and executes one of the fine grain power policies
-that can be executed within the allotted time.
+此时，内核已经禁止中断且计算完系统最多可以空转多少个时钟滴答。此函数会通知 MPA 时将这个时间传也递给它。当接收到通知后，PMA 选择并执行某个可以在所分配的时间内执行完的电源策略。
 
-The power management subsystem expects the :code:`_sys_soc_suspend()` to
-return one of the following values based on the power management operations
-the PMA executed:
+电源管理子系统会期待从 :code:`_sys_soc_suspend()` 返回下列某个值：
 
 :code:`SYS_PM_NOT_HANDLED`
 
-   No power management operations. Indicates that the PMA could not
-   accomplish any actions in the time allotted by the kernel.
+   没有电源管理操作。表明 PMA 在内核所分配的时间内不能完成任何操作。
 
 :code:`SYS_PM_DEVICE_SUSPEND_ONLY`
 
-   Only devices are suspended. Indicates that the PMA could accomplish any
-   device suspend operations. These operations do not include any processor
-   or SOC power operations.
+   只有设备被挂起。表明 PAM 可以执行任何设备挂起操作。这些操作不包括任何处理器或 SoC 的电源操作。
 
 :code:`SYS_PM_LOW_POWER_STATE`
 
-   Entered a LPS. Indicates that the PMA could put the processor into a low
-   power state.
+   进入一个低功耗状态。表明 PMA 可以让处理器进入低功耗状态。
 
 :code:`SYS_PM_DEEP_SLEEP`
 
-   Entered deep sleep. Indicates that the PMA could put the SoC in a deep
-   sleep state.
+   进入深度睡眠。表明 PMA 可以将 SoC 进入深度睡眠状态。
 
-Resume Hook function
+恢复钩子函数
 ====================
 
 .. code-block:: c
 
    void _sys_soc_resume(void);
 
-The kernel calls this hook function when exiting from an idle state or a low
-power state. Based on which policy the PMA executed in the
-:code:`_sys_soc_suspend()` function, the PMA performs the necessary recovery
-operations in this hook function.
+当从空转状态或低功耗状态退出时，内核会调用该函数。PMA 会根据在 :code:`_sys_soc_suspend()` 中执行的何种策略需要来执行必须的恢复操作。
 
-Since the hook functions are called with the interrupts disabled, the PMA
-should ensure that its operations are completed quickly. Thus, the PMA
-ensures that the kernel's scheduling performance is not disrupted.
+由于钩子函数是在中断被禁止时调用的，PMA 应当确保它的操作快速完成。因此，PMA 将确保内核的调度执行不产生混乱。
 
-Device Power Management Infrastructure
+设备电源管理基础设施
 **************************************
 
-The device power management infrastructure consists of interfaces to the Zephyr
-device model. These APIs send control commands to the device driver
-to update its power state or to get its current power state.
-Refer to  :ref:`power_management_api` for detailed descriptions of the APIs.
+设备电源管理基础设施由 Zephyr 设备模型的接口组成。这些 API 发送控制命令给设备驱动程序，让它们更新电源状态或者返回当前电源状态。关于这些 API 的详细描述请参考 :ref:`power_management_api` 。
 
-Device Power Management States
+设备电源管理状态
 ==============================
-The Zephyr OS power management subsystem defines four device states.
-These states are classified based on the degree of context that gets lost in
-those states, kind of operations done to save power and the impact on the device
-behavior due to the state transition. Device context include device hardware
-registers, clocks, memory etc.
+Zephyr OS 电源管理子系统定义了四种设备状态。这些状态按照其上下文丢失程度、节电时需要完成的操作以及由于状态转换时对设备行为的影响来进行分类。设备上下文包括硬件寄存器、时钟、内存等。
 
-The four device power states:
+四种设备状态：
 
 :code:`DEVICE_PM_ACTIVE_STATE`
 
-   Normal operation of the device. All device context is retained.
+   设备的常规操作。所有的设备上下文被保留。
 
 :code:`DEVICE_PM_LOW_POWER_STATE`
 
-   Device context is preserved by the HW and need not be restored by the driver.
+   设备的上下文由硬件存储，不需要驱动程序恢复。
 
 :code:`DEVICE_PM_SUSPEND_STATE`
 
-   Most device context is lost by the hardware. Device drivers must save and
-   restore or reinitialize any context lost by the hardware.
+   大多数设备状态已被硬件丢失。设备驱动程序必须保存并恢复（或者重新初始化）硬件丢失的上下文。
 
 :code:`DEVICE_PM_OFF_STATE`
 
-   Power has been fully removed from the device. The device context is lost
-   when this state is entered. Need to reinitialize the device when powering
-   it back on.
+   电源管理从设备中完全移除。当进入这个状态时，设备的上下文丢失。当设备重新上电后需要重新初始化。
 
-Device Power Management Operations
+设备电源管理操作
 ==================================
 
-Zephyr OS provides a generic API function to send control commands to the driver.
-Currently the supported control commands are:
+Zephyr OS 提供了一个通用 API 函数给驱动程序发送控制命令。当前支持的控制命令包括：
 
 * DEVICE_PM_SET_POWER_STATE
 * DEVICE_PM_GET_POWER_STATE
 
-In the future Zephyr OS may support additional control commands.
-Drivers can implement the control command handler to support the device driver's
-power management functionality.
-Each device driver defines:
+将来可能会支持其它的控制命令。驱动程序可以执行控制命令处理函数，以支持设备驱动的电源管理功能。每个设备驱动程序需要定义：
 
-* The device's supported power states.
-* The device's supported transitions between power states.
-* The device's necessary operations to handle the transition between power states.
+* 设备所支持的状态。
+* 设备所支持的在电源状态间的转换。
+* 设备在进行电源状态转换时的必要操作。
 
-The following are some examples of operations that the device driver may perform
-in transition between power states:
+下面是设备在进行电源状态转换时可能执行的操作的一个例子：
 
-* Save/Restore device states.
-* Gate/Un-gate clocks.
-* Gate/Un-gate power.
-* Mask/Un-mask interrupts.
+* 保存/恢复设备状态。
+* 截断/开启时钟。
+* 截断/开启电源。
+* 屏蔽/解除屏蔽中断。
 
-Device Model with Power Management Support
+带电源管理的设备模型
 ==========================================
 
-Drivers initialize the devices using macros. See :ref:`device_drivers` for
-details on how these macros are used. Use the DEVICE_DEFINE macro to initialize
-drivers providing power management support via the control function.
-One of the macro parameters is the pointer to the device_control handler function.
+驱动程序使用宏对设备进行初始化，关于该宏的详细使用说明请参考 :ref:`device_drivers` 。使用宏 DEVICE_DEFINE 初始化驱动程序时会通过控制函数提供电源管理的支持。宏有一个指针参数指向 device_control 处理函数。
 
-Default Initializer Function
+默认初始化器函数
 ----------------------------
 
 .. code-block:: c
@@ -310,289 +209,216 @@ Default Initializer Function
    int device_control_nop(struct device *unused_device, uint32_t unused_ctrl_command, void *unused_context);
 
 
-If the driver doesn't implement any power control operations, the driver can
-initialize the corresponding pointer with this default nop function. This
-default initializer function does nothing and should be used instead of
-implementing a dummy function to avoid wasting code memory in the driver.
+如果驱动程序没有实现任何电源控制操作，它可以使用默认的 nop 函数初始化相应的指针。默认的初始化函数不会做任何动作，它可以用来替代实现虚假函数，从而避免浪费代码空间。
 
 
-Device Power Management API
+设备电源管理 API
 ===========================
 
-The SOC interface and application use these APIs to perform power management
-operations on the devices.
+SoC 接口和应用程序使用这些 API 在设备上执行电源管理操作。
 
-Get Device List
+获取设备列表
 ---------------
 
 .. code-block:: c
 
    void device_list_get(struct device **device_list, int *device_count);
 
-The Zephyr kernel internally maintains a list of all devices in the system.
-The PMA uses this API to get the device list. The PMA can use the list to
-identify the devices on which to execute power management operations.
+Zephyr 内核会在内部维护一个由系统中所有设备构成的链表。PMA 使用这个 API 获取设备链表。PMA 可以使用这个链表对需要执行电源管理操作的设备做标识。
 
-The PMA can use this list to create a sorted order list based on device
-dependencies. The PMA creates device groups to execute different policies
-on each device group.
+PMA 可以利用这个链表创建一个新的按设备依赖关系排列的链表。PMA 可以创建不同的设备组来执行不同的策略。
 
 .. note::
 
-   Ensure that the PMA does not alter the original list. Since the kernel
-   uses the original list, it should remain unchanged.
+   确保 PMA 不要更改原始链表，因为内核会使用原始链表。
 
-Device Set Power State
+设备设置电源状态
 ----------------------
 
 .. code-block:: c
 
    int device_set_power_state(struct device *device, uint32_t device_power_state);
 
-Calls the :c:func:`device_control()` handler function implemented by the
-device driver with DEVICE_PM_SET_POWER_STATE command.
+使用命令 DEVICE_PM_SET_POWER_STATE 调用由设备驱动程序实现的处理函数 :c:func:`device_control()` 。
 
-Device Get Power State
+设备获取电源状态
 ----------------------
 
 .. code-block:: c
 
    int device_get_power_state(struct device *device, uint32_t * device_power_state);
 
-Calls the :c:func:`device_control()` handler function implemented by the
-device driver with DEVICE_PM_GET_POWER_STATE command.
+使用命令 DEVICE_PM_GET_POWER_STATE 调用由设备驱动程序实现的处理函数 :c:func:`device_control()` 。
 
-Busy Status Indication
+忙状态指示
 ======================
 
-The PMA executes some power policies that can turn off power to devices,
-causing them to lose their state. If the devices are in the middle of some
-hardware transaction, like writing to flash memory when the power is turned
-off, then such transactions would be left in an inconsistent state. This
-infrastructure guards such transactions by indicating to the PMA that
-the device is in the middle of a hardware transaction.
+PMA 执行可以关闭设备电源的电源策略时可能导致设备丢失状态。如果关闭电源时设备正在处理硬件业务（例如向 flash 中写数据），可能会使这些业务处于非一致性状态。基础设施能指示 PMA ，告知它设备正在处理这样的硬件业务，从而达到保护业务的目的。
 
-When the :code:`_sys_soc_suspend()` is called, the PMA checks if any device
-is busy. The PMA can then decide to execute a policy other than deep sleep or
-to defer power management operations until the next call of
-:code:`_sys_soc_suspend()`.
+当 :code:`_sys_soc_suspend()` 被调用时， PMA 会检查是否有设备处于忙状态。PMA 可以自行决定是执行一个非深度睡眠的其它策略还是延迟电源管理操作（知道下次调用 :code:`_sys_soc_suspend()` ）。
 
-If other recovery or retrieval methods are in place, the driver can avoid
-guarding the transactions. Not all hardware transactions must be guarded. The
-Zephyr kernel provides the following APIs for the device drivers and the PMA
-to decide whether a particular transaction must be guarded.
+并不是所有的硬件业务都必须被保证。如果有恰当的恢复或挽回方法，驱动程序可以无需对业务进行保证。Zephyr 内核为设备驱动程序和 PMA 提供了如下的 API 判读是否需要保证某个特殊的业务。
 
-Indicate Busy Status API
+指示忙状态的 API
 ------------------------
 
 .. code-block:: c
 
    void device_busy_set(struct device *busy_dev);
 
-Sets a bit corresponding to the device, in a data structure maintained by the
-kernel, to indicate whether or not it is in the middle of a transaction.
+设置由内核维护的数据结构中的某设备的相应比特，用以指示设备是否正处于某个业务中。
 
-Clear Busy Status API
+清除忙状态的 API
 ---------------------
 
 .. code-block:: c
 
    void device_busy_clear(struct device *busy_dev);
 
-Clears the bit corresponding to the device in a data structure
-maintained by the kernel to indicate that the device is not in the middle of
-a transaction.
+清除由内核维护的数据结构中的某设备的相应比特，用以指示设备没有处于某个业务中。
 
-Check Busy Status of Single Device API
+检查单个设备忙状态的 API
 --------------------------------------
 
 .. code-block:: c
 
    int device_busy_check(struct device *chk_dev);
 
-Checks whether a device is busy. The API returns 0 if the device
-is not busy.
+检查是否某个是被正忙。如果设备不忙返回 0。
 
-Check Busy Status of All Devices API
+检查所有设备忙状态的 API
 ------------------------------------
 
 .. code-block:: c
 
    int device_any_busy_check(void);
 
-Checks if any device is busy. The API returns 0 if no device in the system is busy.
+检查是否有设备正忙。如果没有设备忙则放回 0。
 
 .. _pm_config_flags:
 
-Power Management Configuration Flags
+电源管理配置标志
 ************************************
 
-The Power Management features can be individually enabled and disabled using
-the following configuration flags.
+可以使用下列配置标志单独使能和禁止电源管理功能。
 
 :code:`CONFIG_SYS_POWER_MANAGEMENT`
 
-   This flag enables the power management subsystem.
+   该标志使能电源管理子系统。
 
 :code:`CONFIG_SYS_POWER_LOW_POWER_STATE`
 
-   The PMA enables this flag to use the :code:`SYS_PM_LOW_POWER_STATE` policy.
+   PMA 使能该标志，以使用 :code:`SYS_PM_LOW_POWER_STATE` 策略。
 
 :code:`CONFIG_SYS_POWER_DEEP_SLEEP`
 
-   This flag enables support for the :code:`SYS_PM_DEEP_SLEEP` policy.
+   该标志使能对 :code:`SYS_PM_DEEP_SLEEP` 策略的支持。
 
 :code:`CONFIG_DEVICE_POWER_MANAGEMENT`
 
-   This flag is enabled if the PMA and the devices support device power
-   management.
+   如果 PMA 和设备支持设备电源管理，需要使能该标志。
 
-Writing a Power Management Application
+写一个电源管理应用程序
 **************************************
 
-A typical PMA executes policies through power management APIS.  This section
-details various scenarios that can be used to help developers write their own
-custom PMAs.
+PMA 通过电源管理 API 执行策略。本节详细地描述应用开发者在各种场景下如何写它们自定义的 PMA。
 
-The PMA is part of a larger application doing more than just power
-management. This section focuses on the power management aspects of the
-application.
-
-Initial Setup
+初始化设置
 =============
 
-To enable the power management support, the application must do the following:
+要使能对电源管理的支持，应用程序必须按照如下步骤：
 
-#. Enable the :code:`CONFIG_SYS_POWER_MANAGEMENT` flag
+#. 使能 :code:`CONFIG_SYS_POWER_MANAGEMENT` 标志。
 
-#. Enable other required config flags described in :ref:`pm_config_flags`.
+#. 使能所需的其它配置标志，参考 :ref:`pm_config_flags` 。
 
-#. Implement the hook functions described in :ref:`pm_hook_infra`.
+#. 实现钩子函数，参考 :ref:`pm_hook_infra` 。
 
-Device List and Policies
+设备列表和策略
 ========================
 
-The PMA retrieves the list of enabled devices in the system using the
-:c:func:`device_list_get()` function. Since the PMA is part of the
-application, the PMA starts after all devices in the system have been
-initialized. Thus, the list of devices will not change once the application
-has begun.
+PMA 使用函数 :c:func:`device_list_get()` 恢复系统中使能设备的链表。由于是应用程序的一部分，PMA 会在系统所有设备初始化后才会启动。因此，一旦应用程序启动后，设备链表不会改变。
 
-Once the device list has been retrieved and stored, the PMA can form device
-groups and sorted lists based on device dependencies. The PMA uses the device
-lists and the known aggregate wake latency of the combination of power
-operations to create the fine grain custom power policies. Finally, the PMA
-maps these custom policies to the policy categories defined by the power
-management subsystem as described in `Policies`_.
+一旦设备链表被恢复和存储后，PMA 可以构成设备组，并按照设备依赖关系对链表进行排序。PMA 使用设备链表和已知的电源操作唤醒延迟来创建自定义细电源策略。最后，PMA 将将这些自定义策略映射为 `Policies`_ 所描述的电源管理策略。
 
-Scenarios During Suspend
+挂起期间的情景
 ========================
 
-When the power management subsystem calls the :code:`_sys_soc_suspend()`
-function, the PMA can select between multiple scenarios.
+当电源管理子系统调用 :code:`_sys_soc_suspend()` 函数后，PMA 可以选择多种场景。
 
-Scenario 1
+情景 1
 ----------
 
-The time allotted is too short for any power management.
+所分配的时间太短而不能用于任何电源管理操作。
 
-In this case, the PMA leaves the interrupts disabled, and returns the code
-:code:`SYS_PM_NOT_HANDLED`. This actions allow the Zephyr kernel to continue
-with its normal idling process.
+在这群情况下，PMA 将保持中断的禁止，并返回代码 :code:`SYS_PM_NOT_HANDLED` 。这个动作允许 Zephyr 内核继续进行常规的空转处理。
 
-Scenario 2
+情景 2
 ----------
 
-The time allotted allows the suspension of some devices.
+所分配的时间允许某些设备挂起。
 
-The PMA scans through the devices that meet the criteria and calls the
-:c:func:`device_set_power_state()` function with DEVICE_PM_SUSPEND_STATE state
-for each device.
+PMA 扫描满足该标志的设备，并使用状态 DEVICE_PM_SUSPEND_STATE 为每个设备调用函数 :c:func:`device_set_power_state()` 。
 
-After all devices are suspended properly, the PMA executes the following
-operations:
+当所有的设备都挂起后，PMA 执行下列操作：
 
-* If the time allotted is enough for the :code:`SYS_PM_LOW_POWER_STATE`
-  policy:
+* 如果所分配的事件足够执行 :code:`SYS_PM_LOW_POWER_STATE` 策略：
 
-   #. The PMA sets up the wake event, puts the CPU in a LPS, and re- enables
-      the interrupts at the same time.
+   #. PMA 设置唤醒事件，让 CPU 进入低功耗装填，并同时重新使能中断。
 
-   #. The PMA returns the :code:`SYS_PM_LOW_POWER_STATE` code.
+   #. 返回代码 :code:`SYS_PM_LOW_POWER_STATE` 。
 
-* If the time allotted is not enough for the :code:`SYS_PM_LOW_POWER_STATE`
-  policy, the PMA returns the :code:`SYS_PM_DEVICE_SUSPEND_ONLY` code.
+* 如果所分配的时间不足以执行 :code:`SYS_PM_LOW_POWER_STATE` 策略，PMA 返回代码 :code:`SYS_PM_DEVICE_SUSPEND_ONLY` 。
 
-When a device fails to suspend, the PMA executes the following operations:
+当是被挂起失败，PMA 执行下列操作：
 
-* If the system integrator determined that the device is not essential to the
-  suspend process, the PMA can ignore the failure.
+* 如果系统集成者认为该设备不是必须被挂起，PMA 可以直接忽略之。
 
-* If the system integrator determined that the device is essential to the
-  suspend process, the PMA takes any necessary recovery actions and
-  returns the :code:`SYS_PM_NOT_HANDLED` code.
+* 如果系统集成者认为该设备必须挂起，PAM 需要采取任何必须的恢复动作，并返回代码 :code:`SYS_PM_NOT_HANDLED` 。
 
-Scenario 3
+情景 3
 ----------
 
-The time allotted is enough for all devices to be suspended.
+所分配的时间允许所有设备挂起。
 
-The PMA calls the :c:func:`device_set_power_stated()` function with
-DEVICE_PM_SUSPEND_STATE state for each device.
+PMA 使用状态 DEVICE_PM_SUSPEND_STATE 为每个设备调用函数 :c:func:`device_set_power_state()` 。
 
-After all devices are suspended properly and the time allotted is enough for
-the :code:`SYS_PM_DEEP_SLEEP` policy, the PMA executes the following
-operations:
+当所有的设备都被挂起，且所分配的时间足够执行 :code:`SYS_PM_DEEP_SLEEP` 策略，PMA 执行下列操作：
 
-#. Calls the :c:func:`device_any_busy_check()` function to get device busy
-   status. If any device is busy, the PMA must choose a policy other than
-   :code:`SYS_PM_DEEP_SLEEP`.
-#. Sets up wake event.
-#. Puts the SOC in the deep sleep state.
-#. Re-enables interrupts.
-#. Returns the :code:`SYS_PM_DEEP_SLEEP` code.
+#. 调用函数 :c:func:`device_any_busy_check()` 以获取设备忙状态。如果有设备忙，PMA 必须选择除 :code:`SYS_PM_DEEP_SLEEP` 之前的某个策略。
+#. 设置唤醒事件。
+#. 让 SoC 处于深度睡眠状态。
+#. 重新使能中断。
+#. 返回代码 :code:`SYS_PM_DEEP_SLEEP` 。
 
-If, on the other hand, the time allotted is only enough for the
-:code:`SYS_PM_LOW_POWER_STATE` policy, The PMA executes the following
-operations:
+如果所分配的时间只能够用于执行能够 :code:`SYS_PM_LOW_POWER_STATE` 策略，PMA 执行下列操作：
 
-#. Sets up wake event.
-#. Puts the CPU in a LPS re-enabling interrupts at the same time.
-#. Returns the :code:`SYS_PM_LOW_POWER_STATE` code.
+#. 设置唤醒事件。
+#. 让 CPU 进入某个低功耗状态，并同时重新使能中断。
+#. 返回代码 :code:`SYS_PM_LOW_POWER_STATE` 。
 
-If the time allotted is not enough for any CPU or SOC power management
-operations, the PMA returns the :code:`SYS_PM_DEVICE_SUSPEND_ONLY` code.
+如果所分配的时间不够用于 CPU 或 SoC 执行任何调用管理操作，PMA 返回代码 :code:`SYS_PM_DEVICE_SUSPEND_ONLY` 。
 
-When a device fails to suspend, the PMA executes the following operations:
+当设备挂起失败时，PMA 执行下列操作：
 
-* If the system integrator determined that the device is not essential to the
-  suspend process the PMA can ignore the failure.
+* 如果系统集成者认为该设备不是必须被挂起，PMA 可以直接忽略之。
 
-* If the system integrator determined that the device is essential to the
-  suspend process, the PMA takes any necessary recovery actions and
-  returns the :code:`SYS_PM_NOT_HANDLED` code.
+* 如果系统集成者认为该设备必须挂起，PAM 需要采取任何必须的恢复动作，并返回代码 :code:`SYS_PM_NOT_HANDLED` 。
 
-Policy Decision Summary
+策略决定总结
 =======================
 
 +---------------------------------+---------------------------------------+
-| PM operations                   | Policy and Return Code                |
+| PM 操作                         | 策略和返回代码                        |
 +=================================+=======================================+
-| Suspend some devices and        | :code:`SYS_PM_LOW_POWER_STATE`        |
-|                                 |                                       |
-| Enter Low Power State           |                                       |
+| 挂起某些设备并进入低功耗状态    | :code:`SYS_PM_LOW_POWER_STATE`        |
 +---------------------------------+---------------------------------------+
-| Suspend all devices and         | :code:`SYS_PM_LOW_POWER_STATE`        |
-|                                 |                                       |
-| Enter Low Power State           |                                       |
+| 挂起所有设备并进入低功耗状态    | :code:`SYS_PM_LOW_POWER_STATE`        |
 +---------------------------------+---------------------------------------+
-| Suspend all devices and         | :code:`SYS_PM_DEEP_SLEEP`             |
-|                                 |                                       |
-| Enter Deep Sleep                |                                       |
+| 挂起所有设备并进入深度睡眠      | :code:`SYS_PM_DEEP_SLEEP`             |
 +---------------------------------+---------------------------------------+
-| Suspend some or all devices and | :code:`SYS_PM_DEVICE_SUSPEND_ONLY`    |
-|                                 |                                       |
-| No CPU/SoC PM Operation         |                                       |
+| 挂起部分或全部设备，            | :code:`SYS_PM_DEVICE_SUSPEND_ONLY`    |
+| 无 CPU/SoC PM 操作              |                                       |
 +---------------------------------+---------------------------------------+
-| No PM operation                 | :code:`SYS_PM_NOT_HANDLED`            |
+| 无 PM 操作                      | :code:`SYS_PM_NOT_HANDLED`            |
 +---------------------------------+---------------------------------------+

@@ -1,82 +1,56 @@
 .. _ring_buffers_v2:
 
-Ring Buffers
+环形缓冲
 ############
 
-A :dfn:`ring buffer` is a circular buffer of 32-bit words, whose contents
-are stored in first-in-first-out order. Data items can be enqueued and dequeued
-from a ring buffer in chunks of up to 1020 bytes. Each data item also has
-two associated metadata values: a type identifier and a 16-bit integer value,
-both of which are application-specific.
+:dfn:`环形缓冲（ring buffer）` 是一个以 32 比特字为单位的、以先进先出的顺序进行存储的环形缓冲。从环形缓冲中入队/出队的单个数据项的最多能达到 1020 字节。每个数据项有两个相关联的元数据值：类型标识符和 16 比特的整数值，二者都由应用程序指定。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-Any number of ring buffers can be defined. Each ring buffer is referenced
-by its memory address.
+可以定义任意数量的环形缓冲。每个环形缓冲通过其地址进行引用。
 
-A ring buffer has the following key properties:
+环形缓冲的关键属性包括：
 
-* A **data buffer** of 32-bit words. The data buffer contains the data items
-  that have been added to the ring buffer but not yet removed.
+* **数据缓冲区**： 以 32 比特字为单位。它包含已被添加到环形缓冲区但还未被移除的数据项。
 
-* A **data buffer size**, measured in 32-bit words. This governs the maximum
-  amount of data (including metadata values) the ring buffer can hold.
+* **数据缓冲区的大小**：以 32 比特字为单位。它表示环形缓冲所能容纳的最大数据（包括元数据值）数量。
 
-A ring buffer must be initialized before it can be used. This sets its
-data buffer to empty.
+环形缓冲必须先初始化再使用。初始化时会将其数据缓冲设为空。
 
-A ring buffer **data item** is an array of 32-bit words from 0 to 1020 bytes
-in length. When a data item is **enqueued** its contents are copied
-to the data buffer, along with its associated metadata values (which occupy
-one additional 32-bit word).
-If the ring buffer has insufficient space to hold the new data item
-the enqueue operation fails.
 
-A data items is **dequeued** from a ring buffer by removing the oldest
-enqueued item. The contents of the dequeued data item, as well as its
-two metadata values, are copied to areas supplied by the retriever.
-If the ring buffer is empty, or if the data array supplied by the retriever
-is not large enough to hold the data item's data, the dequeue operation fails.
+环形缓冲的 **数据项** 是一个以 32 比特字为单位的数组，该数组范围是 0 到 1020 字节。当数据项 **入队** 时，它的内容以及所关联的元数据值（需要额外的 32 比特字空间）会被拷贝到数据缓冲中。如果环形缓冲没有足够的空间来容纳新的数据项，则入队操作失败。
 
-Concurrency
+数据项的 **出队** 操作指的是移除已入队时间最久的项。待出队的数据项的内容以及所关联的元数据值会被拷贝到所指定的区域。如果环形缓冲为空，或者所指定的区域不够容难数据项的数据，则出队操作失败。
+
+
+并发性
 ===========
 
-The ring buffer APIs do not provide any concurrency control.
-Depending on usage (particularly with respect to number of concurrent
-readers/writers) applications may need to protect the ring buffer with
-mutexes and/or use semaphores to notify consumers that there is data to
-read.
+环形缓冲的 API 没有提供任何的并发控制。依赖于具体的使用方法（尤其是有多个并发的读者/写者），应用程序可以使用信号量/互斥量来通知消费者有新数据到达，这样能够保护环形缓冲。
 
-For the trivial case of one producer and one consumer, concurrency
-shouldn't be needed.
+对于只有一个生产者和一个消费者的情况，不需要使用并发控制。
 
-Internal Operation
+内部操作
 ==================
 
-The ring buffer always maintains an empty 32-bit word in its data buffer
-to allow it to distinguish between empty and full states.
+环形缓冲总是在其数据缓冲区中维护了一个空的 32 比特字，用于区分空/满状态。
 
-If the size of the data buffer is a power of two, the ring buffer
-uses efficient masking operations instead of expensive modulo operations
-when enqueuing and dequeuing data items.
+如果数据缓冲区的大小是 2 的整数次幂，则当数据项在入队/出队操作时会使用高效的位掩操作，而不是昂贵的取模操作。
 
-Implementation
+实现
 **************
 
-Defining a Ring Buffer
+定义环形缓冲
 ======================
 
-A ring buffer is defined using a variable of type :c:type:`struct ring_buf`.
-It must then be initialized by calling :cpp:func:`sys_ring_buf_init()`.
+使用类型为 :c:type:`struct ring_buf` 的变量可以定义环形缓冲。缓冲缓冲定后必须使用函数 :cpp:func:`sys_ring_buf_init()` 对其进行初始化。
 
-The following code defines and initializes an empty ring buffer
-(which is part of a larger data structure). The ring buffer's data buffer
-is capable of holding 64 words of data and metadata information.
+下面的代码定义并初始化了一个空的环形缓冲（是一个更大的数据结构的一部分）。环形缓冲的数据 buffer 可以容纳 64 字的数据和元数据（metadata）信息。
 
 .. code-block:: c
 
@@ -94,30 +68,26 @@ is capable of holding 64 words of data and metadata information.
         ...
     }
 
-Alternatively, a ring buffer can be defined and initialized at compile time
-using one of two macros at file scope. Each macro defines both the ring
-buffer itself and its data buffer.
+也可以使用文件中的两个宏在编译时定义并初始化一个互斥量。每个宏都会既定义环形缓冲又会定义其数据缓冲区。
 
-The following code defines a ring buffer with a power-of-two sized data buffer,
-which can be accessed using efficient masking operations.
+下面的代码定义了一个数据缓冲区大小为 2 的整数次幂的环形缓冲，它可以通过位掩操作进行高效地访问。
 
 .. code-block:: c
 
     /* Buffer with 2^8 (or 256) words */
     SYS_RING_BUF_DECLARE_POW2(my_ring_buf, 8);
 
-The following code defines a ring buffer with an arbitraty-sized data buffer,
-which can be accessed using less efficient modulo operations.
+下面的代码定义了一个数据缓冲区大小任意的环形缓冲，它可以通过取模操作进行低效率地访问。
 
 .. code-block:: c
 
     #define MY_RING_BUF_WORDS 93
     SYS_RING_BUF_DECLARE_SIZE(my_ring_buf, MY_RING_BUF_WORDS);
 
-Enqueuing Data
+数据入队
 ==============
 
-A data item is added to a ring buffer by calling :cpp:func:`sys_ring_buf_put()`.
+函数 :cpp:func:`sys_ring_buf_put()` 可用于往环形缓冲中添加一个数据项。
 
 .. code-block:: c
 
@@ -130,9 +100,7 @@ A data item is added to a ring buffer by calling :cpp:func:`sys_ring_buf_put()`.
 	...
     }
 
-If the data item requires only the type or application-specific integer value
-(i.e. it has no data array), a size of 0 and data pointer of :c:macro:`NULL`
-can be specified.
+如果该数据项只需要类型或者应用程序指定的整数值（即它没有数据数组），可以将其 size 设为 0、其数据指针指向 :c:macro:`NULL`。
 
 .. code-block:: c
 
@@ -144,11 +112,10 @@ can be specified.
 	...
     }
 
-Retrieving Data
+重入数据
 ===============
 
-A data item is removed from a ring buffer by calling
-:cpp:func:`sys_ring_buf_get()`.
+函数 :cpp:func:`sys_ring_buf_get()` 可用于从环形缓冲中移除一个数据项。
 
 .. code-block:: c
 
@@ -170,10 +137,10 @@ A data item is removed from a ring buffer by calling
         ...
     }
 
-APIs
+API
 ****
 
-The following ring buffer APIs are provided by :file:`misc/ring_buffer.h`:
+:file:`misc/ring_buffer.h` 中提供了如下关于环形缓冲的 API：
 
 * :cpp:func:`SYS_RING_BUF_DECLARE_POW2()`
 * :cpp:func:`SYS_RING_BUF_DECLARE_SIZE()`

@@ -1,117 +1,87 @@
 .. _apps_build:
 
-Build an Application
+编译应用程序
 ####################
 
-The Zephyr build system compiles and links all components of an application
-into a single application image that can be run on simulated hardware or real
-hardware.
+Zephyr 编译系统将应用程序的所有组件编译并链接为一个可在仿真硬件和真实硬件上运行的单一应用程序镜像。
 
 .. contents:: Procedures
    :local:
    :depth: 1
 
-Building an Application
+编译应用程序
 =======================
 
-The build system allows you to easily build an application using the
-application's existing configuration. However, you can also build it
-using different configuration settings, if desired.
+编译系统允许您使用应用程序已存在的配置轻松地编译应用程序。不过，如果有需要，您也可以使用不同的配置设置进行编译。
 
-Before you begin
+开始前
 ----------------
 
-* Ensure you have added all application-specific code to the application
-  directory, as described in :ref:`apps_code_dev`. Ensure each source code
-  directory and sub-directory has its own :file:`Makefile`.
+* 确保您已将所有应用程序相关的代码添加到应用程序目录，如  :ref:`apps_code_dev` 所述。确保每个源代码目录和子目录都有它自己的 :file:`Makefile` 。
 
-* Ensure you have configured the application's kernel, as described
-  in :ref:`apps_kernel_conf`.
+* 确保您已按照 :ref:`apps_kernel_conf` 所述的方法为应用程序配置了内核。
 
-* Ensure the Zephyr environment variables are set for each console terminal;
-  see :ref:`apps_common_procedures`.
+* 确保为每个控制台终端都设置了 Zephyr 环境变量。参考 :ref:`apps_common_procedures` 。
 
-Steps
+步骤
 -----
 
-#. Navigate to the application directory :file:`~/appDir`.
+#. 进入应用程序目录 :file:`~/appDir` 。
 
-#. Enter the following command to build the application's :file:`zephyr.elf`
-   image using the configuration settings for the board type specified
-   in the application's :file:`Makefile`.
+#. 输入下面的目录编译应用程序的 :file:`zephyr.elf` 镜像，它会使用应用程序的 :file:`Makefile` 中所指定的板子典型配置设置。
 
    .. code-block:: console
 
        $ make
 
-   If desired, you can build the application using the configuration settings
-   specified in an alternate :file:`.conf` file using the :code:`CONF_FILE`
-   parameter. These settings will override the settings in the application's
-   :file:`.config` file or its default :file:`.conf` file. For example:
+   如果有需要，您可以使用参数 :code:`CONF_FILE` 指定一个 :file:`.conf` 文件，并在其中给出编译应用程序时的配置。这些配置设置会覆盖应用程序的 :file:`.config` 文件或者默认的 :file:`.conf` 文件中的内容。例如：
 
    .. code-block:: console
 
        $ make CONF_FILE=prj.alternate.conf
 
-   If desired, you can build the application for a different board type
-   than the one specified in the application's :file:`Makefile`
-   using the :code:`BOARD` parameter. For example:
+   如果有需要，您可以使用参数 :code:`BOARD` 为其它类型的开发板编译应用程序，例如：
 
    .. code-block:: console
 
        $ make BOARD=arduino_101
 
-   Both the :code:`CONF_FILE` and :code:`BOARD` parameters can be specified
-   when building the application.
+   当编译应用程序是，可以同时指定参数 :code:`CONF_FILE` 和 :code:`BOARD` 。
 
-Rebuilding an Application
+重新编译应用程序
 =========================
 
-Application development is usually fastest when changes are continually tested.
-Frequently rebuilding your application makes debugging less painful
-as the application becomes more complex. It's usually a good idea to
-rebuild and test after any major changes to the application's source files,
-Makefiles, or configuration settings.
+应用程序开发的过程通常是高速的。高频率地编译应用程序能减轻您调试的痛苦，因为应用程序总是会变得越来越复杂。当应用程序的源文件、Makefile 或者配置设置有任何主要改动时，重新编译和测试总是一个好的行为。
 
 .. important::
 
-    The Zephyr build system rebuilds only the parts of the application image
-    potentially affected by the changes. Consequently, rebuilding an application
-    is often significantly faster than building it the first time.
+    Zephyr 的编译系统只会编译可能对应用程序镜像造成影响的那部分。因此，重新编译应用程序总是比第一次编译快很多。
 
-Steps
+步骤
 -----
 
-#. Follow the steps specified in `Building an Application`_ above.
+#. 按照上面的 `Building an Application`_ 中指定的步骤。
 
-Recovering from a Build Failure
+从编译失败中恢复
 ===============================
 
-Sometimes the build system doesn't rebuild the application correctly
-because it fails to recompile one or more necessary files. You can force
-the build system to rebuild the entire application from scratch with the
-following procedure:
+有时候当一个或多个必须的文件编译失败后，编译系统可能不能再正确地编译应用程序。您可以按照下面的步骤强制编译系统重新编译整个应用程序：
 
-Steps
+步骤
 -----
 
-#. Navigate to the application directory :file:`~/appDir`.
+#. 进入应用程序目录 :file:`~/appDir`.
 
-#. Enter the following command to delete the application's generated files
-   for the specified board type, except for the :file:`.config` file that
-   contains the application's current configuration information.
+#. 输入如下命令，删除应用程序为指定开发板类型生成的文件（不包括 :file:`.config` ，因为它包含应用程序的当前配置信息）：
 
    .. code-block:: console
 
        $ make [BOARD=<type>] clean
 
-   Alternatively, enter the following command to delete *all* generated files
-   for *all* board types, including the :file:`.config` files that contain
-   the application's current configuration information for those board types.
+   您也可以输入如下命令删除应用程序生成的包括 :file:`.config` 在内的所有文件：
 
    .. code-block:: console
 
        $ make pristine
 
-#. Rebuild the application normally following the steps specified
-   in `Building an Application`_ above.
+#. 按照上面的 `Building an Application`_ 中所指定的步骤重新编译应用程序。

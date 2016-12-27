@@ -1,69 +1,50 @@
-Developing Bluetooth Applications
+开发蓝牙应用
 #################################
 
-Initialization
+初始化
 **************
 
-The Bluetooth subsystem is initialized using the :c:func:`bt_init()`
-function. The caller should ensure that function succeeds by checking
-the return code for errors. If a function pointer is passed to
-:c:func:`bt_init()` the initialization happens synchronously and the
-completion is notified through the given function.
+函数 :c:func:`bt_init()` 用于初始化蓝牙子系统。调用者应当通过返回的错误代码判断初始化是否成功。如果一个函数指针被传递给 :c:func:`bt_init()` 了，初始化会同步发生，且会通过所给函数通知其完成。
 
-Bluetooth Application Example
+蓝牙应用例程
 *****************************
 
-A simple Bluetooth beacon application is shown below. The application
-initializes the Bluetooth Subsystem and enables non-connectable
-advertising, effectively acting as a Bluetooth Low Energy broadcaster.
+下面演示了一个蓝牙信标应用例程。该程序初始化了蓝牙子系统，使能了非连接广告，并高效地扮演了低功耗蓝牙广播者的身份。
 
 .. literalinclude:: ../../../samples/bluetooth/beacon/src/main.c
    :language: c
    :lines: 19-
    :linenos:
 
-The key APIs employed by the beacon sample are :c:func:`bt_enable()`
-that's used to initialize Bluetooth and then :c:func:`bt_le_adv_start()`
-that's used to start advertising a specific combination of advertising
-and scan response data.
+信标应用中比较关键的 API 是 :c:func:`bt_enable()` 和 :c:func:`bt_le_adv_start()` 。:c:func:`bt_enable()` 用于初始化蓝牙协议栈；:c:func:`bt_le_adv_start()` 用于启动一个广播和扫描响应数据。
 
-Testing with QEMU
+使用 QEMU 测试 
 *****************
 
-It's possible to test Bluetooth applications using QEMU. In order to do
-so, a Bluetooth controller needs to be exported from the host OS (Linux)
-to the emulator.
+可以在 QEMU 中测试蓝牙应用程序。要达到此目的，需要将蓝牙控制器从主机操作系统（Linux）导出到模拟器。
 
-Using Host System Bluetooth Controller in QEMU
+在 QEMU 中使用主机系统蓝牙控制器
 ==============================================
 
-The host OS's Bluetooth controller is connected to the second QEMU
-serial line using a UNIX socket. This socket employs the QEMU option
-:literal:`-serial unix:/tmp/bt-server-bredr`. This option is already
-added to QEMU through :makevar:`QEMU_EXTRA_FLAGS` in most Bluetooth
-sample Makefiles' and made available through the 'qemu' make target.
+主机操作系统的蓝牙控制器被 UNIX 套接字连接到第二个 QEMU 串行线。这个套接字使用 QEMU 选项 :literal:`-serial unix:/tmp/bt-server-bredr` 。在大多数蓝牙例程的 Makefile 文件中已经将使用 :makevar:`QEMU_EXTRA_FLAGS` 将其添加到 QEMU 中了，因此您可以在 make 时使用 'qemu' 目标。
 
-On the host side, BlueZ allows to export its Bluetooth controller
-through a so-called user channel for QEMU to use:
+在主机侧，BlueZ 允许通过一个叫做用户通道的方式将它的蓝牙控制器导出：
 
-#. Make sure that the Bluetooth controller is down
+#. 确保蓝牙控制器已关闭。
 
-#. Use the btproxy tool to open the listening UNIX socket, type:
+#. 使用 btproxy 工具打开正在监听的 UNIX 套接字，输入：
 
    .. code-block:: console
 
       $ sudo tools/btproxy -u
       Listening on /tmp/bt-server-bredr
 
-#. Choose one of the Bluetooth sample applications located in
-   :literal:`samples/bluetooth`.
+#. 选择位于 :literal:`samples/bluetooth` 中的某个例程。
 
-#. To run Bluetooth application in QEMU, type:
+#. 在 QEMU 中允许蓝牙用于，输入：
 
    .. code-block:: console
 
       $ make qemu
 
-Running QEMU now results in a connection with the second serial line to
-the :literal:`bt-server-bredr` UNIX socket, letting the application
-access the Bluetooth controller.
+正在运行的 QEMU 将引起第二串行线与 :literal:`bt-server-bredr` UNIX 套接字进行连接，让应用程序能够访问蓝牙控制器。

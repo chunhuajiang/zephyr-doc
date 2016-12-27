@@ -1,6 +1,6 @@
 .. _bluetooth_api:
 
-Bluetooth API
+蓝牙 API
 #############
 
 .. contents::
@@ -8,12 +8,7 @@ Bluetooth API
    :local:
    :backlinks: top
 
-This is the full set of available Bluetooth APIs. It's important to note
-that the set that will in practice be available for the application
-depends on the exact Kconfig options that have been chosen, since most
-of the Bluetooth functionality is build-time selectable. E.g. any
-connection-related APIs require :option:`CONFIG_BLUETOOTH_CONN` and any
-BR/EDR (Bluetooth Classic) APIs require :option:`CONFIG_BLUETOOTH_BREDR`.
+本节包含可用蓝牙 API 的完整集合。注意，该集合中实际有效的 API 依赖于被选择的 Kconfig 选项，因为大多数蓝牙功能实在编译时进行选择的。例如，连接修改的 API 需要 :option:`CONFIG_BLUETOOTH_CONN` ，BR/EDR（蓝牙类）API 需要 :option:`CONFIG_BLUETOOTH_BREDR` 。
 
 Generic Access Profile (GAP)
 ****************************
@@ -22,7 +17,7 @@ Generic Access Profile (GAP)
    :project: Zephyr
    :content-only:
 
-Connection Management
+连接管理
 *********************
 
 .. doxygengroup:: bt_conn
@@ -57,7 +52,7 @@ Serial Port Emulation (RFCOMM)
    :project: Zephyr
    :content-only:
 
-Data Buffers
+数据缓冲
 ************
 
 .. doxygengroup:: bt_buf
@@ -81,10 +76,7 @@ HCI Drivers
 HCI RAW channel
 ***************
 
-HCI RAW channel API is intended to expose HCI interface to the remote entity.
-The local Bluetooth controller gets owned by the remote entity and host
-Bluetooth stack is not used. RAW API provides direct access to packets which
-are sent and received by the Bluetooth HCI driver.
+HCI RAW 通道 API 用于向远程实体暴露 HCI 接口。本地蓝牙控制器被远程实体拥有；主机蓝牙协议栈不会被使用。RAW API 提供了对蓝牙 HCI 驱动程序收发的数据包的直接访问。
 
 .. doxygengroup:: hci_raw
    :project: Zephyr

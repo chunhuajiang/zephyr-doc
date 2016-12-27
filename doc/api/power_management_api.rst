@@ -1,16 +1,16 @@
 .. _power_management_api:
 
-Power Management APIs
+电源管理 API
 #####################
 
-Power Management Hook Interface
+电源管理钩子接口
 *******************************
 
 .. doxygengroup:: power_management_hook_interface
    :project: Zephyr
    :content-only:
 
-Device Power Management APIs
+设备驱动电源管理 API
 ****************************
 
 .. doxygengroup:: device_power_management_api

@@ -1,16 +1,16 @@
 .. _file_system:
 
-File System APIs
+文件系统 API
 #####################
 
-File System Functions
+文件系统函数
 *******************************
 
 .. doxygengroup:: file_system_api
    :project: Zephyr
    :content-only:
 
-File System Data Structures
+文件系统数据结构
 *******************************
 
 .. doxygengroup:: data_structures

@@ -1,143 +1,110 @@
 .. _apps_kernel_conf:
 
-Configure an Application's Kernel
+为应用程序配置内核
 #################################
 
-The application's kernel is configured using a set of configuration options
-that can be customized for application-specific purposes.
-The Zephyr build system takes a configuration option's value
-from the first source in which it is specified.
-The available sources are (in order):
+应用程序的内核由一系列可根据应用程序自定义的配置选项进行配置。Zephyr 的编译系统从所指定的第一个源中获取配置选项的值。可用的源包括（按顺序）：
 
-#. The application's current configuration.
-   (i.e. The :file:`.config` file.)
+#. 应用程序当前的配置，例如 :file:`.config` 文件。
 
-#. The application's default configuration.
-   (i.e. The :file:`.conf` file.)
+#. 应用程序的默认配置，例如 :file:`.conf` 文件。
 
-#. The board configuration used by the application.
-   (i.e. The board's :file:`.defconfig` file.)
+#. 应用程序所使用的板级配置，例如开发板的 :file:`.defconfig` 文件。
 
-#. The kernel's default configuration.
-   (i.e. One of the kernel's :file:`Kconfig` files.)
+#. 内核的默认配置，例如内核的某个 :file:`Kconfig` 文件。
 
-For information on available kernel configuration options, including
-inter-dependencies between options, see the :ref:`configuration`.
-Be careful to note if an option is an experimental option
-that is not yet fully supported.
+如果您需要了解所有可用的内核配置选项以及选项间的内部依赖关系，请移步 :ref:`configuration` 。需要注意的是，如果某个选项是实验选项，则它的功能还不健全。
 
 .. contents:: Procedures
    :local:
    :depth: 1
 
-Defining the Application's Default Kernel Configuration
+定义应用程序的默认内核配置
 =======================================================
 
-An application's :file:`.conf` file defines its default kernel configuration.
-The settings in this file override or augment the board configuration settings.
+应用程序的 :file:`.conf` 文件定义了它的默认内核配置。该文件中的设置将会覆盖或补充板级配置设置。
 
-The board configuration settings can be viewed
-in :file:`\$ZEPHYR_BASE/boards/ARCHITECTURE/BOARD/BOARD_defconfig`.
+板级配置设置位于 :file:`\$ZEPHYR_BASE/boards/ARCHITECTURE/BOARD/BOARD_defconfig` 。
 
 .. note::
 
-   When the default board configuration settings are sufficient for your
-   application, a :file:`.conf` file is not needed. Skip ahead to
-   :ref:`override_kernel_conf`.
+   当默认的板级配置设置足够用于您的应用程序时，不需要再使用 :file:`.conf` 文件。跳转到 :ref:`override_kernel_conf` 。
 
-Before you begin
+开始前
 ----------------
 
-* Ensure you have created an application directory, as described
-  in :ref:`apps_structure`.
+* 确保您已创建了应用程序目录，参考 :ref:`apps_structure` 。
 
-* Review the kernel configuration options available and know
-  which ones you want to set for your application.
-  Be aware of any dependencies involving these options.
-  See the :ref:`configuration` for a brief description of each option.
+* 检查内核的可用配置选项，并明确您想用哪个选项来设置应用程序。请注意到这些选项间的依赖关系。每个选项的剪短介绍请移步 :ref:`configuration` 。
 
-Steps
+步骤
 -----
 
-1. Navigate to the :file:`appDir`, and create the :file:`prj.conf` file. Enter:
+1. 进入 :file:`appDir` 并创建一个 :file:`prj.conf` 文件。输入：
 
    .. code-block:: bash
 
        $ touch prj.conf
 
-  The default name is :file:`prj.conf`. The filename must match
-  the ``CONF_FILE`` entry in the application :file:`Makefile`.
+  默认的名字是 :file:`prj.conf`。该文件名必须与应用程序 :file:`Makefile` 中的 ``CONF_FILE`` 条目相匹配。
 
-2. Edit the file and add the appropriate configuration entries.
+2. 编辑文件，并添加恰当的配置条目。
 
-   a) Add each configuration entry on a new line.
+   a) 每添加一个配置条目时应该另起一行。
 
-   b) Begin each entry with ``CONFIG_``.
+   b) 条目以 ``CONFIG_`` 作为前缀。
 
-   c) Ensure that each entry contains no spaces
-      (including on either side of the = sign).
+   c) 确保每个条目不包含空格（包括 ``=`` 的左右两侧）。
 
-   d) Use a # followed by a space to comment a line.
+   d) 使用 ``#`` 以及空格添加行注释
 
-   The example below shows a comment line and a board
-   configuration override in the :file:`prj.conf`.
+   下面的例子演示了行注释以及覆盖 :file:`prj.conf` 中的开发板配置的方法。
 
    .. code-block:: c
 
        # Change the number of IRQs supported by the application
        CONFIG_NUM_IRQS=43
 
-3. Save and close the file.
+3. 保存并关闭文件。
 
 
 .. _override_kernel_conf:
 
-Overriding the Application's Default Kernel Configuration
+覆盖应用程序的默认内核配置
 =========================================================
 
-Override the application's default kernel configuration to
-temporarily alter the application's configuration, perhaps
-to test the effect of a change.
+覆盖应用程序的默认内核配置可临时修改应用程序的配置。您可以测试改动的效果。
 
 .. note::
 
-   If you want to permanently alter the configuration you
-   should revise the :file:`.conf` file.
+   如果您想永久性修改配置，则需要修改 :file:`.conf` 文件。
 
-Configure the kernel options using a menu-driven interface.
-While you can add entries manually, using the configuration menu
-is a preferred method.
+Zephyr 的编译系统使用多驱动接口配置内核选项。尽管您也可以手工添加条目，但是我们推荐使用配置菜单进行添加。
 
-Before you begin
+
+开始前
 ----------------
 
-* Ensure you have created an application directory, as described
-  in :ref:`apps_structure`.
+* 确保已也创建了应用程序目录，参考 :ref:`apps_structure` 。
 
-* Review the kernel configuration options available and know
-  which ones you want to set for your application.
-  Be aware of any dependencies involving these options.
+* 检查内核的可用配置选项，并明确您想用哪个选项来设置应用程序。请注意到这些选项间的依赖关系。每个选项的剪短介绍请移步 :ref:`configuration` 。
 
-* Ensure the Zephyr environment variables are set for each console terminal;
-  see :ref:`apps_common_procedures`.
+* 确保为每个控制台终端都设置了 Zephyr 环境变量。参考 :ref:`apps_common_procedures` 。
 
-Steps
+步骤
 -----
 
-1.  Run the :command:`make menuconfig` rule to launch the
-    menu-driven interface.
+1.  运行 :command:`make menuconfig` 规则加载多驱动接口。
 
- a) In a terminal session, navigate to the application directory
-    (:file:`~/appDir`).
+ a) 通过终端会话进入应用程序目录（:file:`~/appDir`）。
 
- b) Enter the following command:
+ b) 输入下面的命令：
 
   .. code-block:: bash
 
    $ make [BOARD=<type>] menuconfig
 
-  A question-based menu opens that allows you to set individual
-  configuration options.
+  基于问题的菜单允许您设置单个配置选项。
 
 .. image:: figures/app_kernel_conf_1.png
     :width: 400px
@@ -145,39 +112,29 @@ Steps
     :height: 375px
     :alt: Main Configuration Menu
 
-2.  Set kernel configuration values using the following
-    key commands:
+2.  使用下面的关键命令设置内核配置选项值：
 
-   * Use the arrow keys to navigate within any menu or list.
+   * 使用上下箭头键在菜单或者列表中移动。
 
-   * Press :kbd:`Enter` to select a menu item.
+   * 按下 :kbd:`Enter` 键选择某个菜单项。
 
-   * Type an upper case :kbd:`Y` or :kbd:`N` in the
-     square brackets :guilabel:`[ ]` to
-     enable or disable a kernel configuration option.
+   * 在中括号 :guilabel:`[ ]` 中输入大写的 :kbd:`Y` 或者 :kbd:`N` 来使能/禁止某个内核配置选项。
 
-   * Type a numerical value in the round brackets :guilabel:`( )`.
+   * 在原括号 :guilabel:`( )` 中输入数字值。
 
-   * Press :kbd:`Tab` to navigate the command menu at the
-     bottom of the display.
+   * 按下 :kbd:`Tab` 键进入下面的目录菜单。
 
    .. note::
 
-    When a non-default entry is selected for options that
-    are nonnumerical, an asterisk :kbd:`*` appears between the
-    square brackets in the display. There is nothing added added
-    the display when you select the option's default.
+    当非默认的非数值化的条目被选择时，中括号中接会显示 :kbd:`*` 。当您选择选项的默认值时，不会显示任何东西。
 
-3.  For information about any option, select the option and
-    tab to :guilabel:`< Help >` and press :kbd:`Enter`.
+3.  如果需要查看任何关于选项的信息，先选择该选项，然后利用 tab 键进入 :guilabel:`< Help >`，然后输入 :kbd:`Enter` 。
 
-    Press :kbd:`Enter` to return to the menu.
+    按 :kbd:`Enter` 键可返回菜单。
 
-4.  After configuring the kernel options for your application,
-    tab to :guilabel:`< Save >` and press :kbd:`Enter`.
+4.  为您的应用程序配置完内核选项后，利用 tab 键进入 :guilabel:`< Save >`，然后输入 :kbd:`Enter` 。
 
-    The following dialog opens with the :guilabel:`< Ok >`
-    command selected:
+    下列对话框使用 :guilabel:`< Ok >` 命令选择：
 
 .. image:: figures/app_kernel_conf_2.png
     :width: 400px
@@ -186,32 +143,19 @@ Steps
     :alt: Save Configuration Dialog
 
 
-5.  Press :kbd:`Enter` to save the kernel configuration options
-    to the default file name; alternatively, type a file
-    name and press :kbd:`Enter`.
+5.  按下 :kbd:`Enter` 键会将内核配置选项保存为默认文件名。您也可以输入一个文件名后再按 :kbd:`Enter` 键。
 
-    Typically, you will save to the default file name unless
-    you are experimenting with various configuration scenarios.
+    通常，除非您在实验各种不同配置的效果，您需要保存为默认的文件名。
 
-    An :file:`outdir` directory is created in the application
-    directory. The outdir directory contains symbolic links
-    to files under :file:`\$ZEPHYR_BASE`.
+    编译系统会自动在应用程序目录下创建一个 :file:`outdir` 目录。该目录包含 :file:`\$ZEPHYR_BASE` 下的文件的符号链接。
 
    .. note::
 
-    At present, only a :file:`.config` file can be built. If
-    you have saved files with different file names and want to build
-    with one of these, change the file name to :file:`.config`.
-    To keep your original :file:`.config`, rename it to something
-    other than :file:`.config`.
+    当前，只能使用 :file:`.config` 文件进行编译。如果您保存了多种文件名不同的文件，但是又想使用它们其中的某个文件进行编译，您可以将该文件重命名为 :file:`.config` 。在重命名前可将原先的 :file:`.config` 进行备份。
 
-    Kernel configuration files, such as the :file:`.config`
-    file, are saved as hidden files in :file:`outdir`. To list
-    all your kernel configuration files, enter :command:`ls -a`
-    at the terminal prompt.
+    内核配置文件（例如 :file:`.config`）被保存为 :file:`outdir` 下面的隐藏文件。要查看所有的内核配置文件，在终端提示符中输入 :command:`ls -a`。
 
-    The following dialog opens, displaying the file name the
-    configuration was saved to.
+    下面的对话框打开并显示了所保存的配置文件名。
 
 .. image:: figures/app_kernel_conf_3.png
     :width: 400px
@@ -219,13 +163,11 @@ Steps
     :height: 150px
     :alt: Saved Configuration Name Dialog
 
-6.  Press :kbd:`Enter` to return to the options menu.
+6.  按下 :kbd:`Enter` 键返回选项菜单。
 
-7.  To load any saved kernel configuration file,
-    tab to :guilabel:`< Load >` and press :kbd:`Enter`.
+7.  如果需要加载某个已保存的配置文件，利用 tab 键跳转到 :guilabel:`< Load >` 并按下 :kbd:`Enter`。
 
-    The following dialog opens with the :guilabel:`< Ok >`
-    command selected:
+    下面的对话框打开时光标位于 :guilabel:`< Ok >` 命令处。
 
 .. image:: figures/app_kernel_conf_4.png
     :width: 400px
@@ -233,18 +175,13 @@ Steps
     :height: 175px
     :alt: Configuration File Load Dialog
 
-8.  To load the last saved kernel configuration file, press
-    :guilabel:`< Ok >`, or to load another saved configuration
-    file, type the file name, then select :guilabel:`< Ok >`.
+8.  如果需要加载最后保存的内核配置文件，直接选择 :guilabel:`< Ok >`；如果要加载其它的配置文件，先输入文件名，再选择 :guilabel:`< Ok >`。
 
-9.  Press :kbd:`Enter` to load the file and return to the main
-    menu.
+9.  按下 :kbd:`Enter` 键加载文件并返回主菜单。
 
-10. To exit the menu configuration, tab to :guilabel:`< Exit >`
-    and press :kbd:`Enter`.
+10. 如果要退出主配置菜单，利用 tab 键调到 :guilabel:`< Exit >`，并按下 :kbd:`Enter`。
 
-    The following confirmation dialog opens with the
-    :guilabel:`< Yes >` command selected.
+    下面的对话框打开时光标位于 :guilabel:`< Yes >` 命令处。
 
 .. image:: figures/app_kernel_conf_5.png
     :width: 400px
@@ -252,5 +189,4 @@ Steps
     :height: 100px
     :alt: Exit Dialog
 
-11. Press :kbd:`Enter` to retire the menu display and
-    return to the console command line.
+11. 按下 :kbd:`Enter` 键退出显示菜单并返回控制台命令行。
