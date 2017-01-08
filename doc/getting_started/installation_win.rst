@@ -99,7 +99,7 @@ Zephyr 编译时也依赖于 GNU regex 库。Msys 自身已实现了该库，您
 
 Zephyr 的编译系统使用 ISSM 2016 (Intel System Studio for Microcontrollers) 测试过。
 
-您可以从 Inter 开发者专区 `ISSM 2016 Download`_ 下载 ISSM，然后将其安装到您的系统上。
+您可以从 Intel 开发者专区 `ISSM 2016 Download`_ 下载 ISSM，然后将其安装到您的系统上。
 
 最后，您还需要为 ISSM 2016 配置环境变量。例如，使用 ISSM 的默认安装路径：
 :file:`C:/IntelSWTools/ISSM_2016`
