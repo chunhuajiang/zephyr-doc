@@ -53,9 +53,9 @@ Zephyr 的编译系统将在该工具集上运行。进入站点 `MinGW Home`_  
    $ cp /etc/fstab.sample /etc/fstab
    $ cat /etc/fstab
 
-在环境变量 :envvar:`PATH` 中配置 Python 和 MinGW 的安装路劲。
+在环境变量 :envvar:`PATH` 中配置 Python 和 MinGW 的安装路径。
 
-.. note:: `PYTHON_PATH` 路劲的格式必须是 linux 格式。例如，Python 默认的安装路劲是 :file:`C:\\python27`，
+.. note:: `PYTHON_PATH` 路径的格式必须是 linux 格式。例如，Python 默认的安装路径是 :file:`C:\\python27`，
    应该写为 :file:`/c/python27/`。
 
 .. code-block:: console
