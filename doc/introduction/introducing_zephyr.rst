@@ -1,67 +1,47 @@
 .. _introducing_zephyr:
 
-Introducing Zephyr
+Zephyr 简介
 ##################
 
-The Zephyr OS is based on a small-footprint kernel designed for use on
-resource-constrained systems: from simple embedded environmental sensors and LED
-wearables to sophisticated smart watches and IoT wireless gateways.
 
-The Zephyr kernel supports multiple architectures, including ARM Cortex-M, Intel
-x86, ARC, NIOS II and RISC V. The full list of supported boards can be found
-:ref:`here <boards>`.
+Zephyr 是一个内存占用极低的内核，它主要设计用于资源受限的系统：从简单的嵌入式环境传感器、LED 可穿戴设备，到复杂的智能手表、IoT 无线网关。
 
-Licensing
+Zephyr 在被设计时就支持多架构，包括 ARM Cortex-M，Intel x86，ARC，NIOS II 和 RISC V。您可以在 :ref:`这里 <board>` 查看 Zephyr 所支持的所有开发板。
+
+
+许可
 *********
 
-The Zephyr project associated with the kernel makes it available
-to users and developers under the Apache License, version 2.0.
+Zephyr 项目及其内核遵循 Apache License, version 2.0。
 
-Distinguishing Features
+特性
 ***********************
 
-The Zephyr kernel offers a number of features that distinguish it from other
-small-footprint OSes:
+与其它微型内核相比，Zephyr 内核有很多独特的优秀特性：
 
-#. **Single address-space**. Combines application-specific code
-   with a custom kernel to create a monolithic image that gets loaded
-   and executed on a system's hardware. Both the application code and
-   kernel code execute in a single shared address space.
+#. **单地址空间**。将应用程序相关的代码与内核结合在一起，创建一个在硬件上加载、运行的单一镜像。应用程序代码和内核代码运行在同一个共享地址空间。
 
-#. **Highly configurable**. Allows an application to incorporate *only*
-   the capabilities it needs as it needs them, and to specify their
-   quantity and size.
+#. **高度可配置**。应用程序 *只需要* 包含它们需要的功能。
 
-#. **Compile-time resource definition**. Allows system resources
-   to be defined at compile-time, which reduces code size and
-   increases performance.
+#. **编译时定义资源**。所有系统资源都在编译时定义，以减小代码量、增强代码性能。
 
-#. **Minimal error checking**. Provides minimal run-time error checking
-   to reduce code size and increase performance. An optional error-checking
-   infrastructure is provided to assist in debugging during application
-   development.
+#. **最小错误检查**。提供最小化的运行时错误检查，以减小代码量、增强代码性能。提供一个可选的错误检查基础，以协助应用程序的开发和调试。
 
-#. **Extensive suite of services**. Offers a number of familiar services
-   for development:
+#. **广泛的服务**。提供了许多耳熟能详的服务:
 
-   * *Multi-threading Services* for priority-based, non-preemptive and
-     preemptive threads with optional round robin time-slicing.
+   * *多线程服务*：为基于优先级的、非抢占式或抢占式的线程提供可选的时间片。
 
-   * *Interrupt Services* for compile-time registration of interrupt handlers.
+   * *中断服务*：在编译时注册中断处理函数。
 
-   * *Memory Allocation Services* for dynamic allocation and freeing of
-     fixed-size or variable-size memory blocks.
+   * *内存分配服务*：动态地分配和释放固定尺寸、可变尺寸的内存块。
 
-   * *Inter-thread Synchronization Services* for binary semaphores,
-     counting semaphores, and mutex semaphores.
+   * *线程间同步服务*：包括二元信号量、计数信号量和互斥信号量。
 
-   * *Inter-thread Data Passing Services* for basic message queues, enhanced
-     message queues, and byte streams.
+   * *线程间数据传递服务*：包括基本消息队列、增强型消息队列和字节流。
 
-   * *Power Management Services* such as tickless idle and an advanced idling
-     infrastructure.
+   * *电源管理服务*：包括无滴答 CPU 空转和高级 CPU 空转。
 
-Fundamental Terms and Concepts
+基本术语和概念
 ******************************
 
-See :ref:`glossary`
+参考 :ref:`glossary`
