@@ -1,12 +1,13 @@
 .. _kernel:
 
-Zephyr Kernel Primer (version 2)
+Zephyr 内核原语（第 2 版）
 ################################
 
-This document provides a general introduction of the Zephyr kernel's
-key capabilties and services. Additional details can be found by consulting
-the :ref:`api` and :ref:`application` documentation, and by examining
-the code in the Zephyr source tree.
+本章对 Zephyr 内核的主要功能和服务进行简单的介绍，更详细的信息请参考文档 :ref:`api` and :ref:`application` 以及 Zephyr 源码树下的源码。
+
+.. contents::
+    :local:
+    :depth: 1
 
 .. toctree::
    :maxdepth: 2
