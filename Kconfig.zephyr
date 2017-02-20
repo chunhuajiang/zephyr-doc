@@ -1,0 +1,39 @@
+# Kconfig - general configuration options
+
+#
+# Copyright (c) 2014-2015 Wind River Systems, Inc.
+# Copyright (c) 2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+config KERNELVERSION
+	string
+	option env="KERNELVERSION"
+
+source "arch/Kconfig"
+
+source "kernel/Kconfig"
+
+source "drivers/Kconfig"
+
+source "net/Kconfig"
+
+source "misc/Kconfig"
+
+source "lib/Kconfig"
+
+source "subsys/Kconfig"
+
+source "ext/Kconfig"
+
+source "tests/Kconfig"
+
+#
+# The following are for Kconfig files for default values only.
+# These should be parsed at the end.
+#
+# Board defaults should be parsed after SoC defaults
+# because board usually overrides SoC values.
+#
+source "arch/*/soc/*/Kconfig.defconfig"
+source "boards/*/*/Kconfig.defconfig"
