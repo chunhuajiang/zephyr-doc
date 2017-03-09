@@ -1,28 +1,16 @@
 ..
     Zephyr Project documentation master file
 
-Zephyr Project Documentation
+Zephyr Project 学习文档
 ############################
 
-.. only:: release
+欢迎阅读 Zephyr 项目的学习文档，当前文档对应的 Zephyr 版本是 |version|!
 
-   Welcome to the Zephyr Project's documentation version |version|!
+您也可以查看其它版本的文档：
 
-   Documentation for the development branch of Zephyr can be found at
-   https://www.zephyrproject.org/doc/
+`Zephyr 1.1.0`_ | `Zephyr 1.2.0`_ | `Zephyr 1.3.0`_ | `Zephyr 1.4.0`_ | `Zephyr 1.5.0`_ | `Zephyr 1.6.0`_
 
-.. only:: (development or daily)
-
-   Welcome to the Zephyr Project's documentation. This is the documentation of the
-   master tree under development (version |version|).
-
-   Documentation for released versions of Zephyr can be found at
-   ``https://www.zephyrproject.org/doc/<version>``. The following documentation
-   versions are available:
-
-   `Zephyr 1.1.0`_ | `Zephyr 1.2.0`_ | `Zephyr 1.3.0`_ | `Zephyr 1.4.0`_ | `Zephyr 1.5.0`_ | `Zephyr 1.6.0`_
-
-Sections
+总目录
 ********
 
 .. toctree::
@@ -44,7 +32,8 @@ Sections
    LICENSING.rst
    glossary.rst
 
-You can find further information on the `Zephyr Project Wiki`_.
+您也可以访问 Zephyr 项目的 `Wiki`_ 查更多信息。
+
 
 Indices and Tables
 ******************
@@ -53,7 +42,7 @@ Indices and Tables
 
 * :ref:`search`
 
-.. _Zephyr Project Wiki: https://wiki.zephyrproject.org/view/Main_Page
+.. _Wiki: https://wiki.zephyrproject.org/view/Main_Page
 .. _Zephyr 1.7.0: https://www.zephyrproject.org/doc/1.7.0/
 .. _Zephyr 1.6.0: https://www.zephyrproject.org/doc/1.6.0/
 .. _Zephyr 1.5.0: https://www.zephyrproject.org/doc/1.5.0/
