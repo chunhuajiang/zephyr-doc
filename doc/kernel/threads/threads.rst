@@ -1,10 +1,9 @@
 .. _threads_v2:
 
-Threads
+线程
 #######
 
-This section describes kernel services for creating, scheduling, and deleting
-independently executable threads of instructions.
+本节描述内核提供的创建、调度、删除线程的服务。
 
 
 .. toctree::
