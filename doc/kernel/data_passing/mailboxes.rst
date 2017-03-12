@@ -1,127 +1,76 @@
 .. _mailboxes_v2:
 
-Mailboxes
+邮筒
 #########
 
-A :dfn:`mailbox` is a kernel object that provides enhanced message queue
-capabilities that go beyond the capabilities of a message queue object.
-A mailbox allows threads to send and receive messages of any size
-synchronously or asynchronously.
+:dfn:`（邮筒）mailbox` 是一个内核对象，它提供了对消息队列对象的增强功能。邮筒允许线程以同步或异步的方式发送和接收任意尺寸的消息。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-Any number of mailboxes can be defined. Each mailbox is referenced
-by its memory address.
+可以定义任意数量的邮筒。邮筒通过内存地址对其进行引用。
 
-A mailbox has the following key properties:
+邮筒的关键属性包括：
 
-* A **send queue** of messages that have been sent but not yet received.
+* **发送队列**：包含已被发送但还未被接收的消息。
 
-* A **receive queue** of threads that are waiting to receive a message.
+* **接收队列**：包含正在等待接收数据的线程。
 
-A mailbox must be initialized before it can be used. This sets both of its
-queues to empty.
+邮筒必须先初始化再使用。初始化时会将它的所有队列设为空。
 
-A mailbox allows threads, but not ISRs, to exchange messages.
-A thread that sends a message is known as the **sending thread**,
-while a thread that receives the message is known as the **receiving thread**.
-Each message may be received by only one thread (i.e. point-to-multipoint and
-broadcast messaging is not supported).
+邮筒只允许线程（不包括 ISR）交换消息。发送消息的线程叫做 **发送线程**，接收消息的线程叫做 **接收线程**。每个消息只能被一个线程接收（即不支持单点对多点消息和广播消息）。
 
-Messages exchanged using a mailbox are handled non-anonymously,
-allowing both threads participating in an exchange to know
-(and even specify) the identity of the other thread.
+使用邮筒交换的消息被处理时时非匿名的，它允许参与交换的线程知道（甚至指定）其它线程的标识符。
 
-Message Format
+消息格式
 ==============
 
-A **message descriptor** is a data structure that specifies where a message's
-data is located, and how the message is to be handled by the mailbox.
-Both the sending thread and the receiving thread supply a message descriptor
-when accessing a mailbox. The mailbox uses the message descriptors to perform
-a message exchange between compatible sending and receiving threads.
-The mailbox also updates certain message descriptor fields during the exchange,
-allowing both threads to know what has occurred.
+**消息描述符** 是一个数据结构，它指定了消息的位置，以及消息是如何被邮筒处理的。发现线程和接收线程在访问邮筒时都会提供一个消息描述符。邮筒使用消息描述符在相兼容的发送和接收线程间交换消息。在交换期间，邮筒可以更新消息描述符的某些字段，以告诉线程在此期间发生了什么。
 
-A mailbox message contains zero or more bytes of **message data**.
-The size and format of the message data is application-defined, and can vary
-from one message to the next. There are two forms of message data:
+一个邮筒消息包含零字节或多个字节的 **消息数据**。消息数据的尺寸和格式是由应用程序指定的，且不同消息的格式也可以不一样。消息数据存在两种形式：
 
-* A **message buffer** is an area of memory provided by the thread
-  that sends or receives the message. An array or structure variable
-  can often be used for this purpose.
+* **消息缓冲**：它是一个由线程提供的一段内存区域，用于发送和接收消息。消息缓冲多数都是由数组变量或结构体变量实现的。
 
-* A **message block** is an area of memory allocated from a memory pool.
+* A **消息块**：它是一段从内存池分配的内存区域。
 
-A message may *not* have both a message buffer and a message block.
-A message that has neither form of message data is called an **empty message**.
+一个消息 *不能* 同时是消息缓冲和消息块。这两种形式都不是的消息别叫做 **空消息**。
 
 .. note::
-    A message whose message buffer or memory block exists, but contains
-    zero bytes of actual data, is *not* an empty message.
+    
+    如果一个消息存在消息缓冲或者消息块，但是它包含零字节的实际数据，则这样的消息 *不是* 空消息。
 
-Message Lifecycle
+消息的生命周期
 =================
 
-The life cycle of a message is straightforward. A message is created when
-it is given to a mailbox by the sending thread. The message is then owned
-by the mailbox until it is given to a receiving thread. The receiving thread
-may retrieve the message data when it receives the message from the mailbox,
-or it may perform data retrieval during a second, subsequent mailbox operation.
-Only when data retrieval has occurred is the message deleted by the mailbox.
+消息的生命周期是明确的。在发送线程将数据递交给邮筒时，消息就被创建了。之后，消息属于邮筒。再之后，消息被递交给接收线程。接收线程可以在它从邮筒接收到消息时恢复消息数据，也可以在随后的第二次从邮筒接收到消息时才恢复数据。只有当数据被恢复时，邮筒才会删除消息。
 
-Thread Compatibility
+线程兼容性
 ====================
 
-A sending thread can specify the address of the thread to which the message
-is sent, or it send it to any thread by specifying :c:macro:`K_ANY`.
-Likewise, a receiving thread can specify the address of the thread from which
-it wishes to receive a message, or it can receive a message from any thread
-by specifying :c:macro:`K_ANY`.
-A message is exchanged only when the requirements of both the sending thread
-and receiving thread are satisfied; such threads are said to be **compatible**.
+发送线程可以指定接收消息的线程的地址，或者可以通过指定 :c:macro:`K_ANY` 将消息发送给任意线程。类似的，接收线程可以指定从哪个线程接收地址，或者可以通过指定 :c:macro:`K_ANY` 从任何线程接收消息。只有当发送线程和接收线程的需求都被满足时，消息才会被成功地交换；这样的线程被叫做 **兼容的**。
 
-For example, if thread A sends a message to thread B (and only thread B)
-it will be received by thread B if thread B tries to receive a message
-from thread A or if thread B tries to receive from any thread.
-The exchange will not occur if thread B tries to receive a message
-from thread C. The message can never be received by thread C,
-even if it tries to receive a message from thread A (or from any thread).
+例如，如果线程 A （只）发送给线程 B 发送一个消息，则只有线程 B 希望从线程 A 接收消息或者希望从任意线程接收消息时，消息才会被接收。如果线程 B 希望从线程 C 接收消息，则该消息不会被接收。这个消息不会被线程 C 接收（即使他希望从线程 A 或者任意线程接收消息）。
 
-Message Flow Control
+消息流控制
 ====================
 
-Mailbox messages can be exchanged **synchronously** or **asynchronously**.
-In a synchronous exchange, the sending thread blocks until the message
-has been fully processed by the receiving thread. In an asynchronous exchange,
-the sending thread does not wait until the message has been received
-by another thread before continuing; this allows the sending thread to do
-other work (such as gather data that will be used in the next message)
-*before* the message is given to a receiving thread and fully processed.
-The technique used for a given message exchange is determined
-by the sending thread.
+邮筒消息可以被 **同步** 或者 **异步** 交换。在同步交换中，发送线程在消息被接收线程完全处理前会一直阻塞。在异步交换中，发送线程不会等待消息被另一个线程接收，它会直接继续执行；这样能允许发送线程在将消息给接收线程并完全处理 *前* 执行其它工作（例如收集在下一个消息中需要使用的数据）。
 
-The synchronous exchange technique provides an implicit form of flow control,
-preventing a sending thread from generating messages faster than they can be
-consumed by receiving threads. The asynchronous exchange technique provides an
-explicit form of flow control, which allows a sending thread to determine
-if a previously sent message still exists before sending a subsequent message.
+同步交换技术提供了一个隐式的流控制形式，即能阻止发哦是哪个线程产生消息的速度快于接收线程消费的速度。异步交换技术也提供给了一个隐式的流控制形式，即发送消息的线程需要在发送后续消息时判断前一个消息是否仍然存在。
 
-Implementation
+实现
 **************
 
-Defining a Mailbox
+定义邮筒
 ==================
 
-A mailbox is defined using a variable of type :c:type:`struct k_mbox`.
-It must then be initialized by calling :cpp:func:`k_mbox_init()`.
+使用类型为 :c:type:`struct k_mbox` 的变量可以定义一个邮筒。邮筒定义后必须使用函数 :cpp:func:`k_mbox_init()` 对其进行初始化。
 
-The following code defines and initializes an empty mailbox.
+下面的代码定义并初始化了一个空邮筒。
 
 .. code-block:: c
 
@@ -129,120 +78,70 @@ The following code defines and initializes an empty mailbox.
 
     k_mbox_init(&my_mailbox);
 
-Alternatively, a mailbox can be defined and initialized at compile time
-by calling :c:macro:`K_MBOX_DEFINE`.
+也可以使用宏 :c:macro:`K_MBOX_DEFINE` 在编译时定义和初始化一个邮筒。
 
-The following code has the same effect as the code segment above.
+下面的代码与上面的代码片段具有相同的作用。
 
 .. code-block:: c
 
     K_MBOX_DEFINE(my_mailbox);
 
-Message Descriptors
+消息描述符
 ===================
 
-A message descriptor is a structure of type :c:type:`struct k_mbox_msg`.
-Only the fields listed below should be used; any other fields are for
-internal mailbox use only.
+消息描述符是一个结构为 :c:type:`struct k_mbox_msg` 的类型。只能使用下面所列举的字段；其它的字段仅限于邮筒内部所用。
 
 *info*
-    A 32-bit value that is exchanged by the message sender and receiver,
-    and whose meaning is defined by the application. This exchange is
-    bi-directional, allowing the sender to pass a value to the receiver
-    during any message exchange, and allowing the receiver to pass a value
-    to the sender during a synchronous message exchange.
-
+ 
+    被消息发送者和接收者所交换的一个 32 比特的值，它的意义由应用程序定义。这种交换是双向的，即允许发送者在任何消息交换时给接收者传递数据，也允许接收者在同步消息交换时给发送者传递数据。
+    
 *size*
-    The message data size, in bytes. Set it to zero when sending an empty
-    message, or when sending a message buffer or message block with no
-    actual data. When receiving a message, set it to the maximum amount
-    of data desired, or to zero if the message data is not wanted.
-    The mailbox updates this field with the actual number of data bytes
-    exchanged once the message is received.
 
+    消息数据的尺寸，单位是字节。零表示发送一个空的消息或者发送一个无实际数据的消息缓冲或消息块。接收时，将其设为所希望接收数据的最大值，或者如果消息数据不是自己想要的时候将其设为零。当消息被接收后，邮筒会更新这个字段为实际所交换的字节数。
+    
 *tx_data*
-    A pointer to the sending thread's message buffer. Set it to :c:macro:`NULL`
-    when sending a memory block, or when sending an empty message.
-    Leave this field uninitialized when receiving a message.
-
+    
+    一个执行发送线程消息缓冲的指针。当发送一个内存块或者一个空消息时，将其设为 :c:macro:`NULL`。当接收消息时，让该字段保持未初始化。
+    
 *tx_block*
-    The descriptor for the sending thread's memory block. Set tx_block.pool_id
-    to :c:macro:`NULL` when sending an empty message. Leave this field
-    uninitialized when sending a message buffer, or when receiving a message.
 
+    发送线程的内存块的描述符。当发送一个空消息时，将 tx_block.pool_id 设为 :c:macro:`NULL`。当发送一个消息缓冲或者接收一个消息时，将该字段保持未初始化。
+    
 *tx_target_thread*
-    The address of the desired receiving thread. Set it to :c:macro:`K_ANY`
-    to allow any thread to receive the message. Leave this field uninitialized
-    when receiving a message. The mailbox updates this field with
-    the actual receiver's address once the message is received.
-
+    
+    
+    希望接收消息的线程的地址。将其设为 :c:macro:`K_ANY` 可允许任何线程接收该消息。当接收消息时，让该字段保持未初始化。当消息被接收后，邮筒会将该字段更新为实际接收者的地址。
+    
 *rx_source_thread*
-    The address of the desired sending thread. Set it to :c:macro:`K_ANY`
-    to receive a message sent by any thread. Leave this field uninitialized
-    when sending a message. The mailbox updates this field
-    with the actual sender's address once the message is received.
+    
+    希望发送线程的地址。将其设为 :c:macro:`K_ANY` 可允许接收任何线程发送的消息。当发送消息时，让该字段保持未初始化。当消息被接收后，邮筒会将该字段更新为实际发送者的地址。
 
-Sending a Message
+发送消息
 =================
 
-A thread sends a message by first creating its message data, if any.
-A message buffer is typically used when the data volume is small,
-and the cost of copying the data is less than the cost of allocating
-and freeing a message block.
+线程发送消息时需要先创建消息数据。当数据量很小，且拷贝数据的代价少于分配、释放内存块的代价时，通常会使用消息缓冲。
 
-Next, the sending thread creates a message descriptor that characterizes
-the message to be sent, as described in the previous section.
+接着，发送下才能会创建一个用于描述待发送消息的消息描述符，如前一节所述。
 
-Finally, the sending thread calls a mailbox send API to initiate the
-message exchange. The message is immediately given to a compatible receiving
-thread, if one is currently waiting. Otherwise, the message is added
-to the mailbox's send queue.
+最后，发送线程会调用邮筒发送 API 去初始化消息交换的过程。如果存在一个兼容的接收线程，消息会被立即递交给它；否则，消息会被添加的邮筒的发送队列中。
 
-Any number of messages may exist simultaneously on a send queue.
-The messages in the send queue are sorted according to the priority
-of the sending thread. Messages of equal priority are sorted so that
-the oldest message can be received first.
+多个消息可以同时存在发送队列中。发送队列中的消息按照发送线程的优先级进行存储。相同优先级的消息按照先进先出的顺序进行存储。
 
-For a synchronous send operation, the operation normally completes when a
-receiving thread has both received the message and retrieved the message data.
-If the message is not received before the waiting period specified by the
-sending thread is reached, the message is removed from the mailbox's send queue
-and the send operation fails. When a send operation completes successfully
-the sending thread can examine the message descriptor to determine
-which thread received the message, how much data was exchanged,
-and the application-defined info value supplied by the receiving thread.
+对于同步发送，相关操作会在接收线程接收完消息且恢复完消息数据后完成。如果消息在发送线程所指定的等待时间到达后还未被接收，该消息会被移除邮筒的发送队列，发送失败。当发送成功后，发送线程会检查消息描述符，然后判断是哪个线程接收了消息，有多少数据被交换，以及由接收线程提供的应用程序定义的信息值。
 
 .. note::
-   A synchronous send operation may block the sending thread indefinitely,
-   even when the thread specifies a maximum waiting period.
-   The waiting period only limits how long the mailbox waits
-   before the message is received by another thread. Once a message is received
-   there is *no* limit to the time the receiving thread may take to retrieve
-   the message data and unblock the sending thread.
-
-For an asynchronous send operation, the operation always completes immediately.
-This allows the sending thread to continue processing regardless of whether the
-message is given to a receiving thread immediately or added to the send queue.
-The sending thread may optionally specify a semaphore that the mailbox gives
-when the message is deleted by the mailbox, for example, when the message
-has been received and its data retrieved by a receiving thread.
-The use of a semaphore allows the sending thread to easily implement
-a flow control mechanism that ensures that the mailbox holds no more than
-an application-specified number of messages from a sending thread
-(or set of sending threads) at any point in time.
+   
+   同步发送可以导致发送线程被无限期地阻塞（甚至当线程指定了最大等待时间）。等待时间只是限定了邮筒在消息被另一个线程接收前的等待时间。消息被接收后，接收线程恢复消息数据并解除发送线程阻塞状态的时间是 *无限制* 的。
+   
+对于异步发送，操作总是立即完成。这样可以让发送线程不用理会消息是否立即给了接收线程或者被添加到发送队列中，而继续做其它工作。发送线程可以指定一个信号量，当消息被邮筒删除时（例如消息被接收接收线程所接收，且数据被恢复），邮筒会释放信号量。信号量的使用可以让发送线程轻松实现流控制，确保邮筒在任何时间段都不会持有一个发送线程（或者一系列发送线程）的应用程序所指定的消息数量。
 
 .. note::
-   A thread that sends a message asynchronously has no way to determine
-   which thread received the message, how much data was exchanged, or the
-   application-defined info value supplied by the receiving thread.
-
-Sending an Empty Message
+   以异步方式发送消息的线程没有办法判断哪个线程接收了消息，由多数消息被交换，以及由接收线程所提供的应用程序定义的信息值。
+   
+发送空消息
 ------------------------
 
-This code uses a mailbox to synchronously pass 4 byte random values
-to any consuming thread that wants one. The message "info" field is
-large enough to carry the information being exchanged, so the data
-portion of the message isn't used.
+这段代码使用邮筒给任何想要数据的线程异步传递了 4 字节的随机数值。消息的 “info” 字段足够运载被交换的消息，因此消息的数据部分不会被使用。
 
 .. code-block:: c
 
@@ -267,13 +166,10 @@ portion of the message isn't used.
         }
     }
 
-Sending Data Using a Message Buffer
+使用消息缓冲发送数据
 -----------------------------------
 
-This code uses a mailbox to synchronously pass variable-sized requests
-from a producing thread to any consuming thread that wants it.
-The message "info" field is used to exchange information about
-the maximum size message buffer that each thread can handle.
+这段代码使用邮筒从生产线程给任何想要数据的消费线程同步传递了尺寸可变的请求。消息的 “info” 字段用于传输每个线程可以处理的最大尺寸的消息缓冲。
 
 .. code-block:: c
 
@@ -310,18 +206,12 @@ the maximum size message buffer that each thread can handle.
         }
     }
 
-Sending Data Using a Message Block
+使用消息块发送数据
 ----------------------------------
 
-This code uses a mailbox to send asynchronous messages. A semaphore is used
-to hold off the sending of a new message until the previous message
-has been consumed, so that a backlog of messages doesn't build up
-when the consuming thread is unable to keep up.
+这段代码使用邮筒发送异步消息。它使用了一个信号量，让之前的消息被消费后再发送新消息，因此当消费线程不能够消费时，积压的消息不会增加。
 
-The message data is stored in a memory block obtained from a memory pool,
-thereby eliminating unneeded data copying when exchanging large messages.
-The memory pool contains only two blocks: one block gets filled with
-data while the previously sent block is being processed
+消息数据储存于从内存池中获取的内存块中，因此当交换大消息时能消除不必要的数据拷贝。内存池只包含两块：其中一块被填充着数据，先前被发送的另一块则正在被处理。
 
 .. code-block:: c
 
@@ -356,76 +246,36 @@ data while the previously sent block is being processed
         }
     }
 
-Receiving a Message
+接收消息
 ===================
 
-A thread receives a message by first creating a message descriptor that
-characterizes the message it wants to receive. It then calls one of the
-mailbox receive APIs. The mailbox searches its send queue and takes the message
-from the first compatible thread it finds. If no compatible thread exists,
-the receiving thread may choose to wait for one. If no compatible thread
-appears before the waiting period specified by the receiving thread is reached,
-the receive operation fails.
-Once a receive operation completes successfully the receiving thread
-can examine the message descriptor to determine which thread sent the message,
-how much data was exchanged,
-and the application-defined info value supplied by the sending thread.
+线程通过接收消息时，它会先创建一个用于描述它所希望接收的消息的消息描述符，然后调用某个邮筒接收 API。邮筒会搜索它的发送队列，并从它搜索到的第一个兼容线程中取出消息。如果没有兼容线程，接收线程可以等待。如果在接收线程所指定的等待时间到达之前仍然没有兼容线程出现，则接收失败。接收完成后，接收线程可以检查消息的描述符，以查看是哪个线程发送的消息，有多少数据被交互，以及发送线程提供的应用程序相关的信息值。
 
-Any number of receiving threads may wait simultaneously on a mailboxes's
-receive queue. The threads are sorted according to their priority;
-threads of equal priority are sorted so that the one that started waiting
-first can receive a message first.
+多个接收线程可以同时等待在一个邮筒的接收队列上。这些线程以优先级进行排序；相同优先级的线程以先进先出的顺序进行排序。
 
 .. note::
-    Receiving threads do not always receive messages in a first in, first out
-    (FIFO) order, due to the thread compatibility constraints specified by the
-    message descriptors. For example, if thread A waits to receive a message
-    only from thread X and then thread B waits to receive a message from
-    thread Y, an incoming message from thread Y to any thread will be given
-    to thread B and thread A will continue to wait.
+    
+    由于消息描述符会指定线程兼容性，所以接收线程并非总是按照先进先出（FIFO）的顺序接收到数据的。例如，如果线程 A 希望从线程 X 接收消息，线程 B 希望从线程 Y 接收线程，此时如果有一个来自线程 Y 的发送给任意线程的消息到来，这线程 B 会接收到该消息，线程 A 则继续等待。
 
-The receiving thread controls both the quantity of data it retrieves from an
-incoming message and where the data ends up. The thread may choose to take
-all of the data in the message, to take only the initial part of the data,
-or to take no data at all. Similarly, the thread may choose to have the data
-copied into a message buffer of its choice or to have it placed in a message
-block. A message buffer is typically used when the volume of data
-involved is small, and the cost of copying the data is less than the cost
-of allocating and freeing a memory pool block.
 
-The following sections outline various approaches a receiving thread may use
-when retrieving message data.
+接收线程会同时控制从到达消息恢复数据时的数据数量和数据的结束之处。线程可以获取消息中的所有数据，也可以获取部分数据或者不获取任何数据。类似地，线程也可以让数据拷贝到某个消息缓冲中，也可以让数据放到某个消息块中。消息缓冲通常用于当数据量很小导致拷贝数据的代价小于分配、释放内存池块的代码时。
 
-Retrieving Data at Receive Time
+下面几小结总结了接收线程在恢复消息数据时的各种方法。
+
+在接收时恢复数据
 -------------------------------
 
-The most straightforward way for a thread to retrieve message data is to
-specify a message buffer when the message is received. The thread indicates
-both the location of the message buffer (which must not be :c:macro:`NULL`)
-and its size.
+线程恢复消息数据的最直接的方法是当消息到达时指定一个消息缓冲：该缓冲的位置（不能是 :c:macro:`NULL` ）和尺寸。
 
-The mailbox copies the message's data to the message buffer as part of the
-receive operation. If the message buffer is not big enough to contain all of the
-message's data, any uncopied data is lost. If the message is not big enough
-to fill all of the buffer with data, the unused portion of the message buffer is
-left unchanged. In all cases the mailbox updates the receiving thread's
-message descriptor to indicate how many data bytes were copied (if any).
+邮筒会将消息的数据拷贝到这个消息缓冲中。如果消息缓冲不够容纳所有的消息数据，未被拷贝的将被丢失。如果消息缓冲大于消息数据的尺寸，则消息缓冲中未被使用的部分将保持不变。无论是在那种情况下，邮筒都会更新接收线程的消息描述符，以指示具体有多少字节的数据被拷贝。
 
-The immediate data retrieval technique is best suited for small messages
-where the maximum size of a message is known in advance.
+立即数据恢复技术通常用于消息量很小（能提前知道消息的最大尺寸）的情况。
 
 .. note::
-   This technique can be used when the message data is actually located
-   in a memory block supplied by the sending thread. The mailbox copies
-   the data into the message buffer specified by the receiving thread, then
-   frees the message block back to its memory pool. This allows
-   a receiving thread to retrieve message data without having to know
-   whether the data was sent using a message buffer or a message block.
 
-The following code uses a mailbox to process variable-sized requests from any
-producing thread, using the immediate data retrieval technique. The message
-"info" field is used to exchange information about the maximum size
-message buffer that each thread can handle.
+   当发送线程提供的消息数据位于内存块时，也可以使用这种技术。邮筒会将数据拷贝到接收线程所指定的消息缓冲中，然后将消息块释放回内存池。这样的好处是接收线程不需要知道数据是由消息块发送的还是由消息缓冲发送的。
+
+下面的代码利用了数据立即恢复技术，它使用邮筒来处理来自生产线程的尺寸可变的请求。消息的 “info” 字段用于交换每个线程可以处理的消息缓冲的最大尺寸。
 
 .. code-block:: c
 
@@ -462,55 +312,28 @@ message buffer that each thread can handle.
         }
     }
 
-Retrieving Data Later Using a Message Buffer
+随后使用消息缓冲恢复数据
 --------------------------------------------
 
-A receiving thread may choose to defer message data retrieval at the time
-the message is received, so that it can retrieve the data into a message buffer
-at a later time.
-The thread does this by specifying a message buffer location of :c:macro:`NULL`
-and a size indicating the maximum amount of data it is willing to retrieve
-later.
+当消息被接收后，接收先可以推迟恢复消息数据的时间，即它可以在随后的一段时间再将数据恢复到消息缓冲中。要利用这种功能，线程需要指定消息缓冲的位置为 :c:macro:`NULL`，以及它所希望恢复的数据的最大尺寸。
 
-The mailbox does not copy any message data as part of the receive operation.
-However, the mailbox still updates the receiving thread's message descriptor
-to indicate how many data bytes are available for retrieval.
+邮筒不会拷贝任何消息数据。不过，邮筒仍然会更新接收线程的消息描述符，以指示有多少字节的数据可用于恢复。
 
-The receiving thread must then respond as follows:
+接收线程必须按如下方式进行响应：
 
-* If the message descriptor size is zero, then either the sender's message
-  contained no data or the receiving thread did not want to receive any data.
-  The receiving thread does not need to take any further action, since
-  the mailbox has already completed data retrieval and deleted the message.
+* 如果消息描述符的尺寸是零，表示发送者的消息没包含任何数据或者接收线程不需要接收任何数据。接收线程不需要做任何动作，因为邮筒内部已经完成了数据恢复和消息删除。
 
-* If the message descriptor size is non-zero and the receiving thread still
-  wants to retrieve the data, the thread must call :cpp:func:`k_mbox_data_get()`
-  and supply a message buffer large enough to hold the data. The mailbox copies
-  the data into the message buffer and deletes the message.
+* 如果消息描述符的尺寸非零，且接收线程仍然希望恢复数据，则该线程必须调用 :cpp:func:`k_mbox_data_get()`，并提供一个足够容纳数据的消息缓冲。邮筒会将数据拷贝到消息缓冲并删除消息。
 
-* If the message descriptor size is non-zero and the receiving thread does *not*
-  want to retrieve the data, the thread must call :cpp:func:`k_mbox_data_get()`.
-  and specify a message buffer of :c:macro:`NULL`. The mailbox deletes
-  the message without copying the data.
+* 如果消息描述符的尺寸非零，且接收线程 **不** 向接收数据，则该线程必须调用 :cpp:func:`k_mbox_data_get()`，并将消息缓冲指定为 :c:macro:`NULL`。邮筒不会拷贝数据，会直接删除消息。
 
-The subsequent data retrieval technique is suitable for applications where
-immediate retrieval of message data is undesirable. For example, it can be
-used when memory limitations make it impractical for the receiving thread to
-always supply a message buffer capable of holding the largest possible
-incoming message.
+数据的随后恢复技术适用于当应用程序不适合立即恢复的场景。例如，当由于内存限制导致接收线程不能够提供一个能够容纳达到消息数据的消息缓冲时。
 
 .. note::
-   This technique can be used when the message data is actually located
-   in a memory block supplied by the sending thread. The mailbox copies
-   the data into the message buffer specified by the receiving thread, then
-   frees the message block back to its memory pool. This allows
-   a receiving thread to retrieve message data without having to know
-   whether the data was sent using a message buffer or a message block.
 
-The following code uses a mailbox's deferred data retrieval mechanism
-to get message data from a producing thread only if the message meets
-certain criteria, thereby eliminating unneeded data copying. The message
-"info" field supplied by the sender is used to classify the message.
+   当发送线程提供的消息数据位于内存块时，也可以使用这种技术。邮筒会将数据拷贝到接收线程所指定的消息缓冲中，然后将消息块释放回内存池。这样的好处是接收线程不需要知道数据是由消息块发送的还是由消息缓冲发送的。
+
+下面的代码使用了邮筒的数据延迟恢复计数来获取从生产线程发送的消息数据。由于只有当消息满足某个标准时才会恢复数据，因此能减小不必要的数据拷贝。发送者指定的消息的 “info” 字段用于区分消息的类别。
 
 .. code-block:: c
 
@@ -541,37 +364,18 @@ certain criteria, thereby eliminating unneeded data copying. The message
         }
     }
 
-Retrieving Data Later Using a Message Block
+随后使用消息块恢复数据
 -------------------------------------------
 
-A receiving thread may choose to retrieve message data into a memory block,
-rather than a message buffer. This is done in much the same way as retrieving
-data subsequently into a message buffer --- the receiving thread first
-receives the message without its data, then retrieves the data by calling
-:cpp:func:`k_mbox_data_block_get()`. The mailbox fills in the block descriptor
-supplied by the receiving thread, allowing the thread to access the data.
-The mailbox also deletes the received message, since data retrieval
-has been completed. The receiving thread is then responsible for freeing
-the message block back to the memory pool when the data is no longer needed.
+接收线程可以将消息数据恢复到一个内存块（而非消息缓冲）中。这种方法与在随后使用消息缓冲恢复数据的方法基本 —— 接收线程先接收消息（不带数据），然后调用函数 :cpp:func:`k_mbox_data_block_get()` 恢复数据。邮筒会填充接收线程提供的消息描述符，允许线程访问数据。当数据被恢复后，邮筒会删除消息。然后，接收线程在不需要数据时负责释放将消息块释放回内存池中。
 
-This technique is best suited for applications where the message data has
-been sent using a memory block.
+这种技术更适用于消息数据由内存块发送的应用程序。
 
 .. note::
-   This technique can be used when the message data is located in a message
-   buffer supplied by the sending thread. The mailbox automatically allocates
-   a memory block and copies the message data into it. However, this is much
-   less efficient than simply retrieving the data into a message buffer
-   supplied by the receiving thread. In addition, the receiving thread
-   must be designed to handle cases where the data retrieval operation fails
-   because the mailbox cannot allocate a suitable message block from the memory
-   pool. If such cases are possible, the receiving thread must either try
-   retrieving the data at a later time or instruct the mailbox to delete
-   the message without retrieving the data.
+   
+   当发送线程的消息数据位于消息缓冲时，也可以利用这种技术。邮筒会自动分配一个内存块并将数据拷贝到里面。不过，这种方法比直接将数据恢复到由接收线程提供的消息缓冲更低效。此外，接收线程在必须够处理当由于邮筒不能分配到内存块而导致数据恢复失败的情形。如果这种情况发送了，接收线程必须尝试在随后再次恢复数据，或者指示邮筒删除消息（没有恢复数据）。
 
-The following code uses a mailbox to receive messages sent using a memory block,
-thereby eliminating unneeded data copying when processing a large message.
-(The messages may be sent synchronously or asynchronously.)
+下面的代码使用邮筒来接收一个由内存块发送的消息，因此可以消除不必要的内存拷贝（尤其是大消息）。消息可能被同步发送，也可能被异步发送。
 
 .. code-block:: c
 
@@ -611,28 +415,25 @@ thereby eliminating unneeded data copying when processing a large message.
     }
 
 .. note::
-    An incoming message that was sent using a message buffer is also processed
-    correctly by this algorithm, since the mailbox automatically allocates
-    a memory block from the memory pool and fills it with the message data.
-    However, the performance benefit of using the memory block approach is lost.
+    
+    这种算法也能正确地处理使用消息缓冲发送的消息，以为邮筒会自动从内存池中分配一个内存块，并使用消息数据填充它。不过，这样的会丢失性能。
 
-Suggested Uses
+建议的用法
 **************
 
-Use a mailbox to transfer data items between threads whenever the capabilities
-of a message queue are insufficient.
+当消息队列不足以在两个线程间传递数据时，使用邮筒。
 
-Configuration Options
+配置选项
 *********************
 
-Related configuration options:
+相关的配置选项：
 
 * :option:`CONFIG_NUM_MBOX_ASYNC_MSGS`
 
-APIs
+API
 ****
 
-The following APIs for a mailbox are provided by :file:`kernel.h`:
+头文件 file:`kernel.h` 提供了如下的邮筒 API：
 
 * :c:macro:`K_MBOX_DEFINE`
 * :cpp:func:`k_mbox_init()`

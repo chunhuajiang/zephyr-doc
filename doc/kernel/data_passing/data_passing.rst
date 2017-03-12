@@ -1,10 +1,9 @@
 .. _data_passing_v2:
 
-Data Passing
+数据传递
 ############
 
-This section describes kernel services for passing data
-between different threads, or between an ISR and a thread.
+本节描述内核为不同线程间、线程与 ISR 间提供的数据传递服务。
 
 .. toctree::
    :maxdepth: 2

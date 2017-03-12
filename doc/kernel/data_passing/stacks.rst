@@ -1,63 +1,48 @@
 .. _stacks_v2:
 
-Stacks
+栈
 ######
 
-A :dfn:`stack` is a kernel object that implements a traditional
-last in, first out (LIFO) queue, allowing threads and ISRs
-to add and remove a limited number of 32-bit data values.
+:dfn:`栈（stack）` 是一个内核对象，它实现了传统的后进先出（last in first out）队列，允许线程和 ISR 添加大小为 32 比特的数据值。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-Any number of stacks can be defined. Each stack is referenced
-by its memory address.
+可以定义任意数量的栈。每个栈通过其内存地址进行引用。
 
-A stack has the following key properties:
+栈的关键属性包括：
 
-* A **queue** of 32-bit data values that have been added but not yet removed.
-  The queue is implemented using an array of 32-bit integers,
-  and must be aligned on a 4-byte boundary.
+* **队列**： 它包含了已被添加但还未被移除的长度为 32 比特的数据值。队列使用整型数组实现，且必须在 4 字节边界上对齐。
 
-* A **maximum quantity** of data values that can be queued in the array.
+* **最大数量**：栈的容量。
 
-A stack must be initialized before it can be used. This sets its queue to empty.
+栈必须先初始化再使用。初始化时会将栈的队列设为空。
 
-A data value can be **added** to a stack by a thread or an ISR.
-The value is given directly to a waiting thread, if one exists;
-otherwise the value is added to the lifo's queue.
-The kernel does *not* detect attempts to add a data value to a stack
-that has already reached its maximum quantity of queued values.
+数据可以被线程或者 ISR **添加** 到栈中。如果有线程在该栈上等待数据，则该数据直接被传递该线程；否则，该数据会被添加到栈的队列中。内核在添加数据到栈时，不会检测该栈的队列值是否已达到最大数量。
 
 .. note::
-    Adding a data value to a stack that is already full will result in
-    array overflow, and lead to unpredictable behavior.
 
-A data value may be **removed** from a stack by a thread.
-If the stack's queue is empty a thread may choose to wait for it to be given.
-Any number of threads may wait on an empty stack simultaneously.
-When a data item is added, it is given to the highest priority thread
-that has waited longest.
+    向一个已满的栈添加数据会导致数组越界，最终会产生不可预料的行为。
+
+数据项可以被线程从栈中 **移除**。如果该栈的队列为空，线程在这个栈上进行等待。多个线程可以同时在某个空栈上等待，当一个新的数据项被添加时，它会被给予优先级最高的、等待时间最久的线程。
 
 .. note::
-    The kernel does allow an ISR to remove an item from a stack, however
-    the ISR must not attempt to wait if the stack is empty.
+    
+    ISR 虽然也可以从栈中移除数据，但是如果栈为空，ISR 不能进行等待。
 
-Implementation
+实现
 **************
 
-Defining a Stack
+定义栈
 ================
 
-A stack is defined using a variable of type :c:type:`struct k_stack`.
-It must then be initialized by calling :cpp:func:`k_stack_init()`.
+使用类型为 :c:type:`struct k_stack` 的变量可以定义一个栈。栈定义后必须使用函数 :cpp:func:`k_stack_init()` 对其进行初始化。
 
-The following code defines and initializes an empty stack capable of holding
-up to ten 32-bit data values.
+下面的代码定义并初始化了一个可以容纳 10 个值的空栈。
 
 .. code-block:: c
 
@@ -68,24 +53,20 @@ up to ten 32-bit data values.
 
     k_stack_init(&my_stack, my_stack_array, MAX_ITEMS);
 
-Alternatively, a stack can be defined and initialized at compile time
-by calling :c:macro:`K_STACK_DEFINE`.
+也可以使用宏 :c:macro:`K_STACK_DEFINE` 在编译时定义并初始化一个栈。
 
-The following code has the same effect as the code segment above. Observe
-that the macro defines both the stack and its array of data values.
+下面的代码与上面的代码段具有相同的效果。注意，该宏既定义了栈又定义了数组。
 
 .. code-block:: c
 
     K_STACK_DEFINE(my_stack, MAX_ITEMS);
 
-Pushing to a Stack
+压栈
 ==================
 
-A data item is added to a stack by calling :cpp:func:`k_stack_push()`.
+函数 :cpp:func:`k_stack_push()` 可用于将数据项压栈。
 
-The following code builds on the example above, and shows how a thread
-can create a pool of data structures by saving their memory addresses
-in a stack.
+下面的代码基于上面的例程之上，它展示了线程是如何通过保存数据结构池的内存地址到栈中来创建数据结构池的过程。
 
 .. code-block:: c
 
@@ -101,15 +82,12 @@ in a stack.
         k_stack_push(&my_stack, (uint32_t)&my_buffers[i]);
     }
 
-Popping from a Stack
+出栈
 ====================
 
-A data item is taken from a stack by calling :cpp:func:`k_stack_pop()`.
+函数 :cpp:func:`k_stack_pop()` 可以用于从栈中弹出一个数据项。
 
-The following code builds on the example above, and shows how a thread
-can dynamically allocate an unused data structure.
-When the data structure is no longer required, the thread must push
-its address back on the stack to allow the data structure to be reused.
+下面的代码基于上面的例程之上，它展示了线程是如何动态地分配一个未使用的数据结构的过程。当不再需要数据结构时，线程必须将它的地址压入到栈中，以允许该数据结构能被重复利用。
 
 .. code-block:: c
 
@@ -118,23 +96,22 @@ its address back on the stack to allow the data structure to be reused.
     k_stack_pop(&buffer_stack, (uint32_t *)&new_buffer, K_FOREVER);
     new_buffer->field1 = ...
 
-Suggested Uses
+建议的用法
 **************
 
-Use a stack to store and retrieve 32-bit data values in a "last in,
-first out" manner, when the maximum number of stored items is known.
+当已知待存储的数据项的数量时，可以使用栈以后进先出的方式保存和恢复大小为 32 比特的数据。
 
-Configuration Options
+配置选项
 *********************
 
-Related configuration options:
+相关的配置学习：
 
-* None.
+* 无。
 
-APIs
+API
 ****
 
-The following stack APIs are provided by :file:`kernel.h`:
+头文件 :file:`kernel.h` 中提供了如下的栈相关的 API：
 
 * :c:macro:`K_STACK_DEFINE`
 * :cpp:func:`k_stack_init()`
