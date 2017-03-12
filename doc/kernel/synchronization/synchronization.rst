@@ -1,10 +1,9 @@
 .. _synchronization_v2:
 
-Synchronization
+同步
 ###############
 
-This section describes kernel services for synchronizing the operation
-of different threads, or the operation of an ISR and a thread.
+本节描述线程之间、线程与 ISR 之间的同步服务。
 
 .. toctree::
    :maxdepth: 2
