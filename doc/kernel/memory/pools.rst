@@ -1,152 +1,81 @@
 .. _memory_pools_v2:
 
-Memory Pools
+内存池
 ############
 
-A :dfn:`memory pool` is a kernel object that allows memory blocks
-to be dynamically allocated from a designated memory region.
-The memory blocks in a memory pool can be of any size,
-thereby reducing the amount of wasted memory when an application
-needs to allocate storage for data structures of different sizes.
-The memory pool uses a "buddy memory allocation" algorithm
-to efficiently partition larger blocks into smaller ones,
-allowing blocks of different sizes to be allocated and released efficiently
-while limiting memory fragmentation concerns.
+:dfn:`内存池（memory pool）` 是一个内核对象，它允许从指定的内存区域上动态地分配内存块（memory block）。同一个内存池中的内存块的大小是不固定的，这样可以减小由于不同的应用程序需要为大小不同的数据结构分配不同的存储空间所造成的浪费。内存池使用“伙伴（buddy）内存分配”算法，它可以高效地将大块内存分割为小块内存。此外，它还可以在最大限度减小内存碎片的前提下，高效地分配和释放不小不同的内存块。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-Any number of memory pools can be defined. Each memory pool is referenced
-by its memory address.
+可以定义任意数量的内存池。每个内存池通过其内存地址进行引用。
 
-A memory pool has the following key properties:
+内存池的关键属性包括：
 
-* A **minimum block size**, measured in bytes.
-  It must be at least 4X bytes long, where X is greater than 0.
+* **块最小尺寸**：以字节为单位。大于等于 4X 字节，其 0。
 
-* A **maximum block size**, measured in bytes.
-  This should be a power of 4 times larger than the minimum block size.
-  That is, "maximum block size" must equal "minimum block size" times 4^Y,
-  where Y is greater than or equal to zero.
+* **块最大尺寸**：以字节为单位。等于 “块最小尺寸”*4^Y，其中 Y 大于等于 0。 
 
-* The **number of maximum-size blocks** initially available.
-  This must be greater than zero.
+* **最大尺寸块的数量**：大于 0。
 
-* A **buffer** that provides the memory for the memory pool's blocks.
-  This must be at least "maximum block size" times
-  "number of maximum-size blocks" bytes long.
+* **buffer**：内存池的块的实际内存区域。它必须大于等于 “块最大尺寸”*“最大尺寸块的数量”。
 
-The memory pool's buffer must be aligned to an N-byte boundary, where
-N is a power of 2 larger than 2 (i.e. 4, 8, 16, ...). To ensure that
-all memory blocks in the buffer are similarly aligned to this boundary,
-the minimum block size must also be a multiple of N.
+内存片的 buffer 必须 N 字节对齐，其中 N 是大于 2 的 2 的整数次幂（例如 4,8,16...）。为了保证 buffer 中的所有内存块都对齐到这个边界，块的大小必须是 N 的整数倍。
 
-A thread that needs to use a memory block simply allocates it from a memory
-pool. Following a successful allocation, the :c:data:`data` field
-of the block descriptor supplied by the thread indicates the starting address
-of the memory block. When the thread is finished with a memory block,
-it must release the block back to the memory pool so the block can be reused.
+当线程需要内存块时，它只需要从一个内存池中申请。申请成功后，由线程提供的块描述符的 :c:data:`data` 字段表示该内存块的起始地址。当线程使用完内存块后，它必须将其释放给内存池，让其可以重复利用。
 
-If a block of the desired size is unavailable, a thread can optionally wait
-for one to become available.
-Any number of threads may wait on a memory pool simultaneously;
-when a suitable memory block becomes available, it is given to
-the highest-priority thread that has waited the longest.
 
-Unlike a heap, more than one memory pool can be defined, if needed. For
-example, different applications can utilize different memory pools; this
-can help prevent one application from hijacking resources to allocate all
-of the available blocks.
+如果没有找到所期望的内存块，线程可以等待，直到某个块可用。多个线程可以同时等待某个空的内存池；当某个内存块可用时，它会被分配给优先级最高的、等待时间最久的线程使用。
 
-Internal Operation
+与堆不同的是，如果有需要，可以定义多个内存片。例如不同的应用程序可以利用不同的内存池。这样可以阻止某个应用程序“绑架”所有资源。
+
+内部操作
 ==================
+内存片的 buffer 是一个数组，数组的元素则是大小固定的块，这样能保证在块与块之间没有空间被浪费。
 
-A memory pool's buffer is an array of maximum-size blocks,
-with no wasted space between the blocks.
-Each of these "level 0" blocks is a *quad-block* that can be
-partitioned into four smaller "level 1" blocks of equal size, if needed.
-Likewise, each level 1 block is itself a quad-block that can be partitioned
-into four smaller "level 2" blocks in a similar way, and so on.
-Thus, memory pool blocks can be recursively partitioned into quarters
-until blocks of the minimum size are obtained,
-at which point no further partitioning can occur.
+内存片使用一个链表来跟踪未使用的块。每个未使用块的前 4 个字节用于提供链接信息。
 
-A memory pool keeps track of how its buffer space has been partitioned
-using an array of *block set* data structures. There is one block set
-for each partitioning level supported by the pool, or (to put it another way)
-for each block size. A block set keeps track of all free blocks of its
-associated size using an array of *quad-block status* data structures.
+内存池的 buffer 是一个数组，数组的元素的大小是块的最大尺寸，这样能保证块与块之间没有空间被浪费。每个“第 0 级”的块是一个 *quad-block*，（如果有需要）可以被分为四个小的大小相等的“第 1 级”块。类似地，每个第 1 级块也是 quad-block，也可以被分为四个小的大小相等的“第 2 级”块。依次类推。因此，每个内存块都可以递归地分为四分之一的小块，知道小块的尺寸不满足块最小尺寸。
 
-When an application issues a request for a memory block,
-the memory pool first determines the size of the smallest block
-that will satisfy the request, and examines the corresponding block set.
-If the block set contains a free block, the block is marked as used
-and the allocation process is complete.
-If the block set does not contain a free block,
-the memory pool attempts to create one automatically by splitting a free block
-of a larger size or by merging free blocks of smaller sizes;
-if a suitable block can't be created, the allocation request fails.
+内存池通过一个叫做 *块集（block set）* 的数据结构来跟踪它的 buffer 空间的分区情况。内存池为所支持的每一个划分等级或者每一个块尺寸都维持了一个块集。每个块集使用一个叫做 *quad-block 状态* 的数据结构的数组来跟踪它所关联的尺寸的所有空闲块。
+
+当应用程序请求一个内存块时，内存池首先会判断最小块的尺寸是否满足请求，并检查其相应的块集。如果块集包含有一个空闲块，它会将该块标记为以使用，然后分配过程就结束了。如果该块集不包含空闲块，内存池将尝试将一个更大尺寸的空闲块分类成小的块，或者将小块合并为大的块。如果不能创建这样的块，则分配失败。
 
 .. note::
-    By default, memory pools will attempt to split a larger block
-    before trying to merge smaller blocks. However, they can also
-    be configured to merge smaller blocks first, or to skip
-    the merging step entirely. In the latter case, merging of smaller
-    blocks only occurs when the application explicitly issues
-    a request to defragment the entire memory pool.
 
-The memory pool's block merging and splitting process is done efficiently,
-but it is a recursive algorithm that may incur significant overhead.
-In addition, the merging algorithm cannot combine adjacent free blocks
-of different sizes, nor can it merge adjacent free blocks of the same size
-if they belong to different parent quad-blocks. As a consequence,
-memory fragmentation issues can still be encountered when using a memory pool.
+    默认情况下，内存池会先去分裂一个大的块，失败后才会合并小的块。不过这是可以配置的，可以先合并小的块，或者快过合并小块的过程。在后一种情况下，只有当应用程序明确地发出对整个内存池去碎片的请求时才会合并小块。    
 
-When an application releases a previously allocated memory block
-it is simply marked as a free block in its associated block set.
-The memory pool does not attempt to merge the newly freed block,
-allowing it to be easily reallocated in its existing form.
+内存池的块合并和分裂过程是非常高效的，但是它采用的是递归算法，因此很容易产生显著的开销。此外，合并算法不能将大小不同的相邻块结合在一起，也不能合并不属于同一个父 quad-block 的尺寸相同的相邻块。因此，使用内存池时依然会遇到碎片问题。
 
-Implementation
+当应用程序释放一个已分配的内存块时，仅仅会在该内存块所关联块集中将其标记为空闲。内存池不会尝试合并最近释放的块，这样的好处是可以很方便地在其已存在的组织上进行重分配。
+
+
+实现
 **************
 
-Defining a Memory Pool
+定义内存池
 ======================
 
-A memory pool is defined using a variable of type :c:type:`struct k_mem_pool`.
-However, since a memory pool also requires a number of variable-size data
-structures to represent its block sets and the status of its quad-blocks,
-the kernel does not support the run-time definition of a memory pool.
-A memory pool can only be defined and initialized at compile time
-by calling :c:macro:`K_MEM_POOL_DEFINE`.
+使用类型为 :c:type:`struct k_mem_pool` 的变量可以定义一个内存池。不过，由于内存池也需要大量的尺寸可变的数据结构来代表它的块集合和它的 quad-block 的状态，内核不支持在运行时动态地定义内存池。内存池只能使用 :c:macro:`K_MEM_POOL_DEFINE` 在编译时进行定义和初始化。
 
-The following code defines and initializes a memory pool that has 3 blocks
-of 4096 bytes each, which can be partitioned into blocks as small as 64 bytes
-and is aligned to a 4-byte boundary.
-(That is, the memory pool supports block sizes of 4096, 1024, 256,
-and 64 bytes.)
-Observe that the macro defines all of the memory pool data structures,
-as well as its buffer.
+下面的代码定义并初始化了一个内存池，这个内存池有三个大小为 4096 字节的块。这些块也可以被划分为最小为 64 字节的 4 字节对齐的子块。（也就是说，内存池支持的块大小是 4096、1024、256 和 64 字节。）注意，该宏定义了内存池的所有数据结构和它的 buffer。
 
 .. code-block:: c
 
     K_MEM_POOL_DEFINE(my_pool, 64, 4096, 3, 4);
 
-Allocating a Memory Block
+分配内存块
 =========================
 
-A memory block is allocated by calling :cpp:func:`k_mem_pool_alloc()`.
+函数 :cpp:func:`k_mem_pool_alloc()` 用于分配内存块。
 
-The following code builds on the example above, and waits up to 100 milliseconds
-for a 200 byte memory block to become available, then fills it with zeroes.
-A warning is issued if a suitable block is not obtained.
+下面的代码会先等待 100 毫秒，以拿到一个 200 字节的可以内存块，然后将其填充为零。如果没有获得合适的内存块，代码会打印一个警告信息。
 
-Note that the application will actually receive a 256 byte memory block,
-since that is the closest matching size supported by the memory pool.
+注意，应用程序实际会接收到一个大小为 256 字节的内存块，因为这是内存池所支持的最接近的尺寸。
 
 .. code-block:: c
 
@@ -159,14 +88,12 @@ since that is the closest matching size supported by the memory pool.
         printf("Memory allocation time-out");
     }
 
-Releasing a Memory Block
+释放内存块
 ========================
 
-A memory block is released by calling :cpp:func:`k_mem_pool_free()`.
+函数 :cpp:func:`k_mem_pool_free()` 用于释放内存块。
 
-The following code builds on the example above, and allocates a 75 byte
-memory block, then releases it once it is no longer needed. (A 256 byte
-memory block is actually used to satisfy the request.)
+下面的代码基于上面的例程之上，它申请了 75 字节的内存块，并在不再使用时释放。（基于安全考虑，实际上会从堆内存池使用 256 字节的内存块。）
 
 .. code-block:: c
 
@@ -176,41 +103,36 @@ memory block is actually used to satisfy the request.)
     ... /* use memory block */
     k_mem_pool_free(&block);
 
-Manually Defragmenting a Memory Pool
+内存池手工去碎片
 ====================================
 
-This code instructs the memory pool to concatenate unused memory blocks
-into their parent quad-blocks wherever possible. Doing a full defragmentation
-of the entire memory pool before allocating a number of memory blocks
-may be more efficient than relying on the partial defragmentation that can
-occur automatically each time a memory block allocation is requested.
+这段代码指示内存池尽可能地将未使用的内存块合并到它们的父 quad-block 里面。每次收到内存块分配请求时，内存池内部都会自动地去除部分碎片，但是在分配大量内存块前对整个内存池做完全的去碎片化的效率更高。
 
 .. code-block:: c
 
     k_mem_pool_defragment(&my_pool);
 
-Suggested Uses
+建议的用法
 **************
 
-Use a memory pool to allocate memory in variable-size blocks.
+当需要分配大小不固定的内存时，可以使用内存池。
 
-Use memory pool blocks when sending large amounts of data from one thread
-to another, to avoid unnecessary copying of the data.
+当一个线程需要给另一个线程发送大量的数据时，可以使用内存池，这样可以避免不必要的数据拷贝。
 
-Configuration Options
+配置选项
 *********************
 
-Related configuration options:
+相关的配置选项：
 
 * :option:`CONFIG_MEM_POOL_SPLIT_BEFORE_DEFRAG`
 * :option:`CONFIG_MEM_POOL_DEFRAG_BEFORE_SPLIT`
 * :option:`CONFIG_MEM_POOL_SPLIT_ONLY`
 
 
-APIs
+API
 ****
 
-The following memory pool APIs are provided by :file:`kernel.h`:
+头文件 :file:`kernel.h` 中提供了如下的内存池 API：
 
 * :c:macro:`K_MEM_POOL_DEFINE`
 * :cpp:func:`k_mem_pool_alloc()`

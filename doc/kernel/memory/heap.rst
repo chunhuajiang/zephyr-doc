@@ -1,45 +1,33 @@
 .. _heap_v2:
 
-Heap Memory Pool
+堆内存池
 ################
 
-The :dfn:`heap memory pool` is a pre-defined memory pool object that allows
-threads to dynamically allocate memory from a common memory region
-in a :cpp:func:`malloc()`-like manner.
+:dfn:`堆内存池（heap memory pool）` 是一个预定义的内存池对象，它允许线程像使用 :cpp:func:`malloc()` 那样从一段通用内存区动态地申请内存。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-Only a single heap memory pool can be defined. Unlike other memory pools,
-the heap memory pool cannot be directly referenced using its memory address.
+堆内存池只能定义一个。与其它内存池不同的是，堆内存池不能通过内存地址对其引用。
 
-The size of the heap memory pool is configurable. The following sizes
-are supported: 256 bytes, 1024 bytes, 4096 bytes, and 16384 bytes.
+堆内存池的大小是可配置的，支持如下大小：256 字节，1024 字节，4096 字节和 16384 字节。
 
-A thread can dynamically allocate a chunk of heap memory by calling
-:cpp:func:`k_malloc()`. The address of the allocated chunk is guaranteed
-to be aligned on a multiple of 4 bytes. If a suitable chunk of heap memory
-cannot be found :c:macro:`NULL` is returned.
+线程可以调用函数 :cpp:func:`k_malloc()` 来动态申请一大块堆内存。所分配的地址是 4 字节对齐的。如果内核没有找到合适的内存块，将返回一个 :c:macro:`NULL`。
 
-When the thread is finished with a chunk of heap memory it can release
-the chunk back to the heap memory pool by calling :cpp:func:`k_free()`.
+当线程使用完堆内存后，它应当调用 :cpp:func:`k_free()` 将其释放到堆内存池中。
 
-Internal Operation
+内部操作
 ==================
 
-The heap memory pool defines a single maximum size block that contains
-the entire heap; that is, a single block of 256, 1024, 4096, or 16384 bytes.
-The heap memory pool also defines a minimum block size of 64 bytes.
-Consequently, the maximum number of blocks of each size that the heap
-memory pool can support is shown in the following table.
+堆内存池定义了一个包含整个堆的单一的最大尺寸块；即单一块的大小是 256、1024、4096 或 16384 字节。堆内存池也定义了一个最小尺寸块 —— 64 字节。下表展示了堆内存池在每种块尺寸下所能支持的块的数量。
 
 +-------+---------+----------+-----------+-----------+------------+
-| heap  | 64 byte | 256 byte | 1024 byte | 4096 byte | 16384 byte |
-| size  | blocks  | blocks   | blocks    | blocks    | blocks     |
+| 堆    | 64 字节 | 256 字节 | 1024 字节 | 4096 字节 | 16384 字节 |
+| 尺寸  | 的块    | 的块     | 的块      | 的块      | 的块       |
 +=======+=========+==========+===========+===========+============+
 | 256   | 4       | 1        | 0         | 0         | 0          |
 +-------+---------+----------+-----------+-----------+------------+
@@ -51,41 +39,29 @@ memory pool can support is shown in the following table.
 +-------+---------+----------+-----------+-----------+------------+
 
 .. note::
-    The number of blocks of a given size that can be allocated
-    simultaneously is typically smaller than the value shown in the table.
-    For example, each allocation of a 256 byte block from a 1024 byte
-    heap reduces the number of 64 byte blocks available for allocation
-    by 4. Fragmentation of the memory pool's buffer can also further
-    reduce the availability of blocks.
+	
+    对于某个给定的尺寸的内存块，能同时分配到的数量通常小于上面的表所列举的结果。例如，每当从大小为 1024 字节的堆内存中分配一个大小为 256 字节的块后，所能分配到的大小为 64 字节的块的数量就会减 4。内存池 buffer 中的碎片也会进一步减小可用块的数量。
 
-The kernel uses the first 16 bytes of any memory block allocated
-from the heap memory pool to save the block descriptor information
-it needs to later free the block. Consequently, an application's request
-for an N byte chunk of heap memory requires a block that is at least
-(N+16) bytes long.
+内存块被分配后，它的前 16 个字节将被内核用于记录块描述符。内核随后会使用该描述符释放块。因此，如果应用程序请求的堆内存大小是 N 字节，实际至少会使用 N+16 字节。
 
-Implementation
+实现
 **************
 
-Defining the Heap Memory Pool
+定义堆内存池
 =============================
 
-The size of the heap memory pool is specified using the
-:option:`CONFIG_HEAP_MEM_POOL_SIZE` configuration option.
+配置选项 :option:`CONFIG_HEAP_MEM_POOL_SIZE` 用于指定堆内存池的大小。
 
-By default, the heap memory pool size is zero bytes. This value instructs
-the kernel not to define the heap memory pool object.
+默认情况下，堆内存池的大小是零字节，它指示内核不要去定义堆内存池对象。
 
-Allocating Memory
+分配
 =================
 
-A chunk of heap memory is allocated by calling :cpp:func:`k_malloc()`.
+函数 :cpp:func:`k_malloc()` 用于分配一块堆内存。
 
-The following code allocates a 200 byte chunk of heap memory, then fills it
-with zeros. A warning is issued if a suitable chunk is not obtained.
+下面的代码先申请了 200 字节的堆内存空间，然后将其填充为零。如果没有获取到所需的空间，它将打印一条警告消息。
 
-Note that the application will actually allocate a 256 byte memory block,
-since that is the closest matching size supported by the heap memory pool.
+注意，应用程序实际会接收到一个大小为 256 字节的内存块，因为这是堆内存池所支持的最接近的尺寸。
 
 .. code-block:: c
 
@@ -99,14 +75,12 @@ since that is the closest matching size supported by the heap memory pool.
         printf("Memory not allocated");
     }
 
-Releasing Memory
+释放内存
 ================
 
-A chunk of heap memory is released by calling :cpp:func:`k_free()`.
+函数 :cpp:func:`k_free()` 用于释放一块堆内存。
 
-The following code allocates a 75 byte chunk of memory, then releases it
-once it is no longer needed. (A 256 byte memory block from the heap memory
-pool is actually used to satisfy the request.)
+下面的代码申请了 75 字节的内存块，并在不再使用时释放。（基于安全考虑，实际上会从堆内存池使用 256 字节的内存块。）
 
 .. code-block:: c
 
@@ -116,23 +90,22 @@ pool is actually used to satisfy the request.)
     ... /* use memory block */
     k_free(mem_ptr);
 
-Suggested Uses
+建议的用法
 **************
 
-Use the heap memory pool to dynamically allocate memory in a
-:cpp:func:`malloc()`-like manner.
+您可以像使用 :cpp:func:`malloc()` 那样使用堆内存池动态地分配内存。
 
-Configuration Options
+配置选项
 *********************
 
-Related configuration options:
+相关的配置选项：
 
 * :option:`CONFIG_HEAP_MEM_POOL_SIZE`
 
-APIs
+API
 ****
 
-The following heap memory pool APIs are provided by :file:`kernel.h`:
+头文件 :file:`kernel.h` 中提供了如下的堆内存池 API：
 
 * :cpp:func:`k_malloc()`
 * :cpp:func:`k_free()`
