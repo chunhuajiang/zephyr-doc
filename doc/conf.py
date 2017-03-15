@@ -49,9 +49,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Zephyr Project'
-copyright = u'2015-2017 Zephyr Project members and individual contributors.'
-author = u'many'
+project = u'Zephyr 项目中文文档'
+copyright = u'2016, tidyjiang@163.com'
+author = u'tidyjiang@163.com'
 
 
 # The following code tries to extract the information by reading the Makefile,
@@ -85,7 +85,7 @@ finally:
 #
 # This is also used if you do content translation via gettext catalogs.
 # Usually you set "language" from the command line for these cases.
-language = None
+language = 'zh_CN'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
@@ -147,7 +147,7 @@ if tags.has('daily') or tags.has('release'):
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
-html_title = "Zephyr Project Documentation"
+html_title = u"Zephyr 项目中文文档"
 
 # This value determines the text for the permalink; it defaults to "¶".
 # Set it to None or the empty string to disable permalinks.
@@ -239,6 +239,12 @@ htmlhelp_basename = 'zephyrdoc'
 # -- Options for LaTeX output ---------------------------------------------
 
 latex_elements = {
+	'preamble': '''
+		\\hypersetup{unicode=true}
+	\\usepackage{CJKutf8}
+	\\AtBeginDocument{\\begin{CJK}{UTF8}{gbsn}}
+	\\AtEndDocument{\\end{CJK}}
+	'''
 # The paper size ('letterpaper' or 'a4paper').
 #'papersize': 'letterpaper',
 
@@ -325,6 +331,13 @@ breathe_default_project = "Zephyr"
 
 html_context = {
     'show_license': html_show_license,
+    # Enable the "Edit in GitHub link within the header of each page.
+    'display_github': True,
+    # Set the following variables to generate the resulting github URL for each page. 
+    # Format Template: https://{{ github_host|default("github.com") }}/{{ github_user }}/{{ github_repo }}/blob/{{ github_version }}{{ conf_py_path }}{{ pagename }}{{ suffix }}
+    'github_user': 'tidyjiang8',
+    'github_repo': 'zephyr-doc',
+    'github_version': 'master/doc/' 
 }
 
 extlinks = {'jira': ('https://jira.zephyrproject.org/browse/%s', '')}
