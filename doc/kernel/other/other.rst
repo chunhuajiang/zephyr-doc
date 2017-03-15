@@ -1,9 +1,9 @@
 .. _other_v2:
 
-Other Services
+其它服务
 ##############
 
-This section describes other services provided by the kernel.
+本节描述内核提供的其它服务。
 
 .. toctree::
    :maxdepth: 1

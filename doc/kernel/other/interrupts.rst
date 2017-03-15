@@ -1,142 +1,88 @@
 .. _interrupts_v2:
 
-Interrupts
+中断
 ##########
 
-An :dfn:`interrupt service routine` (ISR) is a function that executes
-asynchronously in response to a hardware or software interrupt.
-An ISR normally preempts the execution of the current thread,
-allowing the response to occur with very low overhead.
-Thread execution resumes only once all ISR work has been completed.
+:dfn:`中断服务例程` (ISR) 是一个异步响应硬件或者软件中断的函数。ISR 通常会抢占当前正在执行的线程，以达到快速响应的目的。只有当所有的 ISR 工作都完成后，线程才能得以恢复执行。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-Any number of ISRs can be defined, subject to the constraints imposed
-by underlying hardware.
+理论上，您可以定义任意数量的 ISR，但是它的实际个数受到硬件的限制。
 
-An ISR has the following key properties:
+ISR 的关键属性如下：
 
-* An **interrupt request (IRQ) signal** that triggers the ISR.
-* A **priority level** associated with the IRQ.
-* An **interrupt handler function** that is invoked to handle the interrupt.
-* An **argument value** that is passed to that function.
+* **中断请求（IRQ）信号**：触发 ISR 的信号。
+* **优先级**：与 IRQ 绑定在一起的优先级。
+* **中断处理函数**：用于处理中断的函数。
+* **参数值**：传递给函数的参数。
 
-An :abbr:`IDT (Interrupt Descriptor Table)` or a vector table is used
-to associate a given interrupt source with a given ISR.
-Only a single ISR can be associated with a specific IRQ at any given time.
+:abbr:`IDT（中断描述符表）` 或者向量表用于将一个给定的 ISR 与一个给定的中断源关联在一起。在任意时刻，一个 IRQ 只能与一个 ISR 关联。
 
-Multiple ISRs can utilize the same function to process interrupts,
-allowing a single function to service a device that generates
-multiple types of interrupts or to service multiple devices
-(usually of the same type). The argument value passed to an ISR's function
-allows the function to determine which interrupt has been signaled.
+多个 ISR 可以利用同一个函数来处理中断，这样的好处是允许一个函数可以同时服务于某个设备产生的多种不同类型中断，或者甚至服务于多个设备（通常是同种类型的）产生的中断。传递给 ISR 的参数值可以用于判断是具体哪一个中断源产生了信号。
 
-The kernel provides a default ISR for all unused IDT entries. This ISR
-generates a fatal system error if an unexpected interrupt is signaled.
+内核为所有未使用的 IDT 入口提供了一个默认的 ISR。如果发生了意外的中断，改 ISR 将产生一个致命系统错误。
 
-The kernel supports **interrupt nesting**. This allows an ISR to be preempted
-in mid-execution if a higher priority interrupt is signaled. The lower
-priority ISR resumes execution once the higher priority ISR has completed
-its processing.
+内核支持 **中断嵌套**，即高优先级的中断可以抢占正在执行的低优先级中断。当高优先级的 ISR 处理完成后，低优先级的 ISR 将恢复执行。
 
-An ISR's interrupt handler function executes in the kernel's **interrupt
-context**. This context has its own dedicated stack area (or, on some
-architectures, stack areas). The size of the interrupt context stack must be
-capable of handling the execution of multiple concurrent ISRs if interrupt
-nesting support is enabled.
+ISR 的中断处理函数在内核的 **中断上下文** 中执行。这个上下文有自己专用的栈区。如果中断嵌套被使能了，必须保证中断上下文栈的大小能够容纳多个 ISR 并发执行。
 
 .. important::
-    Many kernel APIs can be used only by threads, and not by ISRs. In cases
-    where a routine may be invoked by both threads and ISRs the kernel
-    provides the :cpp:func:`k_is_in_isr()` API to allow the routine to
-    alter its behavior depending on whether it is executing as part of
-    a thread or as part of an ISR.
-
-Preventing Interruptions
+    很多 API 只能被线程使用，不能被 ISR 使用。如果某个函数既可以被线程调用，也可以被 ISR 调用，内核会使用 API  cpp:func:`k_is_in_isr()` 来让该函数判断当前的上下文是线程还是 ISR，然后再做对应的处理。
+	
+阻止中断
 ========================
 
-In certain situations it may be necessary for the current thread to
-prevent ISRs from executing while it is performing time-sensitive
-or critical section operations.
+在某些特殊情况下，例如当前线程正在执行时间敏感的任务或者进行临界区的操作，则可能需要阻止 ISR 运行。
 
-A thread may temporarily prevent all IRQ handling in the system using
-an **IRQ lock**. This lock can be applied even when it is already in effect,
-so routines can use it without having to know if it is already in effect.
-The thread must unlock its IRQ lock the same number of times it was locked
-before interrupts can be once again processed by the kernel while the thread
-is running.
+线程可以使用 **IRQ 锁** 临时阻止系统处理所有 IRQ。IRQ 锁可以嵌套使用。内核如果要再次正常处理 IRQ，则必须保证 IRQ 解锁的次数等于 IRQ 锁的次数。
 
 .. important::
-    The IRQ lock is thread-specific. If thread A locks out interrupts
-    then performs an operation that allows thread B to run
-    (e.g. giving a semaphore or sleeping for N milliseconds), the thread's
-    IRQ lock no longer applies once thread A is swapped out. This means
-    that interrupts can be processed while thread B is running unless
-    thread B has also locked out interrupts using its own IRQ lock.
-    (Whether interrupts can be processed while the kernel is switching
-    between two threads that are using the IRQ lock is architecture-specific.)
 
-    When thread A eventually becomes the current thread once again, the kernel
-    re-establishes thread A's IRQ lock. This ensures thread A won't be
-    interrupted until it has explicitly unlocked its IRQ lock.
+    IRQ 锁是与线程相关的。如果线程 A 锁定了中断，然后执行了某个操作（例如释放了一个信号量，或者睡眠 N 毫秒）导致线程 B 开始运行，则当线程 A 被交换出去后，这个线程锁将（暂时）失效。也就是说，当线程 B 运行后，除非它使用了自己的 IRQ 锁锁定了中断，否则它将能正常处理中断。（当内核正在在使用了 IRQ 锁的两个线程间切换时，其是否可以处理中断依赖于具体的架构。）
+	
 
-Alternatively, a thread may temporarily **disable** a specified IRQ
-so its associated ISR does not execute when the IRQ is signalled.
-The IRQ must be subsequently **enabled** to permit the ISR to execute.
+    当线程 A 再次变为当前线程后，内核会重新建立线程 A 的 IRQ 锁。这意味着，线程 A 在明确解除 IRQ 锁前都不会被中断。
+
+或者，线程也可以临时 **禁止** 某一个 IRQ。当接收到该 IRQ 的信号时，其关联的 ISR 不会被执行。在随后，该 IRQ 必须被 **使能**，以允许其 ISR 能够执行。
 
 .. important::
-    Disabling an IRQ prevents *all* threads in the system from being preempted
-    by the associated ISR, not just the thread that disabled the IRQ.
+    禁止一个 IRQ 后，不仅仅是禁止该 IRQ  的线程不会被对应的 ISR 抢占，而是系统中的 *所有* 线程都不会被这个 IRQ 对应的 ISR 抢占。
 
-Offloading ISR Work
+移交 ISR 工作
 ===================
+   
+ISR 应当快速执行，以确保可预见的系统行为。如果需要执行耗时的处理，ISR 应当将部分或者全部处理都移交给线程，以此恢复内核响应其它中断的功能。
 
-An ISR should execute quickly to ensure predictable system operation.
-If time consuming processing is required the ISR should offload some or all
-processing to a thread, thereby restoring the kernel's ability to respond
-to other interrupts.
+内核支持多种将中断相关处理移交给线程的机制。
 
-The kernel supports several mechanisms for offloading interrupt-related
-processing to a thread.
 
-* An ISR can signal a helper thread to do interrupt-related processing
-  using a kernel object, such as a fifo, lifo, or semaphore.
+* ISR 可以利用内核对象，例如 fifo、lifo 或者信号量，给帮助线程发送信号，让它们做中断相关的处理。
 
-* An ISR can signal an alert which causes the system workqueue thread
-  to execute an associated alert handler function.
-  (See :ref:`alerts_v2`.)
 
-* An ISR can instruct the system workqueue thread to execute a work item.
-  (See TBD.)
+* ISR 可以发送一个告警，让系统的工作队列线程执行一个相关的告警处理函数。（参考 :ref:`alerts_v2`。）
 
-When an ISR offloads work to a thread, there is typically a single context
-switch to that thread when the ISR completes, allowing interrupt-related
-processing to continue almost immediately. However, depending on the
-priority of the thread handling the offload, it is possible that
-the currently executing cooperative thread or other higher-priority threads
-may execute before the thread handling the offload is scheduled.
 
-Implementation
+* ISR 可以指示系统工作队列线程执行一个工作项。（参考 TBD。）
+
+当 ISR 将工作移交给线程后，内核通常会在 ISR 完成后切换到该线程，以使中断相关的处理能够立即执行。不过，这依赖于处理移交工作的线程的优先级，即当前正在执行的协作式线程或者其它高优先级线程可能比该线程先执行。
+
+实现
 **************
 
-Defining a regular ISR
+定义一个常规的 ISR
 ======================
 
-An ISR is defined at run-time by calling :c:macro:`IRQ_CONNECT`. It must
-then be enabled by calling :cpp:func:`irq_enable()`.
+在运行时，可以先调用 :c:macro:`IRQ_CONNECT` 来定义一个 ISR，然后调用 :cpp:func:`irq_enable()` 来使能该 ISR。 
 
 .. important::
-    IRQ_CONNECT() is not a C function and does some inline assembly magic
-    behind the scenes. All its arguments must be known at build time.
-    Drivers that have multiple instances may need to define per-instance
-    config functions to configure each instance of the interrupt.
+    IRQ_CONNECT() 不是 C 函数，其它内部其实是一个内敛汇编。它的所有参数都必须在编译时确定。如果一个驱动程序有多个实例，它可以为该驱动的每个实例定义一个配置函数。
 
-The following code defines and enables an ISR.
+下面的代码定义并使能了一个 ISR。
 
 .. code-block:: c
 
@@ -159,30 +105,22 @@ The following code defines and enables an ISR.
        ...
     }
 
-Defining a 'direct' ISR
+定义一个直接的 ISR
 =======================
 
-Regular Zephyr interrupts introduce some overhead which may be unacceptable
-for some low-latency use-cases. Specifically:
+常规的 Zephyr 中断会引进一些开销，这对于某些需要低延迟的用例是不可接受的，尤其是：
 
-* The argument to the ISR is retrieved and passed to the ISR
+* 参数需要先被取回然后传递给 ISR。
 
-* If power management is enabled and the system was idle, all the hardware
-  will be resumed from low-power state before the ISR is executed, which can be
-  very time-consuming
+* 如果电源管理被使能，且系统处于空转装填，则所有的硬件将会在 ISR 执行前从低功耗状态中恢复，这是非常耗时的。
 
-* Although some architectures will do this in hardware, other architectures
-  need to switch to the interrupt stack in code
+* 对于中断栈的切换，尽管某些架构会由硬件自动完成，但是另外一些架构需要人工在代码中完成。
 
-* After the interrupt is serviced, the OS then performs some logic to
-  potentially make a scheduling decision.
+* 中断服务完成后，操作系统会执行一些逻辑，有可能会执行调度决策。
 
-Zephyr supports so-called 'direct' interrupts, which are installed via
-:c:macro:`IRQ_DIRECT_CONNECT`. These direct interrupts have some special
-implementation requirements and a reduced feature set; see the definition
-of :c:macro:`IRQ_DIRECT_CONNECT` for details.
+Zephyr 支持一种被叫做“直接中断”的中断。直接中断使用宏 :c:macro:`IRQ_DIRECT_CONNECT` 进行安装。直接中断有一些特殊需求以及一些被简化的特性集，详细内容请参考 :c:macro:`IRQ_DIRECT_CONNECT` 。
 
-The following code demonstrates a direct ISR:
+下面的代码演示了如何使用直接 ISR：
 
 .. code-block:: c
 
@@ -209,28 +147,24 @@ The following code demonstrates a direct ISR:
 Suggested Uses
 **************
 
-Use a regular or direct ISR to perform interrupt processing that requires a
-very rapid response, and can be done quickly without blocking.
+在常规 ISR 或者直接 ISR 中执行需要快速响应、能够快速完成、不会阻塞的中断处理。
 
 .. note::
-    Interrupt processing that is time consuming, or involves blocking,
-    should be handed off to a thread. See `Offloading ISR Work`_ for
-    a description of various techniques that can be used in an application.
+    对于那些比较耗时的，或者会阻塞的中断处理，应当将它们的工作移交给一个线程。您可以阅读 `移交 ISR 工作`_ 查看可以在应用程序中使用的各种技术。
 
-Configuration Options
+配置选项
 *********************
 
-Related configuration options:
+相关的配置选项：
 
 * :option:`CONFIG_ISR_STACK_SIZE`
 
-Additional architecture-specific and device-specific configuration options
-also exist.
+此外，还有一些与架构相关的或者与设备相关的配置选项。
 
-APIs
+API
 ****
 
-The following interrupt-related APIs are provided by :file:`irq.h`:
+头文件 :file:`irq.h` 中提供了如下的与中断相关的 API：
 
 * :c:macro:`IRQ_CONNECT`
 * :c:macro:`IRQ_DIRECT_CONNECT`
@@ -244,7 +178,7 @@ The following interrupt-related APIs are provided by :file:`irq.h`:
 * :cpp:func:`irq_disable()`
 * :cpp:func:`irq_is_enabled()`
 
-The following interrupt-related APIs are provided by :file:`kernel.h`:
+头文件 :file:`kernel.h` 中提供了如下的与中断相关的 API：
 
 * :cpp:func:`k_is_in_isr()`
 * :cpp:func:`k_is_preempt_thread`

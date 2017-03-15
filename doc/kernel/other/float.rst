@@ -1,137 +1,86 @@
 .. _float_v2:
 
-Floating Point Services
+浮点服务
 #######################
 
-The kernel allows threads to use floating point registers on board
-configurations that support these registers.
+内核允许支持浮点寄存器的板子使用能够浮点寄存器。
 
 .. note::
-    Floating point services are currently available only for boards
-    based on the ARM Cortex-M4 or the Intel x86 architectures. The
-    services provided are architecture specific.
-
-    The kernel does not support the use of floating point registers by ISRs.
+    
+    浮点服务当前仅对基于 ARM Cortex-M4 和 因特尔 x86 架构的板子有效。该服务是架构相关的。内核不支持在 ISR 中使用浮点服务。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-The kernel can be configured to provide only the floating point services
-required by an application. Three modes of operation are supported,
-which are described below. In addition, the kernel's support for the SSE
-registers can be included or omitted, as desired.
+可以配置内核让其支持浮点服务。一共支持三种操作，详见下面的描述。此外，内核还支持包括/忽略 SSE 寄存器。
 
-No FP registers mode
+无浮点寄存器模式
 ====================
 
-This mode is used when the application has no threads that use floating point
-registers. It is the kernel's default floating point services mode.
+当没有线程使用浮点寄存器时使用这种模式。这是内核的默认浮点服务模式。
 
-If a thread uses any floating point register,
-the kernel generates a fatal error condition and aborts the thread.
+如果某个线程使用了任何浮点寄存器，内核将产生一个致命错误，并终止该线程。
 
-Unshared FP registers mode
+非共享浮点寄存器模式
 ==========================
 
-This mode is used when the application has only a single thread
-that uses floating point registers.
+当应用程序只有一个线程使用了浮点寄存器时使用这种模式。
 
-The kernel initializes the floating point registers so they can be used
-by any thread. The floating point registers are left unchanged
-whenever a context switch occurs.
+内核会初始化浮点寄存器，然后任何线程都可以使用这些寄存器。当发生上下文切换时，浮点寄存器不会改变。
 
 .. note::
-    Incorrect operation may result if two or more threads use
-    floating point registers, as the kernel does not attempt to detect
-    (or prevent) multiple threads from using these registers.
 
-Shared FP registers mode
+    如果两个或多个线程使用了浮点寄存器，则有可能导致不正确的结果，因为内核不会去检测（或阻止）多线程去使用这些寄存器。
+
+共享浮点寄存器模式
 ========================
 
-This mode is used when the application has two or more threads that use
-floating point registers. Depending upon the underlying CPU architecture,
-the kernel supports one or more of the following thread sub-classes:
+当应用程序有两个或多个线程需要使用浮点寄存器时使用这种模式。依赖于可能的 CPU 架构，内核支持如果一个或多个线程子类：
 
-* non-user: A thread that cannot use any floating point registers
+* 非用户：不能使用任何浮点寄存器的线程。
 
-* FPU user: A thread that can use the standard floating point registers
+* FPU 用户：可以使用标准浮点寄存器的线程。
 
-* SSE user: A thread that can use both the standard floating point registers
-  and SSE registers
+* SSE 用户：可以使用标志浮点寄存器和 SSE 寄存器的线程。
 
-The kernel initializes the floating point registers so they can be used
-by any thread, then saves and restores these registers during
-context switches to ensure the computations performed by each FPU user
-or SSE user are not impacted by the computations performed by the other users.
+内核会初始化浮点寄存器，然后任何线程都可以使用该寄存器。当发生上下文切换时，内核会保存并恢复这些寄存器，以确保每个 FPU 用户或者 SSE 用户在执行浮点运算时不会影响其它用户。
 
-On the ARM Cortex-M4 architecture the kernel treats *all* threads
-as FPU users when shared FP registers mode is enabled. This means that the
-floating point registers are saved and restored during a context switch, even
-when the associated threads are not using them. Each thread must provide
-an extra 132 bytes of stack space where these register values can be saved.
+对于 ARM Cortex-M4 架构，当浮点寄存器被使能时，**所有的** 线程都被认为是 FPU 用户。也就是说，即使相关线程没有使用浮点寄存器，在进行上下文切换的时候也会保存或恢复这些寄存器。每个线程必须提供额外的 132 字节的栈空间，用于存放这些寄存器的值。
 
-On the x86 architecture the kernel treats each thread as a non-user,
-FPU user or SSE user on a case-by-case basis. A "lazy save" algorithm is used
-during context switching which updates the floating point registers only when
-it is absolutely necessary. For example, the registers are *not* saved when
-switching from an FPU user to a non-user thread, and then back to the original
-FPU user. The following table indicates the amount of additional stack space a
-thread must provide so the registers can be saved properly.
+对i与 x86 架构，内核会正确地区分非用户、FPU 用户和 SSE 用户。只有当绝对需要时，内核才会在上下文切换期间使用一个叫做“懒惰存储”的算法更新浮点寄存器的值。例如，当从 FPU 用户切换到非用户时，以及再切换回去时，内核都不会更新浮点寄存器。下标列举了各种情况下所需要的额外的栈空间。
 
 =========== =============== ==========================
-Thread type FP register use Extra stack space required
+线程类型    浮点寄存器      需要使用额外的栈空间
 =========== =============== ==========================
-cooperative any             0 bytes
-preemptive  none            0 bytes
-preemptive  FPU             108 bytes
-preemptive  SSE             464 bytes
+协作式      any             0 字节
+抢占式      无              0 字节
+抢占式      FPU             108 字节
+抢占式      SSE             464 字节
 =========== =============== ==========================
 
-The x86 kernel automatically detects that a given thread is using
-the floating point registers the first time the thread accesses them.
-The thread is tagged as an SSE user if the kernel has been configured
-to support the SSE registers, or as an FPU user if the SSE registers are
-not supported. If this would result in a thread that is an FPU user being
-tagged as an SSE user, or if the application wants to avoid the exception
-handling overhead involved in auto-tagging threads, it is possible to
-pre-tag a thread using one of the techniques listed below.
+在 x86 架构下，当线程第一次访问浮点寄存器时，内核会自动检测到，然后该线程被标记为 SSE 用户（如果内核被配置支持 SSE 寄存器）或者 PFU 用户（如果内核被配置支持不支持 SSE 寄存器）。如果这可能导致一个 FUP 用户线程被标记为 SSE 用户，或者如果应用程序想避免被自动贴上标签的用户调用引起的异常处理开销，可以使用下面的技术给线程预先贴上标签：
 
-* A statically-spawned x86 thread can be pre-tagged by passing the
-  :c:macro:`K_FP_REGS` or :c:macro:`K_SSE_REGS` option to
-  :c:macro:`K_THREAD_DEFINE`.
+* 静态创建的 x86 线程通过传递 :c:macro:`K_FP_REGS` 或者 :c:macro:`K_SSE_REGS` 选项给 :c:macro:`K_THREAD_DEFINE`。
 
-* A dynamically-spawned x86 thread can be pre-tagged by passing the
-  :c:macro:`K_FP_REGS` or :c:macro:`K_SSE_REGS` option to
-  :cpp:func:`k_thread_spawn()`.
+* 动态创建的 x86 线程通过传递 :c:macro:`K_FP_REGS` 或者 :c:macro:`K_SSE_REGS` 选项给 :cpp:func:`k_thread_spawn()`。
 
-* An already-spawned x86 thread can pre-tag itself once it has started
-  by passing the :c:macro:`K_FP_REGS` or :c:macro:`K_SSE_REGS` option to
-  :cpp:func:`k_float_enable()`.
+* 对于已经创建的线程，当它在启动线程时传递 :c:macro:`K_FP_REGS` 或 :c:macro:`K_SSE_REGS` 选项给 :cpp:func:`k_float_enable()`。
 
-If an x86 thread uses the floating point registers infrequently it can call
-:cpp:func:`k_float_disable()` to remove its tagging as an FPU user or SSE user.
-This eliminates the need for the kernel to take steps to preserve
-the contents of the floating point registers during context switches
-when there is no need to do so.
-When the thread again needs to use the floating point registers it can re-tag
-itself as an FPU user or SSE user by calling :cpp:func:`k_float_enable()`.
+如果 x86 线程使用浮点寄存器的频率很低，它可以调用 :cpp:func:`k_float_disable()` 来移除自己的 FPU 或者 SSE 用户标签。这样能在上下文切换时减小不必要的浮点寄存器服务。当线程再次需要使用浮点寄存器时，它可以调用 :cpp:func:`k_float_enable()` 将其再次标记未 FPU 或 SSE 用户。
 
-Implementation
+实现
 **************
 
-Performing Floating Point Arithmetic
+执行浮点计算
 ====================================
 
-No special coding is required for a thread to use floating point arithmetic
-if the kernel is properly configured.
+如果内核相关选项配置好了，线程无须其它代码就能执行浮点运算。
 
-The following code shows how a routine can use floating point arithmetic
-to avoid overflow issues when computing the average of a series of integer
-values.
+下面的代码演示了如何利用浮点服务在计算整数的平均值时避免溢出的问题。
 
 .. code-block:: c
 
@@ -150,31 +99,24 @@ values.
         return (int)((sum / num_values) + 0.5);
     }
 
-Suggested Uses
+建议的用法
 **************
 
-Use the kernel floating point services when an application needs to
-perform floating point operations.
+当应用程序需要执行浮点操作时，使用内核的浮点服务。
 
-Configuration Options
+配置选项
 *********************
 
-To configure unshared FP registers mode, enable the :option:`CONFIG_FLOAT`
-configuration option and leave the :option:`CONFIG_FP_SHARING` configuration
-option disabled.
+要配置非共享浮点寄存器模式，需要使能配置选项 :option:`CONFIG_FLOAT` 并禁能配置选项 :option:`CONFIG_FP_SHARING` 。
 
-To configure shared FP registers mode, enable both the :option:`CONFIG_FLOAT`
-configuration option and the :option:`CONFIG_FP_SHARING` configuration option.
-Also, ensure that any thread that uses the floating point registers has
-sufficient added stack space for saving floating point register values
-during context switches, as described above.
+要配置共享浮点寄存器模式，需要使能配置选项 :option:`CONFIG_FLOAT` 和 :option:`CONFIG_FP_SHARING` 。另外，正如前面所述，要使用浮点寄存器的线程必须具有足够的栈空间。
 
-Use the :option:`CONFIG_SSE` configuration option to enable support for
-SSEx instructions (x86 only).
+配置选项 :option:`CONFIG_SSE` 用于使能对 SSEx 指令（仅限于 x86）的支持。
 
-APIs
+API
 ****
 
+头文件 :file:`kernel.h` 中提供了如下的关于浮点的 API(只适用于 x86)：
 The following floating point APIs (x86 only) are provided by :file:`kernel.h`:
 
 * :cpp:func:`k_float_enable()`
