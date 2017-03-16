@@ -36,23 +36,41 @@
 | 支持的开发板      |  arm             |  ARM V2M Beetle   |                                                      |          |
 | 支持的开发板      |  arc             |  Genuino101 Sensor|                                                      |          |
 | 支持的开发板      |  arc             |  DesignWare(R)    |                                                      |          |
-| 支持的开发板      |  nios ll         |  Altera MAX10     |                                                      |      |
-|  内核入门        |  概述             | 源码树结构          |                                                       |       |
-|  内核入门        |  概述             | 与第一版的改动       |                                                       |       |
-|  内核入门        |  线程             | 生命周期            |                                                      |      |
-|  内核入门        |  线程             |  调度              |                                                      |      |
-|  内核入门        |  线程             |  自定义数据         |                                                       |       |
-|  内核入门        |  线程             |  系统线程           |                                                      |      |
-|  内核入门        |  线程             |  工作队列线程        |                                                      |      |
-|  内核入门        |  Timing          |   内核时钟           |                                                     |      |
-|  内核入门        |  Timing          |   定时器            |                                                     |      |
-|  ...           |  ...             |    .             |  .                                                   |  .    |
-|  应用程序入门     |   -              |  -                |                                                     |      |
-|  移植指导       |    架构移植指导      |  -                  |                                                     |      |
-|  移植指导        |   板子移植指导      |                    |                                                     |      |
-|  移植指导        |   遗留API移植指导   |                    |                                                     |      |
-|  移植指导        |   协议栈迁移        |                    |                                                     |      |
-|  设备驱动和模型   |                   |                    |                                                     |      |
+| 支持的开发板      |  nios ll         |  Altera MAX10     |                                                      |          |
+|  内核入门        |  概述             | 源码树结构         | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  概述             | 与第一版的改动    | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  线程             | 生命周期          | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  线程             |  调度             | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  线程             |  自定义数据       | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  线程             |  系统线程         | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  线程             |  工作队列线程     | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  Timing          |  内核时钟          | [ianhom](https://github.com/ianhom)                 |  完成     |
+|  内核入门        |  Timing          |   定时器           | [ianhom](https://github.com/ianhom)                 |  完成     |
+|  内核入门        |  内存分配         |   内存片          | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  内存分配         |   内存池          | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  内存分配         |   堆内存池        | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  同步            |   信号量           | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  同步            |   互斥量           | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  同步            |   告警             | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  数据传递        |   FIFO             | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  数据传递        |   LIFO             | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  数据传递        |   STACK            | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  数据传递        |   消息队列         | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  数据传递        |   邮筒             | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  数据传递        |   管道             | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  其它服务        |   中断             | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  其它服务        |   原子服务         | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  其它服务        |   轮询             |                                                      |           |
+|  内核入门        |  其它服务        |   环形缓冲         | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  其它服务        |   浮点服务         | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  其它服务        |   C++ 支持         | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  内核入门        |  其它服务        |   cpu空转          | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  应用程序入门    |   -              |  -                  |                                                     |      |
+|  移植指导        |    架构移植指导  |  -                  |                                                     |      |
+|  移植指导        |   板子移植指导   |   -                |                                                     |      |
+|  移植指导        |   遗留API移植指导|   -                |                                                     |      |
+|  移植指导        |   协议栈迁移     |   -                |                                                     |      |
+|  设备驱动和模型   |      -          |    -               |                                                     |      |
 |  子系统         |    蓝牙            |   蓝牙              |                                                     |      |
 |  子系统         |    蓝牙            |   API              |                                                    |      |
 |  子系统         |    蓝牙            |   开发蓝牙应用        |                                                     |      |
@@ -73,45 +91,56 @@
 |  子系统         |    测试框架         |                    |                                                     |      |
 |  子系统         |    USB            |                    |                                                    |      |
 |  API           |    shell          |                    |                                                     |      |
-|  sample        |    kernel         |  Hello World       |                                                     |      |
-|  sample        |    kernel         |  Synchronization   |                                                     |      |
-|  sample        |    kernel         |  Dining Philosopher|                                                     |      |
-|  sample        |    basic          | PWM: Blink LED     |                                                     |      |
-|  sample        |    basic          | Blinky Application |                                                     |      |
-|  sample        |    basic          | Button demo        |                                                     |      |
-|  sample        |    basic          | Disco demo         |                                                     |      |
-|  sample        |    basic          | PWM: Fade LED      |                                                     |      |
-|  sample        |    basic          | PWM: RGB LED       |                                                     |      |
-|  sample        |    basic          | PWM: Servo motor   |                                                     |      |
-|  sample        |    network        | CoAP over DTLS sample client       |                                     |      |
-|  sample        |    network        | CoAP over DTLS sample server       |                                     |      |
-|  sample        |    network        | Sample DHCPv4 client application   |                                     |      |
-|  sample        |    network        | DNS Client Application             |                                     |      |
-|  sample        |    network        | Echo Client                        |                                     |      |
-|  sample        |    network        | Echo Server                        |                                     |      |
-|  sample        |    network        | HTTP Client                        |                                     |      |
-|  sample        |    network        | HTTP Server                        |                                     |      |
-|  sample        |    network        | mbedTLS DTLS client                |                                     |      |
-|  sample        |    network        | mbedTLS DTLS sample server         |                                     |      |
-|  sample        |    network        | MQTT Publisher                     |                                     |      |
-|  sample        |    network        | NATS Client Implementation Sample  |                                     |      |
-|  sample        |    network        | Sample TELNET console application  |                                     |      |
-|  sample        |    network        | CoAP client                        |                                     |      |
-|  sample        |    network        | CoAP Server                        |                                     |      |
-|  sample        |    network        | zperf: Network Traffic Generator   |                                     |      |
-|  sample        |    Bluetooth      | Beacon                     |                                             |      |
-|  sample        |    Bluetooth      | Central                    |                                             |      |
-|  sample        |    Bluetooth      | Heart-rate Monitor         |                                             |      |
-|  sample        |    Bluetooth      | Eddystone                  |                                             |      |
-|  sample        |    Bluetooth      | Handsfree                  |                                             |      |
-|  sample        |    Bluetooth      | HCI UART                   |                                             |      |
-|  sample        |    Bluetooth      | HCI USB                    |                                             |      |
-|  sample        |    Bluetooth      | IPSP Sample                |                                             |      |
-|  sample        |    Bluetooth      | Peripheral                 |                                             |      |
-|  sample        |    Bluetooth      | Peripheral CSC             |                                             |      |
-|  sample        |    Bluetooth      | Peripheral DIS             |                                             |      |
-|  sample        |    Bluetooth      | Peripheral ESP             |                                             |      |
-|  sample        |    Bluetooth      | Peripheral HIDs            |                                             |      |
-|  sample        |    Bluetooth      | Peripheral HR              |                                             |      |
-|  sample        |    Bluetooth      | Peripheral SC-only         |                                             |      |
-|  sample        |    Bluetooth      | Scan & Advertise           |                                             |      |
+|  示例           |    kernel         |  Hello World       |                                                     |      |
+|  示例           |    kernel         |  Synchronization   |                                                     |      |
+|  示例           |    kernel         |  Dining Philosopher|                                                     |      |
+|  示例           |    basic          | PWM: Blink LED     |                                                     |      |
+|  示例           |    basic          | Blinky Application |                                                     |      |
+|  示例           |    basic          | Button demo        |                                                     |      |
+|  示例           |    basic          | Disco demo         |                                                     |      |
+|  示例           |    basic          | PWM: Fade LED      |                                                     |      |
+|  示例           |    basic          | PWM: RGB LED       |                                                     |      |
+|  示例           |    basic          | PWM: Servo motor   |                                                     |      |
+|  示例           |    网络           | CoAP over DTLS sample client       |                                     |      |
+|  示例           |    网络           | CoAP over DTLS sample server       |                                     |      |
+|  示例           |    网络           | Sample DHCPv4 client application   |                                     |      |
+|  示例           |    网络           | DNS Client Application             |                                     |      |
+|  示例           |    网络           | Echo Client                        |                                     |      |
+|  示例           |    网络           | Echo Server                        |                                     |      |
+|  示例           |    网络           | HTTP Client                        |                                     |      |
+|  示例           |    网络           | HTTP Server                        |                                     |      |
+|  示例           |    网络           | mbedTLS DTLS client                |                                     |      |
+|  示例           |    网络           | mbedTLS DTLS sample server         |                                     |      |
+|  示例           |    网络           | MQTT Publisher                     |                                     |      |
+|  示例           |    网络           | NATS Client Implementation Sample  |                                     |      |
+|  示例           |    网络           | Sample TELNET console application  |                                     |      |
+|  示例           |    网络           | CoAP client                        |                                     |      |
+|  示例           |    网络           | CoAP Server                        |                                     |      |
+|  示例           |    网络           | zperf: Network Traffic Generator   |                                     |      |
+|  示例           |    蓝牙           | Beacon                     |                                             |      |
+|  示例           |    蓝牙           | Central                    |                                             |      |
+|  示例           |    蓝牙           | Heart-rate Monitor         |                                             |      |
+|  示例           |    蓝牙           | Eddystone                  |                                             |      |
+|  示例           |    蓝牙           | Handsfree                  |                                             |      |
+|  示例           |    蓝牙           | HCI UART                   |                                             |      |
+|  示例           |    蓝牙           | HCI USB                    |                                             |      |
+|  示例           |    蓝牙           | IPSP Sample                |                                             |      |
+|  示例           |    蓝牙           | Peripheral                 |                                             |      |
+|  示例           |    蓝牙           | Peripheral CSC             |                                             |      |
+|  示例           |    蓝牙           | Peripheral DIS             |                                             |      |
+|  示例           |    蓝牙           | Peripheral ESP             |                                             |      |
+|  示例           |    蓝牙           | Peripheral HIDs            |                                             |      |
+|  示例           |    蓝牙           | Peripheral HR              |                                             |      |
+|  示例           |    蓝牙           | Peripheral SC-only         |                                             |      |
+|  示例           |    蓝牙           | Scan & Advertise           |                                             |      |
+|  示例           |    传感器         | GB and Gesture             |                                             |      |
+|  示例           |    传感器         | FXOS8700                   |                                             |      |
+|  示例           |    传感器         | BMC150                     |                                             |      |
+|  示例           |    传感器         | MCP9808                    |                                             |      |
+|  示例           |    传感器         | TH02                       |                                             |      |
+|  示例           |    Grove Kit      | Grove LCD                  |                                             |      |
+|  示例           |    Advanced       | Environmental Sensing      |                                             |      |
+|  示例           |    电源管理        | 电源管理                   |                                             |      |
+|  配置选项       |      -            |                  -         |                                             |      |
+|  贡献代码       |      -            |                -           |                                             |      |
+|  词汇表         |      -            |   -                        |                                             |      |
