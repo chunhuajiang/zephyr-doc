@@ -5,11 +5,12 @@
 
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :glob:
 
    kernel
    basic/*
+   subsys/subsys.rst
    net/net.rst
    bluetooth/bluetooth.rst
    sensor/*
