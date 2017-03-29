@@ -91,7 +91,7 @@
 |  子系统         |    测试框架         |                    |                                                     |      |
 |  子系统         |    USB            |                    |                                                    |      |
 |  API           |    shell          |                    |                                                     |      |
-|  示例           |    kernel         |  Hello World       |                                                     |      |
+|  示例           |    kernel         |  Hello World       | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |  
 |  示例           |    kernel         |  Synchronization   |                                                     |      |
 |  示例           |    kernel         |  Dining Philosopher|                                                     |      |
 |  示例           |    basic          | PWM: Blink LED     |                                                     |      |
