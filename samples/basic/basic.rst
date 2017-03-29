@@ -1,4 +1,4 @@
-Basic Samples
+基础示例
 #############
 
 .. toctree::
