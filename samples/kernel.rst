@@ -1,8 +1,7 @@
-Kernel Samples
+内核示例
 ##############
 
-The following are kernel samples that can be run on any of the supported
-plaforms:
+下列示例代码可以运行在 Zephyr 所支持的所有开发板上。
 
 .. toctree::
    :maxdepth: 1

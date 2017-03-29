@@ -1,4 +1,4 @@
-Samples and Demos
+示例
 #################
 
 
@@ -18,6 +18,4 @@ Samples and Demos
 
 
 
-
-To add a new sample documentation, please use the template available under
-:file:`doc/templates/sample.tmpl`
+如果需要添加新的示例文档，请参考模板文件 :file:`doc/templates/sample.tmpl`。

@@ -3,19 +3,17 @@
 Hello World
 ###########
 
-Overview
+概述
 ********
-A simple Hello World example that can be used with any supported board and
-prints 'Hello World' to the console. This application can be built into modes:
+Hello World 示例非常简单，它可以运行在任何所支持的开发板上面，用于向控制台打印“Hello World”消息。该应用程序可以被编译成：
 
-* single thread
-* multi threading
+* 单线程模式
+* 多线程模式
 
-Building and Running
+编译和运行
 ********************
 
-This project outputs 'Hello World' to the console.  It can be built and executed
-on QEMU as follows:
+该示例于向控制台打印“Hello World”消息。您可以按照下面的方法编译它，并在 QEMU 中运行它：
 
 .. code-block:: console
 
@@ -23,14 +21,13 @@ on QEMU as follows:
    $ make run
 
 
-To build the single thread version, use the supplied configuration file for
-single thread: :file:`prj_single.conf`:
+如果要编译成单线程版本，需要使用所提供的另一个配置文件：:file:`prj_single.conf`:
 
 .. code-block:: console
 
    $ make CONF_FILE=prj_single.conf run
 
-Sample Output
+示例的输出
 =============
 
 .. code-block:: console
