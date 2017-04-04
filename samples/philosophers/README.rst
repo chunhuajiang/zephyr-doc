@@ -1,3 +1,5 @@
+.. _dining-philosophers-sample:
+
 哲学家进餐
 ###################
 
