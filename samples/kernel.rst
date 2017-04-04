@@ -1,3 +1,5 @@
+.. _kernel-samples:
+
 内核示例
 ##############
 
@@ -10,8 +12,3 @@
    hello_world/*
    synchronization/*
    philosophers/*
-
-
-
-
-
