@@ -1,3 +1,5 @@
+.. _blink-led-sample:
+
 PWM: LED 闪烁
 ##############
 
