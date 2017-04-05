@@ -75,31 +75,18 @@ Zephyr 内核的基本目录包括内核源代码、配置选项以及内核的�
 
 下列预定义变量用于配置工程：
 
-* :makevar:`ZEPHYR_BASE`: Sets the path to the kernel's base directory.
-  This variable is usually set by the :file:`zephyr_env.sh` script.
-  It can be used to get the kernel's base directory, as used in the
-  Makefile.inc inclusion above, or it can be overridden to select an
-  specific instance of the kernel.
+* :makevar:`ZEPHYR_BASE`: 设置内核所在目录的路径。该变量通常由脚本 :file:`zephyr_env.sh` 进行设置。您可以通过它来获取内核所在目录，也可以通过选择一个指定的内核实例将它覆盖。
 
-* :makevar:`PROJECT_BASE`: Provides the developer's application project
-  directory path. It is set by the :file:`Makefile.inc` file.
 
-* :makevar:`SOURCE_DIR`: Overrides the default value for the application's
-  source code directory. The developer source code directory is set to
-  :file:`$(PROJECT_BASE/)src/` by default. This directory name should end
-  with slash **'/'**.
+* :makevar:`PROJECT_BASE`: 指定开发者的应用程序项目所在目录的路径。该办理通常由文件 :file:`Makefile.inc` 进行设置。
 
-* :makevar:`BOARD`: Selects the board that the application's
-  build will use for the default configuration.
+* :makevar:`SOURCE_DIR`: 覆盖应用程序的源代码路径的默认值。源代码路径的默认值是 :file:`$(PROJECT_BASE/)src/`。目录的名字应当以斜线 **'/'** 结尾。
 
-* :makevar:`CONF_FILE`: Indicates the name of a configuration fragment file.
-  This file includes the kconfig configuration values that override the
-  default configuration values.
+* :makevar:`BOARD`: 选择应用程序将要运行到的开发板的默认配置。
 
-* :makevar:`O`: Optional. Indicates the output directory that Kconfig uses.
-  The output directory stores all the files generated during the build
-  process. The default output directory is the :file:`$(PROJECT_BASE)/outdir`
-  directory.
+* :makevar:`CONF_FILE`: 配置文件的文件名，它包含用于覆盖默认配置值的 kconfig 配置值。
+
+* :makevar:`O`: 可选。Kconfig 需要使用的输出文件夹。输出文件夹用于存储在编译期间产生的所有文件。默认的输出文件夹的路径是 :file:`$(PROJECT_BASE)/outdir`。
 
 
 Makefile
@@ -108,48 +95,32 @@ Makefile
 概述
 ========
 
-The build system defines a set of conventions for the correct use of Makefiles
-in the kernel source directories. The correct use of Makefiles is driven by the
-concept of recursion.
+为了在内核源码目录中正确地使用 Makefile 文件，编译系统定义了一系列的约定。递归概念是正确使用 Makefile 文件的核心。
 
-In the recursion model, each Makefile within a directory includes the source
-code and any subdirectories to the build process. Each subdirectory follows
-the same principle. Developers can focus exclusively in their own work. They
-integrate their module with the build system by adding a very simple Makefile
-following the recursive model.
+在递归模型中，目录中的每个 Makefile 包含该目录的源代码以及子目录。每个子目录也遵循同样的规则。开发者只需要按照递归模型简单地添加一个 Makefile 文件就能将他们自己的模块集成到编译系统中去，从而可以专心地将精力集中在本身的工作上。
 
 .. _makefile_conventions:
 
 Makefile 的约定
 ====================
 
-The following conventions restrict how to add modules and Makefiles to the
-build system. These conventions ensure the correct implementation of the
-recursive model.
+下面的约定规定了如何将模块和 Makefile 添加到编译系统中去。这些约定能确保正确地实现递归模型。
 
-* Each source code directory must contain a single Makefile. Directories
-  without a Makefile are not considered source code directories.
+* 每个源代码目录必须包含一个 Makefile。不包含 Makefile 的目录将不被当做源代码目录。
 
-* The scope of every Makefile is restricted to the contents of that directory.
-  A Makefile can only make a direct reference to files and subdirectories on the
-  same level or below.
+* 每个 Makefile 的范围被限制为该目录的内容。Makefile 只能直接引用同级或下级目录的文件和子目录。
 
-* Makefiles list the object files that are included in the link process. The
-  build system finds the source file that generates the object file by matching
-  the object file name to the source file.
+* 在 Makefile 中列举出需要在链接过程中包含的目标文件。编译系统通过对目标文件名的匹配来查找源文件。
 
-* Parent directories add their child directories into the recursion model.
+* 父目录将它们的子目录添加到递归模型中去。
 
-* The root Makefile adds the directories in the kernel base directory into the
-  recursion model.
+* 根 Makefile 将内核目录树中的目录添加到递归模型中去。
 
 添加源文件
 ===================
 
-The Makefile must refer the source build indirectly, specifying the object file
-that results from the source file using the :literal:`obj-y` variable. For
-example, if the file that we want to add is a C file named :file:`<file>.c` the
-following line should be added in the Makefile:
+Makefile 必须间接地引用源文件，即使用 :literal:`obj-y` 变量指定目标文件。例如，如果我们需要添加的 C 文件叫做 :file:`<file>.c`，则我们需要在 Makefile 中按照下面的方式进行引用：
+
 
 .. code-block:: make
 
@@ -157,7 +128,7 @@ following line should be added in the Makefile:
 
 .. note::
 
-   The same method applies for assembly files with the .S extension.
+   该方法同样适用于以 .S 作为扩展名的汇编文件。
 
 Source files can be added conditionally using configuration options.  For
 example, if the option ``CONFIG_VAR`` is set and it implies that a source
