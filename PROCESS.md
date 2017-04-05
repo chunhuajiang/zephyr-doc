@@ -19,7 +19,7 @@
 | 支持的开发板      |  arm             |  Arduino Due      |                                                      |          |
 | 支持的开发板      |  arm             |  CC3200 LaunchXL  |                                                      |          |
 | 支持的开发板      |  arm             |  Curie (BLE)      |                                                      |          |
-| 支持的开发板      |  arm             |  NXP FRDM-K64F    |                                                      |          |
+| 支持的开发板      |  arm             |  NXP FRDM-K64F    |   [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 | 支持的开发板      |  arm             |  NXP FRDM-KW41Z   |                                                      |          |
 | 支持的开发板      |  arm             |  Hexiwear         |                                                      |          |
 | 支持的开发板      |  arm             |  ARM V2M MPS2     |                                                      |          |

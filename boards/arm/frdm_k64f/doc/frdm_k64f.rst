@@ -3,51 +3,41 @@
 NXP FRDM-K64F
 ##############
 
-Overview
+概述
 ********
 
-The Freedom-K64F is an ultra-low-cost development platform for Kinetis K64,
-K63, and K24 MCUs.
+Freedom-K64F 是一款面向 Kinetis K64、K63 和 K24 MCU 设计的超低成本的开发平台。
 
-- Form-factor compatible with the Arduino R3 pin layout
-- Peripherals enable rapid prototyping, including a 6-axis digital
-  accelerometer and magnetometer to create full eCompass capabilities, a
-  tri-colored LED and 2 user push-buttons for direct interaction, a microSD
-  card slot, and connectivity using onboard Ethernet port and headers for use
-  with Bluetooth* and 2.4 GHz radio add-on modules
-- OpenSDAv2, the NXP open source hardware embedded serial and debug adapter
-  running an open source bootloader, offers options for serial communication,
-  flash programming, and run-control debugging
+- 规格与 Arduino™ R3 引脚布局兼容 。
+- 配备丰富的外设，包括用于开发完整电子罗盘功能的 6 轴数字加速度传感器和磁力计，用于直接交互与反馈的 3 色 LED 和两个用户按钮，microSD 卡插槽，以及板载以太网端口，面向 Bluetooth 和 2.4 GHz 无线电附加模块的接头等连接选项，可实现快速原型设计。 。
+- 包含 OpenSDAv2 接口。 OpenSDAv2 是 NXP 开源硬件嵌入式串行接口和调试适配器，它运行了一个开源的 bootloader，提供了串口通信、flash 编程和运行时的控制调试功能。
 
 .. image:: frdm_k64f.jpg
    :width: 720px
    :align: center
    :alt: FRDM-K64F
 
-Hardware
+硬件
 ********
 
-- MK64FN1M0VLL12 MCU (120 MHz, 1 MB flash memory, 256 KB RAM, low-power,
-  crystal-less USB, and 100 Low profile Quad Flat Package (LQFP))
-- Dual role USB interface with micro-B USB connector
+- MK64FN1M0VLL12 MCU (120 MHz，1 MB 闪存，256 KB RAM，低功耗，无晶振 USB 和 100 引脚薄型四方扁平封装(LQFP))
+- 两用 USB 接口，带 Micro-B USB 接头
 - RGB LED
-- FXOS8700CQ accelerometer and magnetometer
-- Two user push buttons
-- Flexible power supply option – OpenSDAv2 USB, Kinetis K64 USB, and external source
-- Easy access to MCU input/output through Arduino* R3 compatible I/O connectors
-- Programmable OpenSDAv2 debug circuit supporting the CMSIS-DAP Interface
-  software that provides:
+- FXOS8700CQ 加速度传感器和磁力计
+- 两个用户按钮
+- 灵活的供电选项 - OpenSDAv2 USB、Kinetis K64 USB和外部电源
+- 可通过兼容Arduino™ R3的I/O接头轻松访问MCU输入/输出
+- 可编程 OpenSDAv2 调试电路，支持 CMSIS-DAP 接口软件，提供以下功能： 
 
-  - Mass storage device (MSD) flash programming interface
-  - CMSIS-DAP debug interface over a driver-less USB HID connection providing
-    run-control debugging and compatibility with IDE tools
-  - Virtual serial port interface
-  - Open source CMSIS-DAP software project
+  - 大容量存储设备(MSD)闪存编程接口
+  - CMSIS-DAP 调试接口可通过免驱动的 USB HID 连接提供运行控制调试功能，兼容 IDE 工具
+  - 虚拟串行端口
+  - 开源 CMSIS-DAP 软件项目
 
-- Ethernet
+- 以太网
 - SDHC
 
-For more information about the K64F SoC and FRDM-K64F board:
+关于 K64F SoC 和 FRDM-K64F 开发板的更多信息请参考：
 
 - `K64F Website`_
 - `K64F Datasheet`_
@@ -56,13 +46,13 @@ For more information about the K64F SoC and FRDM-K64F board:
 - `FRDM-K64F User Guide`_
 - `FRDM-K64F Schematics`_
 
-Supported Features
+支持的功能
 ==================
 
-The frdm_k64f board configuration supports the following hardware features:
+frdm_k64f 开发板配置支持如下的硬件特性：
 
 +-----------+------------+-------------------------------------+
-| Interface | Controller | Driver/Component                    |
+| 接口      | 控制器      | 驱动/组件                    |
 +===========+============+=====================================+
 | NVIC      | on-chip    | nested vector interrupt controller  |
 +-----------+------------+-------------------------------------+
@@ -87,19 +77,19 @@ The frdm_k64f board configuration supports the following hardware features:
 |           |            | fxos8700 trigger                    |
 +-----------+------------+-------------------------------------+
 
-The default configuration can be found in the defconfig file:
+默认的配置文件为：
 
 	``boards/arm/frdm_k64f/frdm_k64f_defconfig``
 
-Other hardware features are not currently supported by the port.
+当前还未支持其它的硬件特性。
 
-Connections and IOs
+连接与 IO
 ===================
 
-The K64F SoC has five pairs of pinmux/gpio controllers.
+K64F SoC 有五对 pinmux/gpio 控制器。
 
 +-------+-----------------+---------------------------+
-| Name  | Function        | Usage                     |
+| 名称   | 功能             | 用法                       |
 +=======+=================+===========================+
 | PTB22 | GPIO            | Red LED                   |
 +-------+-----------------+---------------------------+
@@ -163,40 +153,34 @@ The K64F SoC has five pairs of pinmux/gpio controllers.
 +-------+-----------------+---------------------------+
 
 .. note::
-   Do not enable Ethernet and UART BT HCI simultaneously because they conflict
-   on PTC16-17.
+   由于 PTC16-17 的冲突，不要同时使能以太网和串行蓝牙 HCI。
 
-System Clock
+系统时钟
 ============
 
-The K64F SoC is configured to use the 50 MHz external oscillator on the board
-with the on-chip PLL to generate a 120 MHz system clock.
+K64F SoC 利用开发板上的 50 MHz 的外部振荡器以及板载的 PLL 产生了一个 120 MHz 的系统时钟。 
 
-Serial Port
+串行端口
 ===========
 
-The K64F SoC has six UARTs. One is configured for the console, another for BT
-HCI, and the remaining are not used.
+K64F SoC 有六个 UART，其中一个用于控制台，另一个用于 BT HCI，剩余四个未被使用。 
 
-Programming and Debugging
+编程和调试
 *************************
 
-Flashing
+烧写
 ========
 
-The FRDM-K64F includes an `OpenSDA`_ serial and debug adaptor built into the
-board. The adaptor provides:
+FRDM-K64F 开发板上包括一个 `OpenSDA`_ 串行和调试适配器，这个适配器提供了：
 
-- A USB connection to the host computer, which exposes a Mass Storage and an
-  USB Serial Port.
-- A Serial Flash device, which implements the USB flash disk file storage.
-- A physical UART connection which is relayed over interface USB Serial port.
+- 与主机 PC 的 USB 连接，包括一个大型存储设备和一个 USB 串行端口。
+- 一个串行 Flash 设备，实现了 USB flash 磁盘文件存储。
+- 一个物理 UART 连接，它以接口 USB 串行端口为中继。
 
-Flashing an application to FRDM-K64F
+烧写应用程序到 FRDM-K64F
 -------------------------------------
 
-The sample application :ref:`hello_world` is used for this example.
-Build the Zephyr kernel and application:
+此处使用的示例程序是 :ref:`hello_world` 。按照下面的方法编译 Zephyr 内核和应用程序：
 
 .. code-block:: console
 
@@ -205,19 +189,16 @@ Build the Zephyr kernel and application:
    $ cd $ZEPHYR_BASE/samples/hello_world/
    $ make BOARD=frdm_k64f
 
-Connect the FRDM-K64F to your host computer using the USB port and you should
-see a USB connection which exposes a Mass Storage (MBED) and a USB Serial Port.
-Copy the generated zephyr.bin in the MBED drive.
+使用 micro-USB 线将 FRDM-K64F 连接到您的主机 PC 后，您应当能看到一个大型存储器（MBED）和一个 USB 串行端口。将编译生成的 zephyr.bin 拷贝到 MBED 驱动器中。
 
-Open a serial terminal (minicom, putty, etc.) with the following settings:
+打开一个串行终端（minicom、putty等），并进行如下设置：
 
-- Speed: 115200
-- Data: 8 bits
-- Parity: None
-- Stop bits: 1
+- 波特率： 115200
+- 数据位： 8
+- 奇偶位： 无
+- 停止位： 1
 
-Reset the board and you should be able to see on the corresponding Serial Port
-the following message:
+然后将开发板进行复位，您就能在相应的串行端口上看到如下的输出：
 
 .. code-block:: console
 
