@@ -1,6 +1,6 @@
 .. _boards:
 
-Supported Boards
+支持的开发板
 ################
 
 
@@ -40,10 +40,9 @@ NIOS II Boards
 
    nios2/**/*
 
-A list of additional supported boards can be found on the `Zephyr project wiki`_.
+额外支持的开发板列表可以在`Zephyr 项目维基百科`_ 上面找到。
 
-To add a new board, please use the template available under
-:file:`doc/templates/board.tmpl`
+如果需要添加新的开发板，请使用模板文件:file:`doc/templates/board.tmpl`。
 
 
 .. _Zephyr project wiki: https://wiki.zephyrproject.org/view/Supported_Boards
