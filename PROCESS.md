@@ -142,5 +142,5 @@
 |  示例           |    Advanced       | Environmental Sensing      |                                             |      |
 |  示例           |    电源管理        | 电源管理                   |                                             |      |
 |  配置选项       |      -            |                  -         |                                             |      |
-|  贡献代码       |      -            |                -           |                                             |      |
+|  贡献代码       |      -            |                -           |  [tidyjiang8](https://github.com/tidyjiang8)|  完成     |
 |  词汇表         |      -            |   -                        |                                             |      |
