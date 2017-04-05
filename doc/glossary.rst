@@ -1,69 +1,48 @@
 .. _glossary:
 
-Glossary of Terms
+术语表
 #################
 
 .. glossary::
    :sorted:
 
    API
-      (Application Program Interface) A defined set of routines and protocols for
-      building application software.
+      （应用程序编程接口）构建软件输入输出的程序和协议的集合。
 
-   application
-      The set of user-supplied files that the Zephyr build system uses
-      to build an application image for a specified board configuration.
-      It can contain application-specific code, kernel configuration settings,
-      and at least one Makefile.
-      The application's kernel configuration settings direct the build system
-      to create a custom kernel that makes efficient use of the board's
-      resources.
-      An application can sometimes be built for more than one type of board
-      configuration (including boards with different CPU architectures),
-      if it does not require any board-specific capabilities.
+   应用程序
+      用户提供的相关文件的集合。Zephyr 的编译系统使用这些文件为特定的板级配置编译应用程序镜像。它包括应用程序相关的代码、内核的配置设置以及至少一个 Makefile 文件。
+	  
+	  应用程序的内核配置指引编译系统高效地利用板子的资源创建自定义内核。
+	  
+	  如果不需要任何板子相关的功能，一个应用程序可以被多个板级配置（包括不同 CPU 架构的板子）所编译。
+	  
+   应用程序镜像
+      被板子加载并执行的二进制文件。
+	  
+	  每个应用程序镜像既包含应用程序相关的代码，还包含支撑这些应用程序的 Zephyr 内核代码。应用程序代码和内核代码被编译为单一的、完全链接的二进制文件。
+	  
+	  应用程序加载到板子上后，它将控制整个系统进行初始化，并作为系统的专有应用。应用程序代码和内核代码都将在一个单一的共享地址空间上以特权级的方式运行。
 
-   application image
-      A binary file that is loaded and executed by the board for which
-      it was built.
-      Each application image contains both the application's code and the
-      Zephyr kernel code needed to support it. They are compiled as a single,
-      fully-linked binary.
-      Once an application image is loaded onto a board, the image takes control
-      of the system, initializes it, and runs as the system's sole application.
-      Both application code and kernel code execute as privileged code
-      within a single shared address space.
+   开发板
+      一个带有一系列设备和功能的目标系统，它可以加载、执行应用程序镜像。它既可以是实际的硬件系统，也可以是运行在 QEMU 下的仿真系统。
+	  
+	  Zephyr 内核支持 :ref:`大量的开发板 <boards>`。
 
-   board
-      A target system with a defined set of devices and capabilities,
-      which can load and execute an application image. It may be an actual
-      hardware system or a simulated system running under QEMU.
-      The Zephyr kernel supports a :ref:`variety of boards <boards>`.
-
-   board configuration
-      A set of kernel configuration options that specify how the devices
-      present on a board are used by the kernel.
-      The Zephyr build system defines one or more board configurations
-      for each board it supports. The kernel configuration settings that are
-      specified by the build system can be over-ridden by the application,
-      if desired.
+   开发板配置
+      一系列的内核配置选项，指定内核如何利用开发板上的设备。
+	  
+	  Zephyr 编译系统为它所支持的每个开发板都定义了一个或多个开发板配置。如果需要，应用程序可以覆盖编译系统指定的内核配置项。
 
    IDT
-      (Interrupt Descriptor Table) a data structure used by the x86
-      architecture to implement an interrupt vector table. The IDT is used
-      to determine the correct response to interrupts and exceptions.
+      （中断描述符表）x86 架构使用的用于实现中断向量表的一个数据结构。IDT 用于判断对中断和异常的正确响应。
+	  
 
    ISR
-      (Interrupt Service Routine) Also known as an interrupt handler, an ISR
-      is a callback function whose execution is triggered by a hardware
-      interrupt (or software interrupt instructions) and is used to handle
-      high-priority conditions that require interrupting the current code
-      executing on the processor.
+      (中断服务例程) 也被叫做中断 handler。ISR 是一个回调函数，它的执行由硬件（或者软件中断指令）中断触发，用于处理需要中断当前代码执行的高优先级条件。
 
    kernel
-      The set of Zephyr-supplied files that implement the Zephyr kernel,
-      including its core services, device drivers, network stack, and so on.
+      
+      Zephyr 提供的实现其内核的相关文件的集合，包括核心服务、设备驱动程序、网络协议栈等。
 
    XIP
-      (eXecute In Place) a method of executing programs directly from long
-      term storage rather than copying it into RAM, saving writable memory for
-      dynamic data and not the static program code.
+      （就地执行）一种程序执行的方法，它直接在长期存储设备上执行程序，而无需将其拷贝到 RAM 中，这样做的好处是为动态数据（而非静态的程序代码）节约了可写的内存空间。 a method of 

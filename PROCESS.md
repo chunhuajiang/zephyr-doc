@@ -143,4 +143,4 @@
 |  示例           |    电源管理        | 电源管理                   |                                             |      |
 |  配置选项       |      -            |                  -         |                                             |      |
 |  贡献代码       |      -            |                -           |  [tidyjiang8](https://github.com/tidyjiang8)|  完成     |
-|  词汇表         |      -            |   -                        |                                             |      |
+|  词汇表         |      -            |   -                        |  [tidyjiang8](https://github.com/tidyjiang8)|  完成     |  
