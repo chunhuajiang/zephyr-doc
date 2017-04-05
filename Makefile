@@ -1,3 +1,3 @@
 
 all:
-	make -C Makefile.org htmldocs
+	make -f Makefile.org htmldocs
