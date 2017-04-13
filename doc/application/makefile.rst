@@ -71,44 +71,38 @@ Makefile 必须间接地引用源文件，即使用 :literal:`obj-y` 变量指�
 应用程序的 Makefile
 ********************
 
-Create an application Makefile to define basic information, such as the board
-configuration used by the application. The build system uses the Makefile to
-build a :file:`zephyr.elf` image that contains both the application and the
-kernel libraries.
+创建一个 Makefile 来定义一些基本信息，例如应用程序所使用的开发板配置。编译系统使用 Makefile 来编译并生成一个既包含应用程序又包含内核库的镜像文件 :file:`zephry.elf`。
 
-#. Open the :file:`Makefile` and add the following mandatory
-   entries using any standard text editor.
+#. 使用任何文本编辑器打开 :file:`Makefile` 并添加下面这些强制性条目。
 
    .. note::
 
-      Ensure that there is a space before and after each ``=``.
+      确保在每个 ``=`` 前后都存在一个空格。
 
-#. Add the name of the default board configuration for your application on a
-   new line:
+#. 在新的一行为您的应用程序添加默认的开发板配置：
 
    .. code-block:: make
 
       BOARD = board_configuration_name
 
-   The supported boards can be found in :ref:`boards`.
+   所支持的开发板可以在 :ref:`boards` 找到。
 
-#. Add the name of the default kernel configuration file for your
-   application on a new line:
+#. 在新的一行为您的应用程序添加默认的内核配置：
 
    .. code-block:: make
 
       CONF_FILE ?= kernel_configuration_name
 
-#. Include the mandatory :file:`Makefile` on a new line:
+#. 在新的一行添加一条强制性条目：
 
    .. code-block:: make
 
       include ${ZEPHYR_BASE}/Makefile.inc
 
-#. Save and close the :file:`Makefile`.
+#. 保存并关闭 :file:`Makefile`。
 
 
-Below is an example Makefile:
+下面是一个 Makefile 的例子：
 
 .. code-block:: make
 
