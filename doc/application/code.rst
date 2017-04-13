@@ -3,105 +3,67 @@
 应用程序相关代码
 ###########################
 
-Application-specific source code files are normally added to the application's
-:file:`src` directory. If the application adds a large number of files the
-developer can group them into sub-directories under :file:`src`, to whatever
-depth is needed. The developer must supply a :file:`Makefile` for the
-:file:`src` directory, as well as for each sub-directory under :file:`src`.
+应用程序相关的源代码通常被添加到应用程序的 :file:`src` 目录。如果应用程序需要添加大量的源文件，开发者可以在 :file:`src` 将它们组织为子目录形式（目录深度没有限制）。开发者必须为 :file:`src` 目录及其每个子目录提供相应的 Makefile 文件。
 
 .. note::
 
-   These Makefiles are distinct from the top-level application Makefile
-   that appears in :file:`~/app`.
+   这些 Makefile 与位于应用程序顶层 :file:`~/app` 下的 Makefile 有一定的区别。
 
-Application-specific source code should not use symbol name prefixes that have
-been reserved by the kernel for its own use. For more information, see
+应用程序相关的源代码不能使用内核所保留的符号名前缀。详细信息请参考 `命名规范 <https://wiki.zephyrproject.org/view/Coding_conventions#Naming_Conventions>`_.
 
-`Naming Conventions <https://wiki.zephyrproject.org/view/Coding_conventions#Naming_Conventions>`_.
+下列需且适用于 :file:`src` 目录及其子目录下的所有 Makefile。
 
-
-The following requirements apply to all Makefiles in the :file:`src`
-directory, including any sub-directories it may have.
-
-* During the build process, Kbuild identifies the source files to compile
-  into object files by matching the file names identified in
-  the application's Makefile(s).
+* 在编译过程中，Kbuild 通过匹配应用程序的 Makefile 中的文件名来标识需要被编译到目标文件中的源文件。
 
   .. important::
 
-    A source file that is not referenced by any Makefile is not included
-    when the application is built.
+    编译应用程序时，未被任何 Makefile 引用的源文件不会被编译。
 
-* A Makefile cannot directly reference source code. It can only
-  reference object files (:file:`.o` files) produced from source code files.
+* Makefile 不能直接引用源代码，它只能引用由源代码文件生成的目标文件（:file:`.o` 文件）。
 
-* A Makefile can only reference files in its own directory or in the
-  sub-directories of that directory.
+* Makefile 只能引用当前目录或者其子目录中的文件。
 
-* A Makefile may reference multiple files from a single-line entry.
-  However, a separate line must be used to reference each directory.
+* Makefile 可以在一行引用多个实体，但是一行中最多引用一个目录。
 
 
+#. 在 :file:`src` 下面为您的源代码创建目录结构，并将源代码添加到里面。
 
-#. Create a directory structure for your source code in :file:`src`
-   and add your source code files to it.
+#. 在 :file:`src` 目录下创建一个 :file:`Makefile`，并为 :file:`src` 下面的每个子目录创建一个 :file:`Makefile`。
 
-#. Create a :file:`Makefile` in the :file:`src` directory. Then create
-   an additional :file:`Makefile` in each of the sub-directories under
-   the :file:`src` directory, if any.
-
-   a) Use the following syntax to add file references:
+   a) 使用下面的语法添加引用：
 
       .. code-block:: make
 
          obj-y += file1.o file2.o
 
-   b) Use the following syntax to add directory references:
+   b) 使用下面的语法添加对目录的引用：
 
       .. code-block:: make
 
          obj-y += directory_name/**
 
 
-This example is taken from the Philosopher's Sample. To examine this file in
-context, navigate to: :file:`\$ZEPHYR_BASE/samples/philosophers/src`.
+这个例子来自于哲学家例程，相应目录是 :file:`\$ZEPHYR_BASE/samples/philosophers/src`。
 
 .. code-block:: make
 
    obj-y = main.o
 
-Support for building third-party library code
+支持编译第三方库
 =============================================
 
-It is possible to build library code outside the application's :file:`src`
-directory but it is important that both application and library code targets
-the same Application Binary Interface (ABI). On most architectures there are
-compiler flags that control the ABI targeted, making it important that both
-libraries and applications have certain compiler flags in common. It may also
-be useful for glue code to have access to Zephyr kernel header files.
+您可以编译位于应用程序的 :file:`src` 目录之外的库代码，但是需要牢记的是，应用程序代码和库代码最终会被编译为同一个应用程序二进制接口（Application Binary Interface，ABI）。对于大多数架构，都存在用于控制 ABI 的编译标志。库和应用程序的编译标志通常都是相同的。 It may also be useful for glue code to have access to Zephyr kernel header files.
 
-To make it easier to integrate third-party components, the Zephyr build system
-includes a special build target, ``outputexports``, that takes a number of
-critical variables from the Zephyr build system and copies them into
-:file:`Makefile.export`. This allows the critical variables to be included by
-wrapper code for use in a third-party build system.
+为了便于集成第三方组件，Zephyr 编译系统包含了一个特殊的编译对象 —— ``outputexports``。``outputexports``从 Zephyr 编译系统中拿取了大量临界变量（critical variables），并将它们拷贝到了 :file:`Makefile.export` 中，因此三方库的编译系统可以使用这些临界变量。
 
-The following variables are recommended for use within the third-party build
-(see :file:`Makefile.export` for the complete list of exported variables):
+推荐将下列变量用于第三方库的编译中（完整的变量列表请参考 :file:`Makefile.export`）：
 
-* ``CROSS_COMPILE``, together with related convenience variables to call the
-  cross-tools directly (including ``AR``, ``AS``, ``CC``, ``CXX``, ``CPP``
-  and ``LD``).
+* ``CROSS_COMPILE``，以及一些相关的约定俗成的用于调用交叉工具的变量（包括  ``AR``、``AS``、``CC``、``CXX``、``CPP`` 和 ``LD``）。
 
-* ``ARCH`` and ``BOARD``, together with several variables that identify the
-  Zephyr kernel version.
+* ``ARCH``、``BOARD``，以及一些用于标识 Zephyr 内核版本的变量。
 
-* ``KBUILD_CFLAGS``, ``NOSTDINC_FLAGS`` and ``ZEPHYRINCLUDE`` all of which
-  should normally be added, in that order, to ``CFLAGS`` (or
-  ``CXXFLAGS``).
+* 需要按顺序添加到 ``CFLAGS``（或者 ``CXXFLAGS``）的变量 ``KBUILD_CFLAGS``、``NOSTDINC_FLAGS`` 和 ``ZEPHYRINCLUDE``。
 
-* All kconfig variables, allowing features of the library code to be
-  enabled/disabled automatically based on the Zephyr kernel configuration.
+* 所有的 Kconfig 变量，以基于 Zephyr 内核配置自动使能/禁止库代码的功能。
 
-:file:`samples/static_lib` is a sample project that demonstrates
-some of these features.
+:file:`samples/static_lib` 是用于演示这些功能的示例工程。
