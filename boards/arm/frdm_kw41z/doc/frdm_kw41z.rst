@@ -3,43 +3,39 @@
 NXP FRDM-KW41Z
 ##############
 
-Overview
+概述
 ********
 
-The FRDM-KW41Z is a development kit enabled by the Kinetis® W series
-KW41Z/31Z/21Z (KW41Z) family built on ARM® Cortex®-M0+ processor with
-integrated 2.4 GHz transceiver supporting Bluetooth® Smart/Bluetooth®Low Energy
-(BLE) v4.2, Generic FSK, IEEE® 802.15.4 and Thread.
 
-The FRDM-KW41Z kit contains two Freedom boards that can be used as a
-development board or a shield to connect to a host processor. The FRDM-KW41Z is
-form-factor compatible with the Arduino™ R3 pin layout for more expansion
-options.
 
-The FRDM-KW41Z highly-sensitive, optimized 2.4 GHz radio features a PCB
-F-antenna which can be bypassed to test via SMA connection, multiple power
-supply options, push/capacitive touch buttons, switches, LEDs and integrated
-sensors.
+FRDM-KW41Z 是采用基于 ARM® Cortex®-M0+ 处理器的 Kinetis® W 系列 KW41Z/31Z/21Z (KW41Z) 系列支持的开发套件，具有集成的 2.4 GHz 收发器，支持 Bluetooth® Smart/Bluetooth®Low Energy (BLE) v4.2、Generic FSK、IEEE® 802.15.4 和 Thread 协议。
+
+FRDM-KW41Z 套件包含两个 Freedom 电路板，可用作与主处理器连接的开发板或 Shield 扩展板。FRDM-KW41Z 的规格与 Arduino™ R3 引脚布局兼容，提供了更多的扩展选项。
+
+FRDM-KW41Z 高灵敏度、优化的 2.4 GHz 无线电具有 PCB F 天线(可以绕过它，通过 SMA 连接进行测试)、多个电源选项、推拉式及电容式触摸按钮、开关、LED 和集成传感器。
+
 
 .. image:: frdm_kw41z.jpg
    :width: 720px
    :align: center
    :alt: FRDM-KW41Z
 
-Hardware
+硬件
 ********
 
-- Can be configured as Host or Shield for connection to Host Processor
-- Supports all DC-DC configurations (Buck, Boost, Bypass)
-- PCB inverted F-type antenna
-- SMA RF Connector
-- RF regulatory certified
-- Serial Flash for OTA firmware upgrades
-- On board NXP FXOS8700CQ digital sensor, 3D Accelerometer (±2g/±4g/±8g) + 3D
-  Magnetometer
-- OpenSDA and JTAG debug
+- 可配置为与主处理器连接的主电路板或Shield扩展板
+- 支持所有DC-DC配置(降压、升压和旁路)
+- PCB反向F型天线
+- SMA RF接头
+- 获得射频监管认证
+- OTA固件升级的串行闪存
+- 板载恩智浦FXOS8700CQ数字传感器、3D加速度传感器 (±2g/±4g/±8g) + 3D磁力计
+- OpenSDA和JTAG调试
+- 全面的KSDK支持
 
-For more information about the KW41Z SoC and FRDM-KW41Z board:
+
+
+关于 KW41Z SoC 和 FRDM-KW41Z 开发板的更多信息请参考：
 
 - `KW41Z Website`_
 - `KW41Z Datasheet`_
@@ -48,10 +44,10 @@ For more information about the KW41Z SoC and FRDM-KW41Z board:
 - `FRDM-KW41Z User Guide`_
 - `FRDM-KW41Z Schematics`_
 
-Supported Features
+支持的功能
 ==================
 
-The frdm_kw41z board configuration supports the following hardware features:
+frdm_kw41z 开发板配置支持如下的硬件功能：
 
 +-----------+------------+-------------------------------------+
 | Interface | Controller | Driver/Component                    |
@@ -75,17 +71,16 @@ The frdm_kw41z board configuration supports the following hardware features:
 |           |            | fxos8700 trigger                    |
 +-----------+------------+-------------------------------------+
 
-The default configuration can be found in the defconfig file:
+默认的配置可以在 defconfig 文件中找到：
 
 	``boards/arm/frdm_kw41z/frdm_kw41z_defconfig``
 
-Other hardware features are not currently supported by the port.
+当前还未支持其它硬件功能。
 
-Connections and IOs
+连接与 IO
 ===================
 
-The KW41Z SoC has three pairs of pinmux/gpio controllers, but only two are
-currently enabled (PORTA/GPIOA and PORTC/GPIOC) for the FRDM-KW41Z board.
+KW41Z SoC 有三对 pinmux/gpio 控制器，但是 FRDM-KW41Z 开发板当前只使能了其中两对（PORTA/GPIOA 和 PORTC/GPIOC）。
 
 +-------+-------------+---------------------------+
 | Name  | Function    | Usage                     |
@@ -109,36 +104,33 @@ currently enabled (PORTA/GPIOA and PORTC/GPIOC) for the FRDM-KW41Z board.
 | PTC7  | LPUART0_TX  | UART Console              |
 +-------+-------------+---------------------------+
 
-System Clock
+系统时钟
 ============
 
-The KW41Z SoC is configured to use the 32 MHz external oscillator on the board
-with the on-chip FLL to generate a 40 MHz system clock.
+KW41Z SoC 使用开发板上的 32 MHz 外部晶振，并使用板载 FLL 产生一个 40 MHz的系统时钟。
 
-Serial Port
+串口
 ===========
 
-The KW41Z SoC has one UART, which is used for the console.
+KW41Z SoC 有一个 UART，用作控制台功能。
 
-Programming and Debugging
+编程和调试
 *************************
 
-Flashing
+烧写
 ========
 
-The FRDM-KW41Z includes an `OpenSDA`_ serial and debug adaptor built into the
-board. The adaptor provides:
+FRDM-KW41Z 包括一个 `OpenSDA`_ 串行和调试适配器，它提供了：
 
-- A USB connection to the host computer, which exposes a Mass Storage and an
+- 与主机 PC 的 USB 连接，暴露了一个大容量存储设备和一个 USB 串口。connection to the host computer, which exposes a Mass Storage and an
   USB Serial Port.
-- A Serial Flash device, which implements the USB flash disk file storage.
-- A physical UART connection which is relayed over interface USB Serial port.
+- 一个串行 Flash 设备，实现了 USB flash 磁盘设备存储。
+- 一个物理 UART 连接，作为 USB 串口的中继。
 
-Flashing an application to FRDM-KW41Z
+烧写应用程序到 FRDM-KW41Z
 -------------------------------------
 
-The sample application :ref:`hello_world` is used for this example.
-Build the Zephyr kernel and application:
+这里以实例程序 :ref:`hello_world` 作为例子。编译 Zephyr 内核和应用程序：
 
 .. code-block:: console
 
@@ -147,12 +139,9 @@ Build the Zephyr kernel and application:
    $ cd $ZEPHYR_BASE/samples/hello_world/
    $ make BOARD=frdm_kw41z
 
-Connect the FRDM-KW41Z to your host computer using the USB port and you should
-see a USB connection which exposes a Mass Storage (DAPLINK) and a USB Serial
-Port. Copy the generated zephyr.bin in the DAPLINK drive.
+使用 USB 口将 FRDM-KW41Z 连接到您的主机 PC 上，您将看到一个大容量存储设备（DAPLINK）和一个 USB 串口。然后，将生成的 zephyr.bin 拷贝到 DAPLINK 中。
 
-Reset the board and you should be able to see on the corresponding Serial Port
-the following message:
+复位开发板，您将在相应的串口上看到如下消息：
 
 .. code-block:: console
 
