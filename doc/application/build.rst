@@ -3,82 +3,57 @@
 编译
 ######################
 
-Build an Application
+编译应用程序
 ********************
 
-The Zephyr build system compiles and links all components of an application
-into a single application image that can be run on simulated hardware or real
-hardware.
+Zephyr 的编译系统能够将应用程序的所有组件编译成一个单一的既可以运行在仿真硬件，又可以运行在真实硬件之上的应用程序镜像。
 
+#. 进入应用程序所在目录 :file:`~/app`。
 
-#. Navigate to the application directory :file:`~/app`.
-
-#. Enter the following command to build the application's :file:`zephyr.elf`
-   image using the configuration settings for the board type specified
-   in the application's :file:`Makefile`.
+#. 使用下面的命令可以使用应用程序的 :file:`Makefile` 中所指定的开发板的配置来编译生成 :file:`zephyr.elf` 镜像。
 
    .. code-block:: console
 
        $ make
 
-   If desired, you can build the application using the configuration settings
-   specified in an alternate :file:`.conf` file using the :code:`CONF_FILE`
-   parameter. These settings will override the settings in the application's
-   :file:`.config` file or its default :file:`.conf` file. For example:
+   如果有需要，您可以通过参数 :code:`CONF_FILE` 来指定某个 :file:`.conf` 文件来作为应用程序的配置文件。该文件中的配置值将覆盖应用程序的 :file:`.config` 文件或其默认 :file:`.conf` 中的配置值。例如：
 
    .. code-block:: console
 
        $ make CONF_FILE=prj.alternate.conf
 
-   If desired, you can build the application for a different board type than the
-   one specified in the application's :file:`Makefile` using the :code:`BOARD`
-   parameter. For example:
+   如果有需要，您也可以通过参数 :code:`BOARD` 来指定应用程序所使用的开发板，而忽略其 :file:`Makefile` 中所指定的开发板。例如：
 
    .. code-block:: console
 
        $ make BOARD=arduino_101
 
-   Both the :code:`CONF_FILE` and :code:`BOARD` parameters can be specified
-   when building the application.
+   编译应用程序时，您可以同时指定 :code:`CONF_FILE` 和 :code:`BOARD` 这两个参数。
 
-Rebuilding an Application
+运行应用程序
 *************************
 
-Application development is usually fastest when changes are continually tested.
-Frequently rebuilding your application makes debugging less painful
-as the application becomes more complex. It's usually a good idea to
-rebuild and test after any major changes to the application's source files,
-Makefiles, or configuration settings.
+当应用程序的功能变动，导致源代码、Makefile 或配置设置有变动时，需要重新编译应用程序。、
 
 .. important::
 
-    The Zephyr build system rebuilds only the parts of the application image
-    potentially affected by the changes. Consequently, rebuilding an application
-    is often significantly faster than building it the first time.
+    Zephyr 的编译系统只会编译那些与改动部分相关的文件，因此，重新编译应用程序比第一次编译会快很多。
 
-Sometimes the build system doesn't rebuild the application correctly
-because it fails to recompile one or more necessary files. You can force
-the build system to rebuild the entire application from scratch with the
-following procedure:
+有时候，由于重新编译某一个或多个必须文件时失败，编译系统不能正确地重新编译应用程序，您可以按照下面的流程强制编译系统重新编译整个应用程序：
 
 
-#. Navigate to the application directory :file:`~/app`.
+#. 进入应用程序所在目录 :file:`~/app`。
 
-#. Enter the following command to delete the application's generated files
-   for the specified board type, except for the :file:`.config` file that
-   contains the application's current configuration information.
+#. 使用下面的命令可以为指定的开发板删除在编译应用程序时所产生的除文件 :file:`.config` 之外的其它所有文件。文件 :file:`.config` 中包含了应用程序当前的配置信息。
 
    .. code-block:: console
 
        $ make [BOARD=<type>] clean
 
-   Alternatively, enter the following command to delete *all* generated files
-   for *all* board types, including the :file:`.config` files that contain
-   the application's current configuration information for those board types.
+   此外，您也可以使用下面的命令为 *所有* 开发板删除包括文件 :file:`.config` 在内的 *所有* 文件。
 
    .. code-block:: console
 
        $ make pristine
 
-#. Rebuild the application normally following the steps specified
-   in `Build an Application`_ above.
+#. 按照上面 `编译应用程序`_ 中所描述的方法来重新编译应用程序。
