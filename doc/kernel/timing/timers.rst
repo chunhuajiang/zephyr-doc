@@ -1,108 +1,67 @@
 .. _timers_v2:
 
-Timers
+定时器
 ######
 
-A :dfn:`timer` is a kernel object that measures the passage of time
-using the kernel's system clock. When a timer's specified time limit
-is reached it can perform an application-defined action,
-or it can simply record the expiration and wait for the application
-to read its status.
+:dfn:`定时器（Timer）` 是一个使用内核系统时钟来计时的内核对象。当一个定时器指定的时间计时结束，它将执行一个应用层面已定义的行为，或简单地记录下这个“期满”事件，并等待应用层读取该状态。
 
 .. contents::
     :local:
     :depth: 2
 
-Concepts
+概念
 ********
 
-Any number of timers can be defined. Each timer is referenced by its
-memory address.
+可以定义任意数量的定时器，每个定时使用各自独立的内存地址资源。
 
-A timer has the following key properties:
+每个定时器有以下关键属性：
 
-* A :dfn:`duration` specifying the time interval before the timer expires
-  for the first time, measured in milliseconds. It must be greater than zero.
+* :dfn:`时限（Duration）` 是指从启动到定时器第一次期满之间的时间间隔，单位为毫秒。该值必须大于0。
 
-* A :dfn:`period` specifying the time interval between all timer expirations
-  after the first one, measured in milliseconds. It must be non-negative.
-  A period of zero means that the timer is a one shot timer that stops
-  after a single expiration.
+* :dfn:`周期（Period）` 是指在定时器第一次期满之后，后续每次期满之间的时间间隔，单位为毫秒。该值不能为负数，若该值为0，则该定时器为一次性计时，并会在单次期满后停止工作。
 
-* An :dfn:`expiry function` that is executed each time the timer expires.
-  The function is executed by the system clock interrupt handler.
-  If no expiry function is required a :c:macro:`NULL` function can be specified.
+* :dfn:`期满函数（Expiry function）` 是在定时器每次期满时所执行的函数，该函数由系统时钟中断处理函数来执行。若在期满时无函数需要执行，则该期满函数需要指定为 :c:macro:`NULL` 。
 
-* A :dfn:`stop function` that is executed if the timer is stopped prematurely
-  while running. The function is executed by the thread that stops the timer.
-  If no stop function is required a :c:macro:`NULL` function can be specified.
+* :dfn:`终止函数（Stop function）` 是在定时器运行期间提前终止时所执行的函数。该函数由终止定时器的线程来执行。若在提前终止时无函数需要执行，则该终止函数需要指定为 :c:macro:`NULL` 。
 
-* A :dfn:`status` value that indicates how many times the timer has expired
-  since the status value was last read.
+* :dfn:`状态值（status）` 指示了自最后一次读取该状态值后，定时器经历了多少次期满。 
 
-A timer must be initialized before it can be used. This specifies its
-expiry function and stop function values, sets the timer's status to zero,
-and puts the timer into the **stopped** state.
+定时器在使用前必须先初始化。初始化时将设置期满函数和终止函数，清零定时器状态值，并设置定时器为 **停止** 状态。
 
-A timer is **started** by specifying a duration and a period.
-The timer's status is reset to zero, then the timer enters
-the **running** state and begins counting down towards expiry.
+定时器将在指定时限和周期后 **启动** 。在定时器状态值清零后，定时器进入 **运行** 状态并开始计时。
 
-When a running timer expires its status is incremented
-and the timer executes its expiry function, if one exists;
-If a thread is waiting on the timer, it is unblocked.
-If the timer's period is zero the timer enters the stopped state;
-otherwise the timer restarts with a new duration equal to its period.
+当一个运行中的定时器发生期满时：其状态值将自增，并执行期满函数（若已设置期满函数）。若某线程正在等待该定时器计时结束，该线程将不再被阻塞。如果定时器的周期为0，则此时定期进入停止状态；否则定时器将重启一个新的与周期时间相等的时限时间。
 
-A running timer can be stopped in mid-countdown, if desired.
-The timer's status is left unchanged, then the timer enters the stopped state
-and executes its stop function, if one exists.
-If a thread is waiting on the timer, it is unblocked.
-Attempting to stop a non-running timer is permitted,
-but has no effect on the timer since it is already stopped.
+如果有需要，运行中的定时器可以在中途被终止，此时：定时器的状态值将保持不变，然后定时器进入停止状态并执行终止函数（若已设置中值函数）。若某线程正在等待该定时器计时结束，该线程将不再被阻塞。   
+尝试终止一个非运行的定时器是允许的，但这不产生任何效果，因为其已经停止了。
 
-A running timer can be restarted in mid-countdown, if desired.
-The timer's status is reset to zero, then the timer begins counting down
-using the new duration and period values specified by the caller.
-If a thread is waiting on the timer, it continues waiting.
+如果有需要，运行中的定时器可以在中途被重启，此时：定时器的状态值复位为0，然后定时器以调用者指定的时限和周期继续运行。若某线程正在等待该定时器计时结束，该线程将继续等待。
 
-A timer's status can be read directly at any time to determine how many times
-the timer has expired since its status was last read.
-Reading a timer's status resets its value to zero.
-The amount of time remaining before the timer expires can also be read;
-a value of zero indicates that the timer is stopped.
+定时器的状态值可以在任意时间直接读取，以确定自上一次读取该状态值，定时器经历了多少个期满。   
+读取定时器状态值的行为将清零状态值。   
+定时器期满之前的剩余时间也是可读的，若值为0则表示该定时器已经停止。
 
-A thread may read a timer's status indirectly by **synchronizing**
-with the timer. This blocks the thread until the timer's status is non-zero
-(indicating that it has expired at least once) or the timer is stopped;
-if the timer status is already non-zero or the timer is already stopped
-the thread continues without waiting. The synchronization operation
-returns the timer's status and resets it to zero.
+某个线程可能会通过与定时器 **同步** 的方法来间接读取定时器的状态值。这将阻塞该线程直至该定时器的状态值为一个非零值（指示该定时器至少发生过期满）或该定时器被终止；如果该定时器的状态值已经是一个非零值或该定时器已经被终止，则该线程则继续运行而不再等待。同步操作将返回定时器的状态值并重置状态值为0。
 
 .. note::
-    Only a single user should examine the status of any given timer,
-    since reading the status (directly or indirectly) changes its value.
-    Similarly, only a single thread at a time should synchronize
-    with a given timer. ISRs are not permitted to synchronize with timers,
-    since ISRs are not allowed to block.
+    因为在读取状态值（直接或间接）时将会改变其值，所以只能有一个用户可以检查指定定时器的状态值。类似的，在同一时刻只能有一个线程可以同步指定的定时器。因为中断服务程序不允许被阻塞，所以中断服务程序不允许同步定时器。
 
-Timer Limitations
+定时器的局限性
 =================
 
-Since timers are based on the system clock, the delay values specified
-when using a timer are **minimum** values.
-(See :ref:`clock_limitations`.)
+因为定时器是基于系统时钟，所以在使用一个定时器时指定的延时时间都是 **最小值** 。
+(详见 :ref:`clock_limitations`.)
 
-Implementation
+实现
 **************
 
-Defining a Timer
+定义一个定时器
 ================
 
-A timer is defined using a variable of type :c:type:`struct k_timer`.
-It must then be initialized by calling :cpp:func:`k_timer_init()`.
+通过使用类型为 :c:type:`struct k_timer` 的变量来定义一个定时器。   
+该定时器随后必须通过调用 :cpp:func:`k_timer_init()` 来初始化。
 
-The following code defines and initializes a timer.
+如下的代码定义并初始化了一个定时器：
 
 .. code-block:: c
 
@@ -111,22 +70,18 @@ The following code defines and initializes a timer.
 
     k_timer_init(&my_timer, my_expiry_function, NULL);
 
-Alternatively, a timer can be defined and initialized at compile time
-by calling :c:macro:`K_TIMER_DEFINE`.
+或者，定时器可以在编译阶段通过调用 :c:macro:`K_TIMER_DEFINE` 来定义和初始化。
 
-The following code has the same effect as the code segment above.
+如下的代码与上面的代码效果一致。
 
 .. code-block:: c
 
     K_TIMER_DEFINE(my_timer, my_expiry_function, NULL);
 
-Using a Timer Expiry Function
+使用定时器的期满函数
 =============================
 
-The following code uses a timer to perform a non-trivial action on a periodic
-basis. Since the required work cannot be done at interrupt level,
-the timer's expiry function submits a work item to the
-:ref:`system workqueue <workqueues_v2>`, whose thread performs the work.
+如下代码使用定时器周期地执行了一个有意义的操作。因为所需要完成的工作无法再中断层面完成，所以定时器期满函数会提交一项工作到 :ref:`system workqueue <workqueues_v2>` ，它的线程将执行该项工作。
 
 .. code-block:: c
 
@@ -150,11 +105,10 @@ the timer's expiry function submits a work item to the
     /* start periodic timer that expires once every second */
     k_timer_start(&my_timer, K_SECONDS(1), K_SECONDS(1));
 
-Reading Timer Status
+读取定时器状态值
 ====================
 
-The following code reads a timer's status directly to determine
-if the timer has expired on not.
+如下的代码直接读取了一个定时器的状态值，以确定该定时器是否期满。
 
 .. code-block:: c
 
@@ -177,12 +131,10 @@ if the timer has expired on not.
         /* timer is still running */
     }
 
-Using Timer Status Synchronization
+使用定时器状态值同步
 ==================================
 
-The following code performs timer status synchronization to allow a thread
-to do useful work while ensuring that a pair of protocol operations
-are separated by the specified time interval.
+如下的代码执行了一个定时器状态值同步操作，以允许一个线程在确保指定的时间间隔内一对协议操作是独立的情况下，执行一些有用的工作。
 
 .. code-block:: c
 
@@ -206,39 +158,33 @@ are separated by the specified time interval.
     ...
 
 .. note::
-    If the thread had no other work to do it could simply sleep
-    between the two protocol operations, without using a timer.
+    如果一个线程无其它工作可做，该线程将会在两个协议操作之间睡眠，而不使用定时器。
 
-Suggested Uses
+建议的用法
 **************
 
-Use a timer to initiate an asynchronous operation after a specified
-amount of time.
+请使用定时器在指定具体的时间后初始化一个异步操作。
 
-Use a timer to determine whether or not a specified amount of time
-has elapsed.
+请使用定时器来确定是否已经经历过了指定的时间。
 
-Use a timer to perform other work while carrying out operations
-involving time limits.
+请使用定时器在运行涉及时间限制的操作时，执行其它工作。
 
 .. note::
-   If a thread has no other work to perform while waiting for time to pass
-   it should call :cpp:func:`k_sleep()`.
-   If a thread needs to measure the time required to perform an operation
-   it can read the :ref:`system clock or the hardware clock <clocks_v2>`
-   directly, rather than using a timer.
 
-Configuration Options
+   如果一个线程在等待一个计时器时无其它工作可做，应调用 :cpp:func:`k_sleep()` 。   
+   如果一个线程需要测量一个操作所需要的时间，可以不用使用定时器，而是直接读取 :ref:`system clock or the hardware clock <clocks_v2>` 。
+
+配置选项
 *********************
 
-Related configuration options:
+相关的配置选项:
 
-* None.
+* 无。
 
 APIs
 ****
 
-The following timer APIs are provided by :file:`kernel.h`:
+:file:`kernel.h` 文件提供如下的定时器API：
 
 * :c:macro:`K_TIMER_DEFINE`
 * :cpp:func:`k_timer_init()`
