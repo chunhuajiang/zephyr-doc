@@ -17,7 +17,7 @@
 | 支持的开发板    |  x86             |  tiny TILE        |                                                      |          |
 | 支持的开发板    |  arm             |  Genuino101(BLE)  |                                                      |          |
 | 支持的开发板    |  arm             |  Arduino Due      |                                                      |          |
-| 支持的开发板    |  arm             |  CC3200 LaunchXL  |                                                      |          |
+| 支持的开发板    |  arm             |  CC3200 LaunchXL  |   [josephleung](https://github.com/josephleung)                                                   |          |
 | 支持的开发板    |  arm             |  Curie (BLE)      |                                                      |          |
 | 支持的开发板    |  arm             |  NXP FRDM-K64F    |   [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 | 支持的开发板    |  arm             |  NXP FRDM-KW41Z   |   [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
