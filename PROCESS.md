@@ -68,7 +68,7 @@
 |  应用程序入门   |   概述           |  -                  | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
 |  应用程序入门   |   基础知识       |  -                  | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
 |  应用程序入门   |   Makefile       |  -                  | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
-|  应用程序入门   |   配置           |  -                  |  [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
+|  应用程序入门   |   配置           |  -                  |  [tidyjiang8](https://github.com/tidyjiang8)          |  领取     |
 |  应用程序入门   |   应用程序相关代码 |  -                |  [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
 |  应用程序入门   |   编译           |  -                  | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
 |  应用程序入门   |   运行和调试     |  -                  |  [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
