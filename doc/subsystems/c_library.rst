@@ -1,19 +1,10 @@
 .. _c_library_v2:
 
-Standard C Library
+标准 C 库
 ##################
 
-The kernel currently provides only the minimal subset of the standard C library
-required to meet the kernel's own needs, primarily in the areas of string
-manipulation and display.
+为了满足内核的需求，Zephyr 当前提供了标准 C 库的一个最小子集，主要用于字符串的操作和显示。
 
-Applications that require a more extensive C library can either submit
-contributions that enhance the existing library or substitute with a replacement
-library.
+如果您的应用程序需要更多功能，您可以提交贡献的代码以扩展 C 库，或者用其它的库作为替代。
 
-The Zephyr SDK and other supported toolchains comes with a bare-metal C library
-based on ``newlib`` that can be used with Zephyr by selecting the
-:option:`CONFIG_NEWLIB_LIBC` in the application configuration file. Part of the
-support for ``newlib`` is a set of hooks available under
-:file:`lib/libc/newlib/libc-hooks.c` which integrates the c library with basic
-kernel services.
+Zephyr SDK 以及 Zephyr 所支持的其它工具链都带有基于 ``newlib`` 的裸机 C 库。您可以通过在应用程序的配置文件中添加选项 :option:`CONFIG_NEWLIB_LIBC` 来使能该库。:file:`lib/libc/newlib/libc-hooks.c` 是 ``newlib`` 中的一部分，它包含一系列的钩子。Zephyr 内核服务中会使用到这些钩子。
