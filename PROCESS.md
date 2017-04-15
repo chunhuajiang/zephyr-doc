@@ -95,7 +95,7 @@
 |  子系统         |    传感器驱动     |       -            |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  子系统         |    shell        |       -            |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  子系统         |    测试框架       |                    |                                                     |      |
-|  子系统         |    USB            |                    |                                                    |      |
+|  子系统         |    USB           |      -             |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  API            |    shell          |                    |                                                     |      |
 |  示例           |    kernel         |  Hello World       | [tidyjiang8](https://github.com/tidyjiang8)         |  完成    |  
 |  示例           |    kernel         |  Synchronization   |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
