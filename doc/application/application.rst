@@ -10,7 +10,7 @@
    basic.rst
    makefile.rst
    config.rst
-   code.rst
+   related_code.rst
    build.rst
    run.rst
 
