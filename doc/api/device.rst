@@ -1,6 +1,6 @@
 .. _device_model:
 
-Device Driver Interface
+设备驱动接口
 #######################
 
 .. contents::
@@ -8,7 +8,7 @@ Device Driver Interface
    :local:
    :backlinks: top
 
-Device Model
+设备模型
 ************
 
 .. doxygengroup:: device_model

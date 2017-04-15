@@ -1,6 +1,6 @@
 .. _bluetooth_api:
 
-Bluetooth API
+蓝牙 API
 #############
 
 .. contents::
