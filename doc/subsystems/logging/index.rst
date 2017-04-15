@@ -1,4 +1,4 @@
-Logging
+日志
 ########
 
 .. toctree::
