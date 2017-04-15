@@ -90,8 +90,8 @@
 |  子系统         |    网络           |    L2协议栈和驱动 |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
 |  子系统         |    网络           |    网络管理api    |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
 |  子系统         |    网络           |    buffer         |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
-|  子系统         |    网络           |    qemu 仿真       |                                                     |      |
-|  子系统         |    电源管理       |                    |                                                     |      |
+|  子系统         |    网络           |    qemu 仿真       |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
+|  子系统         |    电源管理       |                    |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  子系统         |    传感器驱动     |                    |                                                     |      |
 |  子系统         |    shell          |                    |                                                    |      |
 |  子系统         |    测试框架       |                    |                                                     |      |
