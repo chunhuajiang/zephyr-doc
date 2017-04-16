@@ -1,41 +1,37 @@
 .. _fade-led-sample:
 
-PWM: Fade LED
-#############
+PWM: LED 亮度渐变
+###################
 
-Overview
+概述
 ********
 
-This is a sample app which fades a LED using PWM.
+此示例使用 PWM 控制 LED 亮度渐变。
 
-The LED will start from dark and increases its
-brightness gradually for 10 seconds. Then, the
-brightness reduces gradually for 10 seconds and
-finally the LED becomes dark again. The LED will
-repeat this cycle for ever.
+LED 将从全黑开始，并在 10 秒内逐渐增加其亮度。然后在 10 秒内逐渐减少亮度，最终 LED 再次全黑。LED 将持续重复这个周期。
 
-Wiring
+接线
 ******
 
-Arduino 101 and Quark D2000 CRB
+Arduino 101 和 Quark D2000 CRB
 ===============================
-You will need to connect the LED to ground and PWM0 via
-the shield. You may need a current limiting resistor. See
-your LED datasheet.
 
-Nucleo_F401RE and Nucleo_L476RG
+需要将 LED 接地，并通过扩展板接至 PWM0。 你可能需要一个限流电阻，请参考数据手册中的 LED 部分。
+
+Nucleo_F401RE 和 Nucleo_L476RG
 ===============================
-Connect PWM2(PA0) to LED
+
+将 PWM2(PA0) 连接至 LED。
 
 Nucleo_F103RB
 =============
-Connect PWM1(PA8) to LED
 
-Building and Running
+将 PWM1(PA8) 连接至 LED。
+
+编译和运行
 ********************
 
-This sample can be built for multiple boards, in this example we will build it
-for the arduino_101 board:
+本示例可以用于多个开发板，这里以 arduino_101 为例：
 
 .. code-block:: console
 
