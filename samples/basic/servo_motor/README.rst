@@ -1,40 +1,29 @@
 .. _servo-motor-sample:
 
-PWM: Servo motor
+PWM: 伺服电机
 ################
 
-Overview
+概览
 ********
 
-This is a sample app which drives a servo motor using
-PWM.
+此示例使用PWM驱动一个伺服电机。
 
-This app is targeted for servo motor ROB-09065. With the
-PWM control signal, the servo motor can rotate to any
-angle between 0 and 180 degrees. The corresponding PWM
-pulse width is between 700 micro seconds and 2300 micro
-seconds. The motor is programmed to rotate back and forth
-in the 180 degree range.
+此程序针对的是ROB-09065伺服电机。更改PWM控制信号，伺服电机可旋转0至180度间的任意角度。它所对应的PWM脉宽在700微秒和2300微秒之间。电机被编程为在180度范围内来回旋转。
 
-Since different servo motors may require different PWM
-pulse width, you may need to modify the pulse width in
-the app if you are using a different servo motor.
+由于不同的伺服电机需要不同的PWM脉宽，如果你使用的是不同的伺服电机，请在程序中修改脉宽。
 
-Wiring
+接线
 ******
 
-Arduino 101 and Quark D2000 CRB
+Arduino 101 和 Quark D2000 CRB
 ===============================
 
-You will need to connect the motor's red wire to 5v,
-the black wire to ground and the white wire to PWM 0 via
-the shield.
+需要将电机的红色连至5V，黑线接地，且白线通过扩展板接至PWM 0。
 
-Building and Running
+编译和运行
 ********************
 
-This sample can be built for multiple boards, in this example we will build it
-for the arduino_101 board:
+此示例可为多块开发板编译，此处以arduino_101开发板为例:
 
 .. code-block:: console
 
