@@ -7,12 +7,7 @@ PWM: LED 闪烁
 ********
 本示例将会使用 PWM 让 LED 灯闪烁。
 
-The LED will start at a blinking frequency of 0.5Hz. Every 4 seconds,
-the blinking frequency will double. When the blinking frequency
-reaches 500Hz, the blinking frequency will be halved every 4 seconds
-until the blinking frequency reaches 0.5Hz. This completes a whole
-blinking cycle. From now on, the LED will repeat the blinking cycle
-for ever.
+LED 将以 0.5Hz 的频率开始闪烁。每隔 4 秒，闪烁频率翻倍。当闪烁频率到达 500Hz 后，每隔 4 秒减半，直到到达 0.5Hz。这是一个完整的闪烁周期。然后，LED 将持续重复闪烁周期。
 
 连线
 ******
@@ -20,7 +15,7 @@ for ever.
 Arduino 101 和 Quark D2000 CRB
 ===============================
 You will need to connect the LED to ground and PWM0 via the shield.
-You may need a current limiting resistor. See your LED datasheet.
+你可能需要一个限流电阻，请参考数据手册中的 LED 部分。
 
 Nucleo_F401RE 和 Nucleo_L476RG
 ===============================
