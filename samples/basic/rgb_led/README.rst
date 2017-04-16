@@ -3,40 +3,27 @@
 PWM: RGB LED
 ############
 
-Overview
+概览
 ********
 
-This is a sample app which drives a RGB LED using PWM.
+这是一个简单的示例，它使用 PWM 驱动一个 RGB LED。
 
-There are three LEDs of single color in a RGB LED. The
-three LEDs will be driven by a pwm port each. The pulse
-width for each pwm port will change from zero to period.
-So, the brightness for each LED will change from dark to
-max brightness in 11 steps. The three "for" loops (one
-for each LED) will generate 1331 combinations and so,
-1331 different colors. The whole process will repeat for
-ever.
+在一个 RGB LED 中有三个单色 LED。每个单色 LED 都需要一个 PWM 端口驱动。每个 PWM 端口的脉宽都将从 0 变至特定周期。从而使得每个 LED 的亮度在 11 步内从全黑渐变为最亮。三个 “for” 循环（每个 LED 一个 for）将产生 1331 种组合，也就是 1331 种不同的颜色。整个过程将持续重复。
 
-Wiring
+接线
 ******
 
 Arduino 101
 ===========
 
-You will need to connect the LED pins to PWM0, PWM1 and PWM2
-on arduino 101 via the shield. Depending on what kind of RGB
-LED you are using, please connect the common cathode to the
-ground or the common anode to Vcc. You need current limiting
-resistor for each of the single color LEDs.
+在 arduino 101 中你需要通过扩展板将 LED 接至 PWM0、PWM1、PWM2，这依赖于你所使用的是哪种类型的 RGB LED。请将共阴极接地或共阳极接 Vcc，还需要为每个单色 LED 接限流电阻。
 
-The sample app requires three PWM ports. So, it can not work
-on Quark D2000 platform.
+此示例需要三个 PWM 端口，所以不能工作于 Quark D2000 平台。
 
-Building and Running
+编译和运行
 ********************
 
-This samples does not output anything to the console.  It can be built and
-flashed to a board as follows:
+此示例不在控制台输出任何东西，可使用以下语句编译并烧写至开发板。
 
 .. code-block:: console
 
