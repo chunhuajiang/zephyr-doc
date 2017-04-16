@@ -13,7 +13,7 @@ Blinky 示例演示了如何将 GPIO 配置为输出引脚，从而驱动 LED，
 
 此示例假设某个 LED 已经连上一个 GPIO 引脚。此示例代码的运行需要用户在 :file:`board.h` 中为开发板定义按钮以及 LED0_* 变量。
 
-:file:`board.h`必须定义以下变量：
+:file:`board.h` 必须定义以下变量：
 
 - LED0_GPIO_PORT
 - LED0_GPIO_PIN
