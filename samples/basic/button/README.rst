@@ -1,27 +1,24 @@
 .. _button-sample:
 
-Button demo
+Button 示例
 ###########
 
-Overview
+概览
 ********
 
-A simple button demo showcasing the use of GPIO input with interrupts.
+一个简单的按钮示例，展示了 GPIO 输入中断的使用。
 
-Requirements
+需求
 ************
 
-The demo assumes that a push button is connected to one of GPIO lines. The
-sample code is configured to work on boards with user defined buttons and that
-have defined the SW0_* variable in board.h
+此示例假定按钮连接至一个GPIO引脚。示例代码的运行需要用户定义了按钮，并在 board.h 文件中定义了 SW0_* 变量。
 
-To use this sample, you will require a board that defines the user switch in its
-header file. The :file:`board.h` must define the following variables:
+使用此示例，你需要在开发板的头文件中定义用户开关。:file:`board.h` 中必须定义以下变量:
 
 - SW0_GPIO_NAME
 - SW0_GPIO_PIN
 
-The following boards currently define the above variables:
+以下开发板已经定义了上述变量:
 
 - bbc_microbit
 - cc3200_launchxl
@@ -35,11 +32,10 @@ The following boards currently define the above variables:
 - quark_se_c1000_ss_devboard
 
 
-Building and Running
+编译和运行
 ********************
 
-This sample can be built for multiple boards, in this example we will build it
-for the nucleo_f103rb board:
+此示例可为多块开发板编译，此处以 nucleo_f103rb 为例:
 
 .. code-block:: console
 
@@ -47,8 +43,4 @@ for the nucleo_f103rb board:
    $ make BOARD=nucleo_f103rb
 
 
-After startup, the program looks up a predefined GPIO device, and configures the
-pin in input mode, enabling interrupt generation on falling edge. During each
-iteration of the main loop, the state of GPIO line is monitored and printed to
-the serial console. When the input button gets pressed, the interrupt handler
-will print an information about this event along with its timestamp.
+启动之后，程序寻找一个预定义 GPIO 设备，并将引脚配置为输入模式，使用下降沿中断触发模式。在主循环的每个迭代期间，监视 GPIO 引脚状态并打印至串口控制台。当输入按钮按下，中断处理函数将打印一个携带时间戳事件信息。
