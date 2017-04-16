@@ -101,12 +101,12 @@
 |  示例           |    kernel         |  Synchronization   |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  示例           |    kernel         |  Dining Philosopher|  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  示例           |    basic          | PWM: Blink LED     |  陈蛇                                               |  完成    |
-|  示例           |    basic          | Blinky Application |  陈蛇                                               |  领取    |
-|  示例           |    basic          | Button demo        |  陈蛇                                               |  领取    |
-|  示例           |    basic          | Disco demo         |                                                     |     |
-|  示例           |    basic          | PWM: Fade LED      |                                                     |      |
-|  示例           |    basic          | PWM: RGB LED       |                                                     |      |
-|  示例           |    basic          | PWM: Servo motor   |                                                     |      |
+|  示例           |    basic          | Blinky Application |  陈蛇                                               |  完成    |
+|  示例           |    basic          | Button demo        |  陈蛇                                               |  完成    |
+|  示例           |    basic          | Disco demo         |  陈蛇                                               |  领取    |
+|  示例           |    basic          | PWM: Fade LED      |  陈蛇                                               |  领取    |
+|  示例           |    basic          | PWM: RGB LED       |  陈蛇                                               |  领取    |
+|  示例           |    basic          | PWM: Servo motor   |  陈蛇                                               |  领取    |
 |  示例           |    网络           | CoAP over DTLS sample client       |                                     |      |
 |  示例           |    网络           | CoAP over DTLS sample server       |                                     |      |
 |  示例           |    网络           | Sample DHCPv4 client application   |                                     |      |
