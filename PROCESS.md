@@ -100,7 +100,7 @@
 |  示例           |    kernel         |  Hello World       | [tidyjiang8](https://github.com/tidyjiang8)         |  完成    |  
 |  示例           |    kernel         |  Synchronization   |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  示例           |    kernel         |  Dining Philosopher|  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
-|  示例           |    basic          | PWM: Blink LED     |  陈蛇                                               |  领取    |
+|  示例           |    basic          | PWM: Blink LED     |  陈蛇                                               |  完成    |
 |  示例           |    basic          | Blinky Application |  陈蛇                                               |  领取    |
 |  示例           |    basic          | Button demo        |  陈蛇                                               |  领取    |
 |  示例           |    basic          | Disco demo         |                                                     |     |
