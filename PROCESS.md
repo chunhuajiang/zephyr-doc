@@ -107,10 +107,10 @@
 |  示例           |    basic          | PWM: Fade LED      |  陈蛇                                               |  完成    |
 |  示例           |    basic          | PWM: RGB LED       |  陈蛇                                               |  完成    |
 |  示例           |    basic          | PWM: Servo motor   |  陈蛇                                               |  完成    |
-|  示例           |    网络           | CoAP over DTLS sample client       |    陈蛇                              |  领取    |
-|  示例           |    网络           | CoAP over DTLS sample server       |    陈蛇                              |  领取    |
-|  示例           |    网络           | Sample DHCPv4 client application   |    陈蛇                              |  领取    |
-|  示例           |    网络           | DNS Client Application             |    陈蛇                              |  领取    |
+|  示例           |    网络           | CoAP over DTLS sample client       |    陈蛇                              |  完成    |
+|  示例           |    网络           | CoAP over DTLS sample server       |    陈蛇                              |  完成    |
+|  示例           |    网络           | Sample DHCPv4 client application   |    陈蛇                              |  完成    |
+|  示例           |    网络           | DNS Client Application             |    陈蛇                              |  完成    |
 |  示例           |    网络           | Echo Client                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  示例           |    网络           | Echo Server                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  示例           |    网络           | HTTP Client                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
