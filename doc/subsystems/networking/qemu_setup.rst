@@ -1,21 +1,14 @@
 .. _networking_with_qemu:
 
-Networking with Qemu
+QEMU 网络环境
 ####################
 
-This page describes how to set up a "virtual" networking between a (Linux) host
-and a Zephyr application running in a QEMU virtual machine (built for Zephyr
-targets like qemu_x86, qemu_cortex_m3, etc.) In this example, the
-``echo_server`` sample application from Zephyr source distribution is run in
-QEMU. The QEMU instance is connected to Linux host using serial port and SLIP is
-used to transfer data between Zephyr and Linux (over a chain of virtual
-connections).
+本节描述了如何在一个（Linux）主机与运行在 QEMU 虚拟机中的 Zephyr 应用程序之间设置一个“虚拟”网络环境。在这个例子中，我们将 Zephyr 源码中的例程 ``echo_server`` 运行在 QEMU 中。QEMU 实例通过串行端口连接到 Linux 主机。通过 SLIP 在 Zephyr 与 Linux 之间传递数据（通过虚拟连接链）。
 
-Prerequisites
+前提
 *************
 
-On the Linux Host you need to fetch Zephyr net-tools project, which is located
-in a separate git repository:
+在 Linux 主机上，您需要获取 Zephyr net-tools 工程。该工程位于一个独立的 git 仓库中：
 
 .. code-block:: console
 
@@ -25,71 +18,64 @@ in a separate git repository:
 
 .. note::
 
-   If you get error about AX_CHECK_COMPILE_FLAG, install package autoconf-archive
-   package on Debian/Ubuntu.
+   如果您碰到关于 AX_CHECK_COMPILE_FLAG 的错误，请在 Debain/Ubuntu 上面安装软件包 autoconf-archive。、
 
-Basic Setup
+基本设置
 ***********
 
-For the steps below, you will need at least 4 terminal windows:
+在下面的过程中，您至少需要四个终端窗口：
 
-* Terminal #1 is your usual Zephyr development terminal, with Zephyr environment
-  initialized.
-* Terminals #2, #3, #4 - fresh terminal windows with net-tools being the current
-  directory ("cd net-tools")
+* 终端 #1 是你平常所使用的 Zephyr 开发终端
+* 终端 #2、#3、#4 - 新的终端窗口，且当前路径是 net-tools 所在路径
 
-Step 1 - Create helper socket
+Step 1 - 创建助手 socket
 =============================
 
-Before starting QEMU with network emulation, a unix socket for the emulation
-should be created.
+在开始使用 QEMU 仿真前，需要创建已给 unix socket。
 
-In terminal #2, type:
+在终端 #2，输入：
 
 .. code-block:: console
 
    $ ./loop-socat.sh
 
-Step 2 - Start TAP device routing daemon
+Step 2 - 启动 TAP 设备路由守护进程
 ========================================
 
-In terminal #3, type:
-
+在终端 #3，输入：
 
 .. code-block:: console
 
    $ sudo ./loop-slip-tap.sh
 
 
-Step 3 - Start app in QEMU
+Step 3 - 在 QEMU 中启动 app
 ==========================
 
-Build and start the ``echo_server`` sample application.
+编译并启动例程 ``echo_server``。
 
-In terminal #1, type:
+在终端 #1，输入：
 
 .. code-block:: console
 
    $ cd samples/net/echo_server
    $ make pristine && make qemu
 
-If you see error from QEMU about unix:/tmp/slip.sock, it means you missed Step 1
-above.
+如果您在 QEMU 中看到类似于 unix:/tmp/slip.sock 的错误，说明您遗漏了上面的第 1 步。
 
-Step 4 - Run apps on host
+Step 4 - 在主机上运行 app
 =========================
 
-Now in terminal #4, you can run various tools to communicate with the
-application running in QEMU.
+现在，在终端 #4，您可以运行各种工具与 QEMU 中的应用程序通信。
 
-You can start with pings:
+您可以使用 ping：
 
 .. code-block:: console
 
    $ ping 192.0.2.1
    $ ping6 2001:db8::1
 
-For example, using netcat ("nc") utility, connecting using UDP:
+例如，使用 netcat（“nc”）工具连接一个 UDP 连接：
 
 .. code-block:: console
 
@@ -101,8 +87,7 @@ For example, using netcat ("nc") utility, connecting using UDP:
    $ echo foobar | nc -u 192.0.2.1 4242
    foobar
 
-If echo_server is compiled with TCP support (now enabled by default for
-echo_server sample, CONFIG_NET_TCP=y):
+如果 echo_server 在编译时使能了对 TCP 的支持（当前默认是支持的，CONFIG_NET_TCP=y）：
 
 .. code-block:: console
 
@@ -111,47 +96,35 @@ echo_server sample, CONFIG_NET_TCP=y):
 
 .. note::
 
-   You will need to Ctrl+C manually.
+   您需要手动过输入 Ctrl+C 。
 
-You can also use the telnet command to achieve the above.
+您也可以使用 telnet 命令实现上面的功能。
 
-Step 5 - Stop supporting daemons
+Step 5 - 停止守护进程
 ================================
 
-When you are finished with network testing using QEMU, you should stop
-any daemons or helpers started in the initial steps, to avoid possible
-networking or routing problems such as address conflicts in local network
-interfaces. For example, you definitely need to stop them if you switch
-from testing networking with QEMU to using real hardware. For example,
-there was a report of an airport WiFi connection not working during
-travel due to an address conflict.
+当您使用 QEMU 完成网络测试后，需要停止在初始化步骤中启动的守护进程和助手，以避免在本地网络接口发生地址冲突之类的网络或路由问题。例如，当您从使用 QEMU 测试网络切换到使用真实硬件测试网络时，您就需要停止这些守护进程和助手。否则，您将接收到一个由于地址冲突而报告的一个错误 —— 空中 WiFi 连接无法工作。
 
-To stop the daemons, just press Ctrl+C in the corresponding terminal windows
-(you need to stop both ``loop-slip-tap.sh`` and ``loop-socat.sh``).
+要停止守护例程，只需要在响应的终端窗口按下 Ctrl+C（您需要同时停止 ``loop-slip-tap.sh`` 和 ``loop-socat.sh``）。 
 
 
-Setting up NAT/masquerading to access Internet
+设置 NAT/masquerading 以访问 Internet
 **********************************************
 
-To access Internet from a custom application running in a QEMU, NAT
-(masquerading) should be set up for QEMU's source address. Assuming 192.0.2.1 is
-used, the following command should be run as root:
+要使运行在 QEMU 中的应用程序能够访问 Internet，需要为 QEMU 的源地址设置 NAT（masquerading）。假设使用的地址是 192.0.2.1，则需要以 root 权限运行下面的命令：
 
 .. code-block:: console
 
    $ iptables -t nat -A POSTROUTING -j MASQUERADE -s 192.0.2.1
 
-Additionally, IPv4 forwarding should be enabled on host, and you may need to
-check that other firewall (iptables) rules don't interfere with masquerading.
+此外，还需要在主机上使能 IPv4 转发，并确保其它防火墙（iptables）规则不与 masquerading 相互干扰。
 
-Network connection between two QEMU VMs
+在两个 QEMU VM 之间的网络连接
 ***************************************
 
-Unlike VM-Host setup described above, VM-VM setup is automatic - for sample
-applications which support such mode such as the echo_server and echo_client
-samples, you will need 2 terminal windows, set up for Zephyr development.
+与上面所描述的 VM-Host 设置不同的是，VM-VM 设置是自动的。对于那些支持 echo_server 和 echo_client 这种模式的应用程序，您需要 2 个终端窗口来设置 Zephyr 开发环境。
 
-Terminal #1:
+终端 #1:
 ============
 
 .. code-block:: console
@@ -159,9 +132,9 @@ Terminal #1:
    $ cd samples/net/echo_server
    $ make server
 
-This will start QEMU, waiting for connection from a client QEMU.
+这将会启动一个 QEMU，并等待来自客户端 QEMU 的连接。
 
-Terminal #2:
+终端 #2:
 ============
 
 .. code-block:: console
@@ -169,5 +142,4 @@ Terminal #2:
    $ cd samples/net/echo_client
    $ make client
 
-This will start 2nd QEMU instance, and you should see logging of data sent and
-received in both.
+这将会启动第 2 个 QEMU 实例，同时您会看到数据收发的日志。
