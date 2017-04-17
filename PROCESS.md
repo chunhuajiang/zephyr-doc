@@ -114,7 +114,7 @@
 |  示例           |    网络           | Echo Client                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  示例           |    网络           | Echo Server                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  示例           |    网络           | HTTP Client                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
-|  示例           |    网络           | HTTP Server                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
+|  示例           |    网络           | HTTP Server                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  示例           |    网络           | mbedTLS DTLS client                |    陈蛇                              |  领取    |
 |  示例           |    网络           | mbedTLS DTLS sample server         |    陈蛇                              |  领取    |
 |  示例           |    网络           | MQTT Publisher                     |    陈蛇                              |  领取    |

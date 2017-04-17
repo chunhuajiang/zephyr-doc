@@ -1,68 +1,55 @@
 .. _http-server-sample:
 
-HTTP Server
+HTTP 服务器
 ###########
 
-Overview
+概述
 ********
 
-The HTTP Server sample application for Zephyr implements a basic TCP server
-on top of the HTTP Parser Library that is able to receive HTTP 1.1 requests,
-parse them and write back the responses.
+HTTP 服务器示例程序基于 HTTP 解析器库实现了一个基本的 TCP 服务，能够接收并解析 HTTP 1.1 请求，并回送响应的响应消息。
 
-This sample  code generates HTTP 1.1 responses dynamically
-and does not serve content from a file system. The source code includes
-examples on how to write HTTP 1.1 responses: 200 OK, 400 Bad Request,
-403 Forbidden, 404 Not Found and soft HTTP errors like 200 OK with a 404
-Not Found HTML message.
+本示例不会从文件系统上获取服务内容，而是动态地生成 HTTP 1.1 响应。源代码中的示例包括如何创建 HTTP 1.1 响应：
+200 OK、400 错误的请求、403 禁止、404 Not Found 以及软 HTTP 错误，例如带有 404 Not Found HTML 消息的 200 OK。
 
-The source code for this sample application can be found at:
-:file:`samples/net/http_server`.
+本示例相关源码位于： :file:`samples/net/http_server`。
 
-Requirements
+需求
 ************
 
-- Linux machine with wget and the screen terminal emulator
-- Freedom Board (FRDM-K64F)
-- LAN for testing purposes (Ethernet)
+- Linux 机器，可以使用 wget 命令，可以监视串口终端输出
+- Freedom 开发板（FRDM-K64F）
+- 用于测试的 LAN (Ethernet)
 
-Building and Running
+编译和运行
 ********************
 
-Currently, the HTTP Server application is configured to listen at port 80,
-This value is defined in the :file:`samples/net/http_server/src/config.h`
-file:
+HTTP 服务器当前所配置的监听端口是 80，该值定义在文件 :file:`samples/net/http_server/src/config.h` 中：
 
 .. code-block:: c
 
 	#define ZEPHYR_PORT		80
 
-Open the project configuration file for your platform, for example the
-:file:`prj_frdm_k64f.conf` file is the configuration file for the
-:ref:`frdm_k64f` board. For IPv4 networks, set the following variables:
+
+打开您的平台所对应的工程配置文件（例如 :ref:`frdm_k64f` 开发板对应的配置文件是 :file:`prj_frdm_k64f.conf`）。对于 IPv4 网络，设置如下变量：
 
 .. code-block:: console
 
 	CONFIG_NET_IPV4=y
 	CONFIG_NET_IPV6=n
 
-IPv6 is the preferred routing technology for this sample application,
-if CONFIG_NET_IPV6=y is set, the value of CONFIG_NET_IPV4=y is ignored.
+在本示例中，优先选择的路由技术的 IPv6。也就是说，如果 CONFIG_NET_IPV6=y 被设置，则 CONFIG_NET_IPV4=y 的值将会被忽略。、
 
-This sample code only supports static IP addresses that are defined in the
-project configuration file:
+本示例仅支持静态 IP 地址，这些地址在工程的配置文件中指定，例如：
 
 .. code-block:: console
 
 	CONFIG_NET_SAMPLES_MY_IPV6_ADDR="2001:db8::1"
 	CONFIG_NET_SAMPLES_MY_IPV4_ADDR="192.168.1.101"
 
-Adding URLs
+添加 URL
 ===========
 
-To define a new URL or to change how a URL is processed by the HTTP server,
-open the :file:`samples/net/http_server/src/main.c` file and locate the
-following lines:
+如果要定义新的 URL 或者改变 HTTP 服务器对已有 URL 的处理方式，打开文件 :file:`samples/net/http_server/src/main.c` 并定位到如下代码：
 
 .. code-block:: c
 
@@ -70,58 +57,44 @@ following lines:
 	http_url_add("/headers", HTTP_URL_STANDARD, http_write_header_fields);
 	http_url_add("/index.html", HTTP_URL_STANDARD, http_write_it_works);
 
-The first line defines how Zephyr will deal with unknown URLs. In this case,
-it will respond with a soft HTTP 404 status code, i.e. an HTTP 200 OK status
-code with a 404 Not Found HTML body.
+上面代码的第一行用于定义 Zephyr 如何处理未知 URL。在这种情形下，Zephyr 会响应一个软 HTTP 404 状态码，即一个 HTTP 200 OK 状态码，但是它的 body 是 404 Not Found HTML。
 
-The second line must be interpreted as follows: requests to /headers,
-/headers/index.html and in general to /headers/xxx, will trigger the
-http_write_header_fields routine that prints the received HTTP
-Header Fields. In this case, "xxx" must be understood as any resource
-under the /headers/ URL.
+第二行必须按照如下的方式理解：对 /headers、/headers/index.html 以及更一般的 /headers/xxx 的请求将会触发例行程序 http_write_header_fields —— 打印所接收到的 HTTP 头部字段。在这种情形下，"xxx" 必须被理解为 /headers/ URL 下面的任何资源。
 
-The third line will trigger a routine that prints an HTML It Works!
-message when the /index.html or /index.html/xxx URLs are found.
+第三行将会触发另一个例行程序 —— 当找到 URL /index.html 或者 /index.html/xxx 时打印一个 HTML（It Works!）消息。
 
-To build this sample on your Linux host computer, open a terminal window,
-locate the source code of this sample application and type:
+为了在您的 Linux 主机上编译这个示例程序，请打开一个终端窗口，进入示例程序所在目录并输入：
 
 .. code-block:: console
 
 	make BOARD=frdm_k64f
 
-The FRDM K64F board is detected as a USB storage device. The board
-must be mounted (i.e. to /mnt) to 'flash' the binary:
+FRDM K64F 开发板会被主机识别成一个 USB 存储设备。烧写镜像文件前，开发板必须被挂在到某个目录（例如 /mnt）。烧写：
 
 .. code-block:: console
 
     $ cp outdir/frdm_k64f/zephyr.bin /mnt
 
-On Linux, use the 'dmesg' program to find the right USB device for the
-FRDM serial console. Assuming that this device is ttyACM0, open a
-terminal window and type:
+在 Linux 上，使用 `dmesg` 命令可以查看 FRDM 串行控制台的 USB 设备。假设该设备是 ttyACM0，打开中断查看并输入：
 
 .. code-block:: console
 
     $ screen /dev/ttyACM0 115200
 
-Once the binary is loaded into the FRDM board, press the RESET button.
+镜像文件被加载到 FRDM 开发板后，按下 RESET 按键。
 
-Refer to the board documentation in Zephyr, :ref:`frdm_k64f`,
-for more information about this board and how to access the FRDM
-serial console under other operating systems.
+关于 FRDM-K64F 的更多信息（以及如何在其它操作系统下访问 FRDM 串行控制台）请查看 Zephyr 中的开发板文档 :ref:`frdm_k64f`。
 
-Sample Output
+示例输出
 =============
 
-Assume that this HTTP server is configured to listen at 192.168.1.101 port 80.
-On your Linux host computer, open a terminal window and type:
+假设该 HTTP 服务器被配置用于监听 192.168.1.101 的 80 端口。在您的 Linux 主机上，打开一个终端窗口并输入：
 
 .. code-block:: console
 
 	wget 192.168.1.101/index.html
 
-wget will show:
+执行上面的 wget 命令后将会显示：
 
 .. code-block:: console
 
@@ -131,7 +104,7 @@ wget will show:
 	Length: unspecified [text/html]
 	Saving to: ‘index.html’
 
-The HTML file generated by Zephyr and downloaded by wget is:
+由 Zephyr 所产生并被 wget 所下载的 HTML 文件的内容是：
 
 .. code-block:: html
 
@@ -142,7 +115,7 @@ The HTML file generated by Zephyr and downloaded by wget is:
 	<body><h1><center>It Works!</center></h1></body>
 	</html>
 
-The screen application will display the following information:
+串口监视终端将显示打印如下消息：
 
 .. code-block:: console
 
@@ -160,13 +133,13 @@ The screen application will display the following information:
 	[http_rx_tx:86] Connection closed by peer
 
 
-To obtain the HTTP Header Fields web page, use the following command:
+要获取 HTTP 头部字段的 web 页面，使用下面的命令：
 
 .. code-block:: console
 
 	wget 192.168.1.101/headers -O index.html
 
-wget will show:
+执行上面的 wget 命令后将会显示：
 
 .. code-block:: console
 
@@ -176,7 +149,7 @@ wget will show:
 	Length: unspecified [text/html]
 	Saving to: ‘index.html’
 
-This is the HTML file generated by Zephyr and downloaded by wget:
+由 Zephyr 所产生并被 wget 所下载的 HTML 文件的内容是：
 
 .. code-block:: html
 
@@ -199,13 +172,13 @@ This is the HTML file generated by Zephyr and downloaded by wget:
 	</body>
 	</html>
 
-To test the 404 Not Found soft error, use the following command:
+要测试 404 Not Found 软错误，使用下面的命令：
 
 .. code-block:: console
 
 	wget 192.168.1.101/not_found -O index.html
 
-Zephyr will generate an HTTP response with the following header:
+Zephyr 将会将生成一个具有如下头部的 HTTP 响应：
 
 .. code-block:: console
 
@@ -213,7 +186,7 @@ Zephyr will generate an HTTP response with the following header:
 	Content-Type: text/html
 	Transfer-Encoding: chunked
 
-and this is the HTML message that wget will save:
+wget 将会保存的 HTML 文件的内容是：
 
 .. code-block:: html
 
@@ -224,24 +197,21 @@ and this is the HTML message that wget will save:
 	<body><h1><center>404 Not Found</center></h1></body>
 	</html>
 
-HTTPS Server
+HTTPS 服务器
 ============
 
-The sample code also includes a HTTPS (HTTP over TLS) server example
-running side by side with the HTTP server, this server runs on qemu.
-In order to compile and run the code execute:
+本示例还包含一个 HTTPS（(HTTP over TLS） 服务器，它与 HTTP 服务器并行运行。在 qemu 中运行该示例：
 
 .. code-block:: console
 
         make BOARD=qemu_x86 run
 
-The sample code supports only one hard-coded valid URL (index.html) and
-will return 404 code for other requests.
+本示例仅支持一个 Hard-coded 的 URL（index.html）。如果接收到其它请求，服务器将会返回 404 代码。
 
-Sample Output
+示例的输出
 =============
 
-The app will show the following on the screen:
+程序会在屏幕上显示如下消息：
 
 .. code-block:: console
 
@@ -252,13 +222,13 @@ The app will show the following on the screen:
 	failed
 	! mbedtls_ssl_handshake returned -29312
 
-Now execute the following command on a different terminal window
+在另一个终端窗口执行如下的命令：
 
 .. code-block:: console
 
 	wget https://192.0.2.1 --no-check-certificate
 
-This will be shown on the screen
+屏幕上将显示如下消息：
 
 .. code-block:: console
 
@@ -271,19 +241,16 @@ This will be shown on the screen
 
 	index.html                                            [ <=> ]
 
-The inspection of the file index.html will show
+检查文件 index.html 将会显示：
 
 .. code-block:: console
 
 	<h2>Zephyr TLS Test Server</h2>
 	<p>Successful connection</p>
 
-Known Issues and Limitations
+已知问题和限制
 ============================
 
-- Currently, this sample application only generates HTTP responses in
-  chunk transfer mode.
-- Clients must close the connection to allow the HTTP server to release
-  the network context and accept another connection.
-- The use of mbedTLS and IPv6 takes more than the available ram for the
-  emulation platform, so only IPv4 works for now in QEMU.
+- 本示例当前只能以块差（chunk）传输模式产生 HTTP 响应。
+- 客户端必须先关闭连接，以允许 HTTP 服务器释放网络上下文，然后 HTTP 服务器才能接受另一连接。
+- 使用 mbedTLS 和 IPv6 所需资源超过仿真平台的可用 ram，因此当前 QEMU 仅支持 IPv4。
