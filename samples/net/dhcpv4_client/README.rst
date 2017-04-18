@@ -1,33 +1,29 @@
 .. _dhcpv4-client-sample:
 
-Sample DHCPv4 client application
+DHCPv4 客户端应用示例
 ################################
 
-Overview
+概览
 ********
 
-This application starts a DHCPv4 client, gets an IPv4 address from the
-DHCPv4 server, and prints address, lease time, netmask and router
-information to a serial console.
+此应用程序启动一个 DHCPv4 客户端，从 DHCPv4 服务器端获取一个 IPv4 地址，并向串口控制台打印地址、租用期、掩码以及路由器信息。
 
-Requirements
+需求
 ************
 
-- :ref:`networking with Qemu <networking_with_qemu>`
+- :ref:`使用 QEMU 网络仿真 <networking_with_qemu>`
 
-Building and Running
+编译和运行
 ********************
 
 QEMU x86
 ========
 
-These are instructions for how to use this sample application using
-QEMU on a Linux host to negotiate IP address from DHCPv4 server running
-on Linux host.
+本操作指南用于在 Linux 主机中通过 QEMU 使用此示例应用程序，以从 Linux 主机中的 DHCPv4 服务器协商 IP 地址。
 
-Follow readme from:
+以下为自述文件:
 
-    Run 'loop_socat' and 'loop-slip-tap' scripts from net-tools.
+    从 net-tools 运行 'loop_socat' 和 'loop-slip-tap' 脚本。
 
     https://gerrit.zephyrproject.org/r/gitweb?p=net-tools.git;a=blob;f=README
 
@@ -35,14 +31,13 @@ Follow readme from:
 
     $ ./loop_socat.sh
 
-In another window:
+在另一窗口:
 
 .. code-block:: console
 
     $ sudo ./loop-slip-tap.sh
 
-Here's a sample server configuration file '/etc/dhcpd/dhcp.conf'
-used to configure the DHCPv4 server:
+'/etc/dhcpd/dhcp.conf' 为服务器配置文件示例，它用于配置 DHCPv4 服务器：
 
 .. code-block:: console
 
@@ -54,22 +49,20 @@ used to configure the DHCPv4 server:
      range 192.0.2.10 192.0.2.100;
    }
 
-Use another terminal window to start up a DHCPv4 server on the Linux host,
-using this conf file:
+在 Linux 主机中使用另一终端窗口启动一个 DHCPv4 服务器，使用以下 conf 文件：
 
 .. code-block:: console
 
     $ sudo dhcpd -d -4 -cf /etc/dhcp/dhcpd.conf -lf /var/lib/dhcp/dhcpd.leases tap0
 
-Run Zephyr samples/net/dhcpv4_client application in QEMU:
+在 QEMU 中运行 samples/net/dhcpv4_client 应用示例:
 
 .. code-block:: console
 
     $ cd $ZEPHYR_BASE/samples/net/dhcpv4_client
     $ make pristine && make qemu
 
-Once DHCPv4 client address negotiation completed with server, details
-are shown like this:
+一旦与服务器完成协商 DHCPv4 客户端地址，将显示如下信息:
 
 .. code-block:: console
 
@@ -80,8 +73,7 @@ are shown like this:
     [dhcpv4] [INF] handler: Subnet: 255.255.255.0
     [dhcpv4] [INF] handler: Router: 0.0.0.0
 
-To verify the Zephyr application client is running and has received
-an ip address by typing:
+为证明 Zephyr 应用客户端正在运行，并已经接收到一个 IP 地址，请键入:
 
 .. code-block:: console
 
@@ -91,26 +83,22 @@ an ip address by typing:
 FRDM_K64F
 =========
 
-These are instructions for how to use this sample application running on
-:ref:`frdm_k64f` board to negotiate IP address from DHCPv4 server running on
-Linux host.
+本操作指南用于在 :ref:`frdm_k64f` 开发板运行此示例应用程序，以从 Linux 主机中的 DHCPv4 服务器协商 IP 地址。
 
-Connect ethernet cable from :ref:`Freedom-K64F board <frdm_k64f>` to Linux host
-machine and check for new interfaces:
+使用以太网电缆将 :ref:`Freedom-K64F 开发板 <frdm_k64f>` 开发板连接至 Linux 主机，并检查新接口：
 
 .. code-block:: console
 
     $ ifconfig
 
-Add ip address and routing information to interface:
+为接口添加 ip 地址及路由信息：
 
 .. code-block:: console
 
     $ sudo ip addr add 192.0.2.2 dev eth1
     $ sudo ip route add 192.0.2.0/24 dev eth1
 
-Here's a sample server configuration file '/etc/dhcpd/dhcp.conf'
-used to configure the DHCPv4 server:
+'/etc/dhcpd/dhcp.conf' 为服务器配置文件示例，用于配置 DHCPv4 服务：
 
 .. code-block:: console
 
@@ -122,14 +110,13 @@ used to configure the DHCPv4 server:
      range 192.0.2.10 192.0.2.100;
    }
 
-Use another terminal window to start up a DHCPv4 server on the Linux host,
-using this conf file:
+在 Linux 主机使用另一个终端窗口启动 DHCPv4 服务，使用以下 conf 文件:
 
 .. code-block:: console
 
     $ sudo dhcpd -d -4 -cf /etc/dhcp/dhcpd.conf -lf /var/lib/dhcp/dhcpd.leases eth1
 
-Build Zephyr samples/net/dhcpv4_client application:
+创建 samples/net/dhcpv4_client Zephyr 应用程序:
 
 .. code-block:: console
 
@@ -137,8 +124,7 @@ Build Zephyr samples/net/dhcpv4_client application:
     $ make pristine && make BOARD=frdm_k64f
     $ cp outdir/frdm_k64f/zephyr.bin /media/rveerama/MBED/
 
-Once DHCPv4 client address negotiation completed with server, details
-are shown like this:
+一旦与服务器完成协商 DHCPv4 客户端地址，将显示如下信息:
 
 .. code-block:: console
 
@@ -150,8 +136,7 @@ are shown like this:
     [dhcpv4] [INF] handler: Subnet: 255.255.255.0
     [dhcpv4] [INF] handler: Router: 0.0.0.0
 
-To verify the Zephyr application client is running and has received
-an ip address by typing:
+为证明 Zephyr 应用客户端正在运行，并已经接收到一个 IP 地址，请键入:
 
 .. code-block:: console
 
