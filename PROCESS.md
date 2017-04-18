@@ -115,14 +115,14 @@
 |  示例           |    网络           | Echo Server                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  示例           |    网络           | HTTP Client                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  示例           |    网络           | HTTP Server                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
-|  示例           |    网络           | mbedTLS DTLS client                |    陈蛇                              |  领取    |
-|  示例           |    网络           | mbedTLS DTLS sample server         |    陈蛇                              |  领取    |
-|  示例           |    网络           | MQTT Publisher                     |    陈蛇                              |  领取    |
-|  示例           |    网络           | NATS Client Implementation Sample  |    陈蛇                              |  领取    |
-|  示例           |    网络           | Sample TELNET console application  |    陈蛇                              |  领取    |
-|  示例           |    网络           | CoAP client                        |    陈蛇                              |  领取    |
-|  示例           |    网络           | CoAP Server                        |    陈蛇                              |  领取    |
-|  示例           |    网络           | zperf: Network Traffic Generator   |    陈蛇                              |  领取    |
+|  示例           |    网络           | mbedTLS DTLS client                |    陈蛇                              |  完成    |
+|  示例           |    网络           | mbedTLS DTLS sample server         |    陈蛇                              |  完成    |
+|  示例           |    网络           | MQTT Publisher                     |    陈蛇                              |  完成    |
+|  示例           |    网络           | NATS Client Implementation Sample  |    陈蛇                              |  完成    |
+|  示例           |    网络           | Sample TELNET console application  |    陈蛇                              |  完成    |
+|  示例           |    网络           | CoAP client                        |    陈蛇                              |  完成    |
+|  示例           |    网络           | CoAP Server                        |    陈蛇                              |  完成    |
+|  示例           |    网络           | zperf: Network Traffic Generator   |    陈蛇                              |  完成    |
 |  示例           |    蓝牙           | Beacon                     |                                             |      |
 |  示例           |    蓝牙           | Central                    |                                             |      |
 |  示例           |    蓝牙           | Heart-rate Monitor         |                                             |      |
