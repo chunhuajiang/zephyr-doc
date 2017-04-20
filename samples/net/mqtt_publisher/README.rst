@@ -1,90 +1,78 @@
 .. _mqtt-publisher-sample:
 
-MQTT Publisher
+MQTT 发布机
 ##############
 
-Overview
+概述
 ********
 
-`MQTT <http://mqtt.org/>`_ (MQ Telemetry Transport) is a lightweight
-publish/subscribe messaging protocol optimized for small sensors and
-mobile devices.
+`MQTT <http://mqtt.org/>`_ (Message Queuing  Telemetry Transport 消息队列遥测传输) 是一个轻量级发布/订阅信息协议，为小型传感器及移动设备而优化。
 
-The Zephyr MQTT Publisher sample application is a MQTT v3.1.1
-client that sends MQTT PUBLISH messages to a MQTT broker.
-See the `MQTT V3.1.1 spec`_ for more information.
+Zephyr MQTT 发布机示例应用程序是一个 MQTT v3.1.1 客户端，它向 MQTT 代理传送 MQTT PUBLISH 消息。参考 `MQTT V3.1.1 spec`_ 获取更多信息。
 
 .. _MQTT V3.1.1 spec: http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/mqtt-v3.1.1.html
 
-The source code of this sample application can be found at:
-:file:`samples/net/mqtt_publisher`.
+此示例应用源码位于：:file:`samples/net/mqtt_publisher`.
 
-Requirements
+需求
 ************
 
-- Linux machine
-- Freedom Board (FRDM-K64F)
-- Mosquitto server: any version that supports MQTT v3.1.1. This sample
-  was tested with mosquitto 1.3.4.
-- Mosquitto subscriber
-- LAN for testing purposes (Ethernet)
+- Linux 机器
+- 自由板 (FRDM-K64F)
+- Mosquitto 服务器: 支持 MQTT v3.1.1 的任意版本。 此例在 mosquitto 1.3.4上经过测试。
+- Mosquitto 订阅者
+- 用于测试目的的 LAN (以太网)
 
-Build and Running
+编译和运行
 *****************
 
-Currently, this sample application only supports static IP addresses.
-Open the :file:`src/config.h` file and set the IP addresses according
-to the LAN environment.
-Alternatively, set the IP addresses in the :file:`prj_frdm_k64f.conf` file.
+当前，此示例仅支持静态 IP 地址。打开 :file:`src/config.h` 文件， 并依照局域网环境设置 IP 地址。或者在 :file:`prj_frdm_k64f.conf` 文件中设置 IP 地址。
 
-This file :file:`src/config.h` also contains some variables that may be changed:
+:file:`src/config.h` 文件也包含了一些需要设置的变量:
 
-MQTT broker TCP port:
+MQTT 代理的 TCP 端口：
 
 .. code-block:: c
 
 	#define SERVER_PORT		1883
 
-Application sleep time:
+应用程序睡眠时间：
 
 .. code-block:: c
 
 	#define APP_SLEEP_MSECS		500
 
-Application RX and TX timeout:
+应用程序的接收和发送超时：
 
 .. code-block:: c
 
 	#define APP_TX_RX_TIMEOUT       300
 
-Max number of connection tries:
+最大尝试连接次数：
 
 .. code-block:: c
 
 	#define APP_CONNECT_TRIES	10
 
-Max number of MQTT PUBLISH iterations:
+MQTT PUBLISH 最大迭代次数：
 
 .. code-block:: c
 
 	#define APP_MAX_ITERATIONS	5
 
-MQTT Client Identifier:
+MQTT 客户端标识：
 
 .. code-block:: c
 
 	#define MQTT_CLIENTID		"zephyr_publisher"
 
-This sample application supports the IBM Bluemix Watson topic format that can
-be enabled by changing the default value of APP_BLUEMIX_TOPIC from 0 to 1:
+此示例应用支持 IBM Bluemix Watson 主题格式，可将 APP_BLUEMIX_TOPIC 默认值由 0 变为 1:
 
 .. code block:: c
 
 	#define APP_BLUEMIX_TOPIC	1
 
-The Bluemix topic may include some parameters like device type, device
-identifier, event type and message format. This application uses the
-following macros to specify those values:
+Bluemix 主题可以包含一些参数如设备类型、设备标识符、事件类型和消息格式。此应用使用以下宏来指定这些值：
 
 .. code block:: c
 
@@ -93,29 +81,28 @@ following macros to specify those values:
 	#define BLUEMIX_EVENT		"status"
 	#define BLUEMIX_FORMAT		"json"
 
-On your Linux host computer, open a terminal window, locate the source code
-of this sample application (i.e. :file:`samples/net/mqtt_publisher`) and type:
+在你的 Linux 主机上, 打开终端窗口, 定位到此应用程序的源码 (即 :file:`samples/net/mqtt_publisher`) 并输入：
 
 .. code-block:: console
 
 	make BOARD=frdm_k64f
 
-Open another terminal window and type:
+打开另一个终端窗口并输入:
 
 .. code-block:: console
 
 	sudo mosquitto -v -p 1883
 
-Open another terminal window and type:
+打开另一个终端窗口并输入:
 
 .. code-block:: console
 
 	mosquito_sub -t sensors
 
-Sample output
+示例输出
 =============
 
-This is the output from the FRDM UART console, with:
+以下是输出来自 FRDM UART 控制台，参数设置为:
 
 .. code-block:: c
 
@@ -170,18 +157,17 @@ This is the output from the FRDM UART console, with:
 
 	Bye!
 
-The line:
+下行:
 
 .. code-block:: console
 
 	[try_to_connect:220] mqtt_connect: -5 <ERROR>
 
-means that an error was detected and a new connect message will be sent.
+表示检测到一个错误，并准备发送一个新的连接信息。
 
-The MQTT API is asynchronous, so messages are displayed as the callbacks are
-executed.
+MQTT API 是异步的, 所以消息在回调函数执行时显示。
 
-This is the information that the subscriber will receive:
+以下为订阅者收到的信息:
 
 .. code-block:: console
 
@@ -202,7 +188,7 @@ This is the information that the subscriber will receive:
 	DOORS:OPEN_QoS1
 	DOORS:OPEN_QoS2
 
-This is the output from the MQTT broker:
+以下为 MQTT 代理输出信息:
 
 .. code-block:: console
 

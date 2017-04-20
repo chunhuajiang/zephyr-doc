@@ -1,39 +1,35 @@
 .. _zoap-client-sample:
 
-CoAP client
+CoAP客户端
 ###########
 
-Overview
+概览
 ********
 
-A simple CoAP server showing how to retrieve information from a resource.
+一个简单的CoAP服务器，演示了如何从一个资源中获取信息。
 
-This demo assumes that the platform of choice has networking support,
-some adjustments to the configuration may be needed.
+本示例假定你所选的平台支持网络，可能需要对配置进行一些调整。
 
-This sample will make a GET request with path 'test' to the IPv6
-multicast address reserved for CoAP nodes, so the URI can be
-represented as:
+本示例将向为CoAP节点所保留的IPv6组播地址发起一个带‘test’路径的GET请求，所以URL可表现为：
 
 .. code-block:: none
 
     coap://[ff02::fd]:5683/test
 
-Building and Running
+编译和运行
 ********************
 
-This project will print all the octets of the response received, more context can
-be obtained by using a tool like tcpdump or wireshark.
+此项目将以字节方式打印出所有接收到的响应，更多的内容可以通过使用像tcpdump或wireshark类似的工具获得。
 
-See the `net-tools`_ project for more details.
+参考 `net-tools`_ 项目以获取更详细信息。
 
-It can be built and executed on QEMU as follows:
+可使用如下方法在QEMU上编译并运行：
 
 .. code-block:: console
 
     make run
 
-Sample output
+示例输出
 =============
 
 .. code-block:: console
@@ -43,6 +39,6 @@ Sample output
   00 24 3d 86 60 40 00 01 ff 54 79 70 65 3a 20 30 0a 43 6f 64 65 3a 20
   31 0a 4d 49 44 3a 20 31 0a (76 bytes)
 
-.. note: The values shown above might differ.
+.. 注意: 以上所显示的值可能会有所不同。
 
 .. _`net-tools`: https://gerrit.zephyrproject.org/r/gitweb?p=net-tools.git;a=tree
