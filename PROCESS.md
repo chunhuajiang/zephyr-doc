@@ -86,7 +86,7 @@
 |  子系统         |    日志           |    内核事件日志   |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  子系统         |    网络           |    概述           |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  子系统         |    网络           |    架构           |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
-|  子系统         |    网络           |    连接api        |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
+|  子系统         |    网络           |    连接api        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  子系统         |    网络           |    L2协议栈和驱动 |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  子系统         |    网络           |    网络管理api    |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
 |  子系统         |    网络           |    buffer         |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
