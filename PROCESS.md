@@ -80,7 +80,7 @@
 |  子系统         |    蓝牙           |   蓝牙            |                                                     |      |
 |  子系统         |    蓝牙           |   API             |                                                    |      |
 |  子系统         |    蓝牙           |   开发蓝牙应用    |                                                     |      |
-|  子系统         |    蓝牙           |   测试            |                                                     |      |
+|  子系统         |    蓝牙           |   测试            [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  子系统         |    C库            |                   |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  子系统         |    日志           |    系统日志       |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
 |  子系统         |    日志           |    内核事件日志   |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
