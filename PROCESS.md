@@ -80,7 +80,7 @@
 |  子系统         |    蓝牙           |   蓝牙            |                                                     |      |
 |  子系统         |    蓝牙           |   API             |                                                    |      |
 |  子系统         |    蓝牙           |   开发蓝牙应用    |                                                     |      |
-|  子系统         |    蓝牙           |   测试            [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
+|  子系统         |    蓝牙           |   测试           |                                                       |      |
 |  子系统         |    C库            |                   |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  子系统         |    日志           |    系统日志       |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
 |  子系统         |    日志           |    内核事件日志   |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
@@ -94,7 +94,7 @@
 |  子系统         |    电源管理       |                    |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  子系统         |    传感器驱动     |       -            |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  子系统         |    shell        |       -            |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
-|  子系统         |    测试框架       |                    |                                                     |      |
+|  子系统         |    测试框架       |                    |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  子系统         |    USB           |      -             |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  API            |    shell          |                    |                                                     |      |
 |  示例           |    kernel         |  Hello World       | [tidyjiang8](https://github.com/tidyjiang8)         |  完成    |  
