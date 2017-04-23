@@ -1,10 +1,9 @@
 .. _subsystems:
 
-Subsystems
+子系统
 ##########
 
-This section contains information about subsystem and the API they expose
-to applications.
+本章介绍 Zephyr 的子系统以及子系统暴露给应用程序的 API 的相关信息。
 
 .. toctree::
    :maxdepth: 1

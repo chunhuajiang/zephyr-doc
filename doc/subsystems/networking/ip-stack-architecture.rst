@@ -1,9 +1,9 @@
 .. _ip_stack_architecture:
 
-IP Stack Architecture
+IP 协议栈架构
 #####################
 
-High level overview of the IP stack
+IP 协议栈顶层概述
 ***********************************
 
 .. figure:: ip-stack-architecture.svg
@@ -13,33 +13,21 @@ High level overview of the IP stack
 
     Network stack overview
 
-*The IP stack is layered and it consists of the following parts:*
+* IP 协议栈是分层的，由以下几部分组成：
 
-* **Networking Application.** This application uses the connectivity API to
-  manipulate a network connection, and management API to set network
-  related parameters such as starting a scan (when applicable),
-  setting IP address to a network interface, etc.
+* **网络应用程序。** 这些应用程序使用连接 API 来操作网络连接，使用管理 API 来设置网络相关的参数（例如启动扫描、设置网络接口的 IP 地址等）。
 
-* **Core IP stack.** This provides implementations for
-  various protocols such as IPv6, IPv4, UDP, TCP, ICMPv4 and ICMPv6.
+* **核心 IP 协议栈。** 它实现了各种各样的协议，例如 IPv6、IPv4、UDP、TCP、ICMPv4 和 ICMPv6。
 
-* **Network interface abstraction layer.** This provides functionality
-  that is common in all the network interfaces, such as acquiring
-  an IP address, etc.
+* **网络接口抽象层。** 它为所有网络接口提供了通用功能，例如获取 IP 地址等。
 
-* **Generic L2 layer.** This provides common API for sending and receiving
-  data to and from an actual network device.
+* **通用的 L2 层。** 为向实际网络设备收发数据提供通用 API。
 
-* **L2 network technology component.** These components include Ethernet,
-  IEEE 802.15.4, Bluetooth, etc. Some of these technologies support IPv6
-  header compression (6LoWPAN), which is done in its own layer. For
-  example ARP for IPv4 is done in the Ethernet component.
+* **L2 网络技术组件。** 这些组件包括 Ethernet、IEEE 802.15.4、Bluetooth 等。其中，部分技术支持 IPv6 头部压缩（6LoWPAN），已在其自己的分层中实现。例如，在 Ethernet 组件中实现了 ARP。
 
-* **Network device driver.** The actual low-level device driver handles the
-  physical sending or receiving of a network packet.
+* **网络设备驱动程序。** 实际的底层设备驱动程序，用于处理网络报文的物理收发。
 
-
-Network data flow
+网络的数据流
 *****************
 
 .. figure:: ip-stack-data-flow.svg
@@ -47,59 +35,25 @@ Network data flow
     :alt: Network data flow
     :figclass: align-center
 
-    Network data flow
+    网络数据流
 
-The application typically consists of one or more tasks or threads
-that execute the application logic. When using the network
-connectivity APIs, following things will happen.
+应用程序通常由一个或多有执行应用程序逻辑的 task 或线程组成。当使用网络连接 API 时，将会发生下面的事：
 
-*Data receiving (RX):*
+*数据接收（RX）：*
 
-1) A network data packet is received by a device driver.
+1) 设备驱动程序接收到一个网络数据报文。
 
-2) The device driver allocates enough network buffers to store the received
-   data. The network buffers are then passed to the RX FIFO
-   for further processing. The RX FIFO is used as a way to separate
-   the data processing pipeline (bottom-half) as the device driver is
-   running in interrupt context and it must do its processing very fast.
+2) 设备驱动程序分配足够的网络 buffe，用于存储所接收到的数据。之后，网络 buffer 会被传递到 RX FIFO，用于进一步处理。RX FIFO 用于分隔数据处理流水线（底半步），因为设备驱动程序运行在中断上下文，它必须快速地处理工作。
 
-3) The RX thread reads the RX FIFO and passes the data to the correct
-   L2 driver. After the L2 driver has checked the packet, the packet is
-   passed to L3 processing. The L3 layer checks if the packet is a proper
-   IPv6 or IPv4 packet. If the packet contains UDP or TCP data, it
-   is then sent to correct application via a function callback.
-   This also means that the application data processing in that callback
-   is run in thread context even if the actual application is running
-   in task context. The data processing in the application callback should
-   be done fast in order not to block the system too long.
-   There is only one RX thread in the system. The stack size of the RX
-   thread can be tweaked via Kconfig option but it should be kept as
-   small as possible. This also means that stack utilization in the
-   data processing callback should be minimized in order to avoid stack
-   overflow.
+3) RX 线程读取 RX FIFO，并将数据传递到正确的 L2 驱动程序。经过 L2 驱动程序检查后，报文会被传递到 L3 继续处理。L3 层检测报文是否是 IPv6 报文或 IPv4 报文。如果报文包含 UDP 或 TCP 数据，它会通过回调函数传递给相应的应用程序。这意味着，回调函数中的应用程序处理数据时是运行在线程上下文中的，即使实际的应用程序运行在 task 上下文。在应用程序回调中处理数据应尽快完成，以避免阻塞系统的时间太久。系统中只有一个 RX 线程。RX 线程的栈大小可以通过 Kconfig 选项调整，但是它的值应当保持尽量小。这也意味着在数据处回调函数中应尽量少用栈空间，以避免栈溢出。
 
-4) The application will then receive the data, which is stored inside a chain
-   of net_bufs. The application now owns the data. After it has finished working
-   with it, the application should release the net_bufs data by calling
-   `net_nbuf_unref()`.
+4) 然后数据会被应用程序接收到，并保存在一个 net_bufs 链中。应用程序此时就获得了数据。当应用程序完成它自己的处理工作后，它应当调用 `net_nbuf_unref()` 来释放 net_bufs 数据。
 
-*Data sending (TX):*
+*数据发送（TX）：*
 
-1) The application should use the connectivity API when the application is
-   ready to send data. The sent data is checked by the correct L2 layer module
-   and if everything is ok, the data is placed into the network interface TX
-   queue. The network interface is typically selected to be the same interface
-   for reply data packets or the interface is selected according to the routing
-   algorithm. The application should not free the data packet if it was
-   correctly placed into TX queue; the network driver will release the packet
-   after it is sent. If the connectivity API sending function returns an error
-   to the application, that means the packet was not sent correctly and the
-   application needs to free the packet.
+1) 当应用程序准备发送数据时，应当使用连接 API。待发送的数据会被相应的 L2 层模块检查，如果一切 ok，数据会被放到合适的网络接口的 TX 队列中。选择网络接口时通常会选择用于响应数据报文的同一个接口，或者根据路由算法所选择的接口。当数据被正确地放到 TX 队列中后，应用程序不需要释放数据报文；网络驱动程序会在数据发送后将其释放。如果连接 API 的发送函数给应用程序返回了一个错误，说明报文未被正确地发送出去，此时应用程序需要释放这个报文。
 
-2) Each network interface has a TX thread associated with it and the TX thread
-   will send the packet to the correct device driver.
 
-3) If the device driver is able to inject the network packet into the
-   network, then it will release the packet. Typically there are no
-   retransmits at this lower level so usually the packet is released
-   even if not sent correctly. This depends on the technology being used.
+2) 每个网络接口都有一个与之关联的 TX 线程，它会将报文发送到正确的设备驱动程序中。
+
+3) 如果设备驱动程序能将网络报文注射到网络中，它会释放报文。通常，在这一层没有重传机制，因此通常即使报文未被正确发送也有可能被释放。这依赖于所使用的技术。

@@ -11,13 +11,13 @@
 | 入门指南        | 搭建 Win 开发环境   |  -                | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
 | 入门指南        | 搭建 Linux 开发环境 |  -                | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
 | 入门指南        | 搭建 Mac 开发环境   |  -                | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
-| 支持的开发板    |  x86            |  Arduino101       |                                                      |          |
-| 支持的开发板    |  x86             |  x86 qemu         |                                                      |          |
-| 支持的开发板    |  x86             |  quark d2000      |                                                      |          |
-| 支持的开发板    |  x86             |  tiny TILE        |                                                      |          |
+| 支持的开发板    |  x86            |  Arduino101       |  陈蛇                                               |  领取    |
+| 支持的开发板    |  x86             |  x86 qemu         |  陈蛇                                               |  领取    |
+| 支持的开发板    |  x86             |  quark d2000      |  陈蛇                                               |  领取    |
+| 支持的开发板    |  x86             |  tiny TILE        |  陈蛇                                               |  领取    |
 | 支持的开发板    |  arm             |  Genuino101(BLE)  |                                                      |          |
 | 支持的开发板    |  arm             |  Arduino Due      |                                                      |          |
-| 支持的开发板    |  arm             |  CC3200 LaunchXL  |                                                      |          |
+| 支持的开发板    |  arm             |  CC3200 LaunchXL  |   [josephleung](https://github.com/josephleung)                                                   |          |
 | 支持的开发板    |  arm             |  Curie (BLE)      |                                                      |          |
 | 支持的开发板    |  arm             |  NXP FRDM-K64F    |   [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 | 支持的开发板    |  arm             |  NXP FRDM-KW41Z   |   [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
@@ -80,49 +80,49 @@
 |  子系统         |    蓝牙           |   蓝牙            |                                                     |      |
 |  子系统         |    蓝牙           |   API             |                                                    |      |
 |  子系统         |    蓝牙           |   开发蓝牙应用    |                                                     |      |
-|  子系统         |    蓝牙           |   测试            |                                                     |      |
-|  子系统         |    C库            |                   |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
+|  子系统         |    蓝牙           |   测试           |                                                       |      |
+|  子系统         |    C库            |                   |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  子系统         |    日志           |    系统日志       |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
-|  子系统         |    日志           |    内核事件日志   |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
-|  子系统         |    网络           |    概述           |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
-|  子系统         |    网络           |    架构           |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
-|  子系统         |    网络           |    连接api        |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
-|  子系统         |    网络           |    L2协议栈和驱动 |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
+|  子系统         |    日志           |    内核事件日志   |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
+|  子系统         |    网络           |    概述           |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
+|  子系统         |    网络           |    架构           |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
+|  子系统         |    网络           |    连接api        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
+|  子系统         |    网络           |    L2协议栈和驱动 |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  子系统         |    网络           |    网络管理api    |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
-|  子系统         |    网络           |    buffer         |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
-|  子系统         |    网络           |    qemu 仿真       |                                                     |      |
-|  子系统         |    电源管理       |                    |                                                     |      |
-|  子系统         |    传感器驱动     |                    |                                                     |      |
-|  子系统         |    shell          |                    |                                                    |      |
-|  子系统         |    测试框架       |                    |                                                     |      |
-|  子系统         |    USB            |                    |                                                    |      |
+|  子系统         |    网络           |    buffer         |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
+|  子系统         |    网络           |    qemu 仿真       |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
+|  子系统         |    电源管理       |                    |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
+|  子系统         |    传感器驱动     |       -            |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
+|  子系统         |    shell        |       -            |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
+|  子系统         |    测试框架       |                    |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
+|  子系统         |    USB           |      -             |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  API            |    shell          |                    |                                                     |      |
 |  示例           |    kernel         |  Hello World       | [tidyjiang8](https://github.com/tidyjiang8)         |  完成    |  
 |  示例           |    kernel         |  Synchronization   |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  示例           |    kernel         |  Dining Philosopher|  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
-|  示例           |    basic          | PWM: Blink LED     |                                                     |      |
-|  示例           |    basic          | Blinky Application |                                                     |      |
-|  示例           |    basic          | Button demo        |                                                     |      |
-|  示例           |    basic          | Disco demo         |                                                     |      |
-|  示例           |    basic          | PWM: Fade LED      |                                                     |      |
-|  示例           |    basic          | PWM: RGB LED       |                                                     |      |
-|  示例           |    basic          | PWM: Servo motor   |                                                     |      |
-|  示例           |    网络           | CoAP over DTLS sample client       |                                     |      |
-|  示例           |    网络           | CoAP over DTLS sample server       |                                     |      |
-|  示例           |    网络           | Sample DHCPv4 client application   |                                     |      |
-|  示例           |    网络           | DNS Client Application             |                                     |      |
+|  示例           |    basic          | PWM: Blink LED     |  陈蛇                                               |  完成    |
+|  示例           |    basic          | Blinky Application |  陈蛇                                               |  完成    |
+|  示例           |    basic          | Button demo        |  陈蛇                                               |  完成    |
+|  示例           |    basic          | Disco demo         |  陈蛇                                               |  完成    |
+|  示例           |    basic          | PWM: Fade LED      |  陈蛇                                               |  完成    |
+|  示例           |    basic          | PWM: RGB LED       |  陈蛇                                               |  完成    |
+|  示例           |    basic          | PWM: Servo motor   |  陈蛇                                               |  完成    |
+|  示例           |    网络           | CoAP over DTLS sample client       |    陈蛇                              |  完成    |
+|  示例           |    网络           | CoAP over DTLS sample server       |    陈蛇                              |  完成    |
+|  示例           |    网络           | Sample DHCPv4 client application   |    陈蛇                              |  完成    |
+|  示例           |    网络           | DNS Client Application             |    陈蛇                              |  完成    |
 |  示例           |    网络           | Echo Client                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 |  示例           |    网络           | Echo Server                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
-|  示例           |    网络           | HTTP Client                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
-|  示例           |    网络           | HTTP Server                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
-|  示例           |    网络           | mbedTLS DTLS client                |                                     |      |
-|  示例           |    网络           | mbedTLS DTLS sample server         |                                     |      |
-|  示例           |    网络           | MQTT Publisher                     |                                     |      |
-|  示例           |    网络           | NATS Client Implementation Sample  |                                     |      |
-|  示例           |    网络           | Sample TELNET console application  |                                     |      |
-|  示例           |    网络           | CoAP client                        |                                     |      |
-|  示例           |    网络           | CoAP Server                        |                                     |      |
-|  示例           |    网络           | zperf: Network Traffic Generator   |                                     |      |
+|  示例           |    网络           | HTTP Client                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
+|  示例           |    网络           | HTTP Server                        |  [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
+|  示例           |    网络           | mbedTLS DTLS client                |    陈蛇                              |  完成    |
+|  示例           |    网络           | mbedTLS DTLS sample server         |    陈蛇                              |  完成    |
+|  示例           |    网络           | MQTT Publisher                     |    陈蛇                              |  完成    |
+|  示例           |    网络           | NATS Client Implementation Sample  |    陈蛇                              |  完成    |
+|  示例           |    网络           | Sample TELNET console application  |    陈蛇                              |  完成    |
+|  示例           |    网络           | CoAP client                        |    陈蛇                              |  完成    |
+|  示例           |    网络           | CoAP Server                        |    陈蛇                              |  完成    |
+|  示例           |    网络           | zperf: Network Traffic Generator   |    陈蛇                              |  完成    |
 |  示例           |    蓝牙           | Beacon                     |                                             |      |
 |  示例           |    蓝牙           | Central                    |                                             |      |
 |  示例           |    蓝牙           | Heart-rate Monitor         |                                             |      |

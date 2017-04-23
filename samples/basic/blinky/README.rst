@@ -1,33 +1,28 @@
 .. _blinky-sample:
 
-Blinky Application
+Blinky
 ##################
 
-Overview
+概览
 ********
 
-The Blinky example shows how to configure GPIO pins as outputs which can also be
-used to drive LEDs on the hardware usually delivered as "User LEDs" on many of
-the supported boards in Zephyr.
+Blinky 示例演示了如何将 GPIO 配置为输出引脚，从而驱动 LED，它们通常在 Zephyr 支持的众多开发板中也被当成 “User LEDs”。
 
-Requirements
+需求
 ************
 
-The demo assumes that an LED is connected to one of GPIO lines. The
-sample code is configured to work on boards with user defined buttons and that
-have defined the LED0\_* variables in :file:`board.h`.
+此示例假设某个 LED 已经连上一个 GPIO 引脚。此示例代码的运行需要用户在 :file:`board.h` 中为开发板定义按钮以及 LED0_* 变量。
 
-The :file:`board.h` must define the following variables:
+:file:`board.h` 必须定义以下变量：
 
 - LED0_GPIO_PORT
 - LED0_GPIO_PIN
 
 
-Building and Running
+编译并运行
 ********************
 
-This samples does not output anything to the console.  It can be built and
-flashed to a board as follows:
+此示例不在控制台输出任何内容。可通过以下命令将其编译并烧写进开发板：
 
 .. code-block:: console
 
@@ -35,5 +30,4 @@ flashed to a board as follows:
    $ make BOARD=arduino_101
    $ make BOARD=arduino_101 flash
 
-After flashing the image to the board, the user LED on the board should start to
-blink.
+将镜像烧写进开发板之后，开发板上的用户 LED 开始闪烁。

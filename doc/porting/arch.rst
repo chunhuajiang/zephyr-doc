@@ -1,133 +1,95 @@
 .. _architecture_porting_guide:
 
-Architecture Porting Guide
+架构移植指导
 ##########################
 
-An architecture port is needed to enable Zephyr to run on an :abbr:`ISA
-(instruction set architecture)` or an :abbr:`ABI (Application Binary
-Interface)` that is not currently supported.
+Zephyr 目前不支持某些 :abbr:`ISA(instruction set architecture)` 和 :abbr:`ABI (Application Binary Interface)` 架构。如果您希望在这些架构上运行 Zephyr，需要做一些架构相关的移植工作。
 
-The following are examples of ISAs and ABIs that Zephyr supports:
+Zephyr 目前支持的 ISA 和 ABI 架构包括：
 
 * x86_32 ISA with System V ABI
 * x86_32 ISA with IAMCU ABI
 * ARMv7-M ISA with Thumb2 instruction set and ARM Embedded ABI (aeabi)
 * ARCv2 ISA
 
-An architecture port can be divided in several parts; most are required and
-some are optional:
+架构相关的移植可以划分为几个部分，其中一部分是必须的，另一些是可选的：
 
-* **The early boot sequence**: each architecture has different steps it must
-  take when the CPU comes out of reset (required).
+* **早期的启动过程**: 必须的。当 CPU 复位后，每种架构都需要做不同的处理。
 
-* **Interrupt and exception handling**: each architecture handles asynchronous
-  and un-requested events in a specific manner (required).
+* **中断和异常处理**: 必须的。每种架构以特定的方式处理异步和未请求事件。
 
-* **Thread context switching**: the Zephyr context switch is dependent on the
-  ABI and each ISA has a different set of registers to save (required).
+* **线程上下文切换**: 必须的。 Zephyr 的上下文切换依赖于 ABI。不同的 ISA 需要保存不同的寄存器集合。
 
-* **Thread creation and termination**: A thread's initial stack frame is ABI
-  and architecture-dependent, and thread abortion possibly as well (required).
+* **线程的创建和结束**: 必须的。线程的初始化帧依赖于 ABI 和架构。线程的终止也类似。
 
-* **Device drivers**: most often, the system clock timer and the interrupt
-  controller are tied to the architecture (some required, some optional).
+* **设备驱动程序**: 部分是必须的，部分是可选的。大多数情况下，系统的时钟定时器和中断控制器都是与架构绑定在一起的。
 
-* **Utility libraries**: some common kernel APIs rely on a
-  architecture-specific implementation for performance reasons (required).
+* **工具库**: 必须的。由于性能问题，内核的一些通用 API 依赖于架构相关的实现。
 
-* **CPU idling/power management**: most architectures implement instructions
-  for putting the CPU to sleep (partly optional, most likely very desired).
+* **CPU 空转/电源管理**: 可选的。大多数架构都实现了让 CPU 睡眠的指令。
 
-* **Fault management**: for implementing architecture-specific debug help and
-  handling of fatal error in threads (partly optional).
+* **Fault 处理**: 可选的。 主要与架构相关的调试、处理线程致命错误相关。
 
-* **Linker scripts and toolchains**: architecture-specific details will most
-  likely be needed in the build system and when linking the image (required).
+* **链接脚本和工具链**: 必须的。 编译系统在链接镜像时，极有可能需要一些架构相关
+  的细节。
 
-Early Boot Sequence
+早期的启动过程
 *******************
 
-The goal of the early boot sequence is to take the system from the state it is
-after reset to a state where is can run C code and thus the common kernel
-initialization sequence. Most of the time, very few steps are needed, while
-some architectures require a bit more work to be performed.
+早起的启动过程是为了让系统从复位状态切换到能运行 C 代码的状态。大多数情况下都只需要很少的步骤，只有个别架构需要略多的处理。
 
-Common steps for all architectures:
+所有架构的通用步骤：
 
-* Setup an initial stack.
-* If running an :abbr:`XIP (eXecute-In-Place)` kernel, copy initialized data
-* from ROM to RAM.
-* If not using an ELF loader, zero the BSS section.
-* Jump to :code:`_Cstart()`, the early kernel initialization
+* 设置初始化栈。 
+* 如果运行的是 :abbr:`XIP (eXecute-In-Place)` 内核，将初始化代码从 ROM 拷贝到 RAM。
+* 如果没有使用 ELF 加载器，初始化 BSS 段。
+* 跳转到 :code:`_Cstart()` 去初始化内核。
 
-  * :code:`_Cstart()` is responsible for context switching out of the fake
-    context running at startup into the main thread.
+  * :code:`_Cstart()` 负责从系统启动时的虚拟上下文切换到后台/空转任务。
 
-Some examples of architecture-specific steps that have to be taken:
+一些架构相关的步骤可能包括：
 
-* If given control in real mode on x86_32, switch to 32-bit protected mode.
-* Setup the segment registers on x86_32 to handle boot loaders that leave them
-  in an unknown or broken state.
-* Initialize a board-specific watchdog on Cortex-M3/4.
-* Switch stacks from MSP to PSP on Cortex-M.
-* Use a different approach than calling into _Swap() on Cortex-M to prevent
-  race conditions.
-* Setup FIRQ and regular IRQ handling on ARCv2.
+* 如果处于 x86_32 实模式，则需要切换到 32 位的保护模式。
+* 设置 x86_32 的段寄存器，以处理 boot loader。
+* 处理 Cortex-M3/4 的开发板相关的看门狗。
+* 将 Cortex-M3/4 的栈由 MSP 切换到 PSP。
 
-Interrupt and Exception Handling
+中断和异常处理
 ********************************
 
-Each architecture defines interrupt and exception handling differently.
+每种架构的中断和异常处理都是不同的。
 
-When a device wants to signal the processor that there is some work to be done
-on its behalf, it raises an interrupt. When a thread does an operation that is
-not handled by the serial flow of the software itself, it raises an exception.
-Both, interrupts and exceptions, pass control to a handler. The handler is
-known as an :abbr:`ISR (Interrupt Service Routine)` in the case of
-interrupts. The handler perform the work required the exception or the
-interrupt.  For interrupts, that work is device-specific. For exceptions, it
-depends on the exception, but most often the core kernel itself is responsible
-for providing the handler.
+当设备希望向处理器发送信号时，*它的内部需要完成一些额外的工作*，然后再发出一个中断。当线程需要执行一个不能由软件自身按照串行流程的方式处理的操作时，它会发出一个异常。中断和异常都会将控制权限传递给处理者。对于中断，这个处理者被叫做 :abbr:`ISR (Interrupt Service Routine)`。处理者执行中断或异常请求的工作。对于中断，这些工作是与设备相关的。对于异常，这些工作依赖于异常，但是大多数时候内核的核心都会自己提供处理者。
 
-The kernel has to perform some work in addition to the work the handler itself
-performs. For example:
+除处理者需要执行相关工作外，内核还必须执行一些额外的工作。
 
-* Prior to handing control to the handler:
+* 在将控制器交给处理者之前：
 
-  * Save the currently executing context.
-  * Possibly getting out of power saving mode, which includes waking up
-    devices.
-  * Updating the kernel uptime if getting out of tickless idle mode.
+  * 保存当前的执行上下文。
 
-* After getting control back from the handler:
+* 从处理者收回控制器后：
 
-  * Decide whether to perform a context switch.
-  * When performing a context switch, restore the context being context
-    switched in.
+  * 决定是否执行上下文切换。
+  * 当需要执行上下文切换时，恢复被切换的上下文。
 
-This work is conceptually the same across architectures, but the details are
-completely different:
+从概念上讲，所有的架构都是做这些工作，但是具体细节是不同的：
 
-* The registers to save and restore.
-* The processor instructions to perform the work.
-* The numbering of the exceptions.
-* etc.
+* 需要保存和恢复的寄存器。
+* 执行相关工作的处理器指令。
+* 异常数量。
+* 等等。
 
-It thus needs an architecture-specific implementation, called the
-interrupt/exception stub.
+因此，它的实现是架构相关的，叫做中断/异常桩。
 
-Another issue is that the kernel defines the signature of ISRs as:
+另一个问题是内核将 ISR 的签名定义为：
 
 .. code-block:: C
 
     void (*isr)(void *parameter)
 
-Architectures do not have a consistent or native way of handling parameters to
-an ISR. As such there are two commonly used methods for handling the
-parameter.
+架构没有处理传递给 ISR 的参数的一致性方法或者本地方法。处理这些参数一般有两种方法：
 
-* Using some architecture defined mechanism, the parameter value is forced in
-  the stub. This is commonly found in X86-based architectures.
+* 使用一些架构定义的机制，参数值被强迫在桩中。这种方法通常出现在基于 x86 的架构中。
 
 * The parameters to the ISR are inserted and tracked via a separate table
   requiring the architecture to discover at runtime which interrupt is
@@ -159,13 +121,13 @@ is a fault, like divide-by-zero or invalid memory access, or an interrupt that
 is not expected (:dfn:`spurious interrupt`). See the ARM implementation in
 :file:`arch/arm/core/fault.c` for an example.
 
-Thread Context Switching
+线程的上下文切换
 ************************
 
-Multi-threading is the basic purpose to have a kernel at all. Zephyr supports
-two types of threads: preemptible and cooperative.
+使用多线程是使用内核的基本目的。Zephyr 支持两种类型的线程：抢占式线程和协作式线程。
 
-Two crucial concepts when writing an architecture port are the following:
+
+当写架构相关的移植代码时，有两个关键性概念：
 
 * Cooperative threads run at a higher priority than preemptible ones, and
   always preempt them.
@@ -267,80 +229,41 @@ to stack corruption.
   is 0, no preemptive context switch ever happens. The interrupt code can be
   optimized to not take any scheduling decision when this is the case.
 
-Thread Creation and Termination
+线程的创建和终止
 *******************************
 
-To start a new thread, a stack frame must be constructed so that the context
-switch can pop it the same way it would pop one from a thread that had been
-context switched out. This is to be implemented in an architecture-specific
-:code:`_new_thread` internal routine.
+要开始一个新线程，必须构建一个栈帧，然后在进行上下文切换时弹出它。对于一个已经切换出去的线程，它也需要以类似的方式弹出栈帧。这一点是在架构相关的内部函数 :code:`_new_thread` 中实现的。
 
-The thread entry point is also not to be called directly, i.e. it should not be
-set as the :abbr:`PC (program counter)` for the new thread. Rather it must be
-wrapped in :code:`_thread_entry`. This means that the PC in the stack
-frame shall be set to :code:`_thread_entry`, and the thread entry point shall
-be passed as the first parameter to :code:`_thread_entry`. The specifics of
-this depend on the ABI.
+线程的入口点不能被直接调用，也就是说，不能直接为新线程设置 :abbr:`PC (程序计数器)`。相反，它必须封装在 :code:`_thread_entry` 内。这意味着栈帧中的 PC 应该被设置到 :code:`_thread_entry` 中，且线程入口点应该作为 :code:`_thread_entry` 的第一个参数。它的具体细节依赖于 ABI。
 
-The need for an architecture-specific thread termination implementation depends
-on the architecture. There is a generic implementation, but it might not work
-for a given architecture.
+线程的终止是架构相关的，因此它的实现也依赖于架构。我们给出了一个通用实现，但是它可能在您的架构下不能正常工作。
 
-One reason that has been encountered for having an architecture-specific
-implementation of thread termination is that aborting a thread might be
-different if aborting because of a graceful exit or because of an exception.
-This is the case for ARM Cortex-M, where the CPU has to be taken out of handler
-mode if the thread triggered a fatal exception, but not if the thread
-gracefully exits its entry point function.
+由于线程可能是优雅地终止，也可能由于异常而终止，所以将线程终止实现为架构相关的方案是合理的。对于 Cortex-M 架构，当线程触发了致命错误时，它的 CPU 必须从进入处理者模式；但是当线程自己从入口函数优雅地推出时，则无需进入处理者模式。
 
-This means implementing an architecture-specific version of
-:c:func:`k_thread_abort`, and setting the Kconfig option
-:option:`CONFIG_ARCH_HAS_THREAD_ABORT` as needed for the architecture (e.g. see
-:file:`arch/arm//core/cortex_m/Kconfig`).
+因此，我们可以根据架构的需要（:file:`arch/arm//core/cortex_m/Kconfig`）设置 Kconfig 选项 :option:`CONFIG_ARCH_HAS_TASK_ABORT` 和 :option:`CONFIG_ARCH_HAS_NANO_FIBER_ABORT`，并实现架构相关的 :c:func:`fiber_abort` 和 :code:`_TaskAbort`。
 
-Device Drivers
+设备驱动程序
 **************
 
-The kernel requires very few hardware devices to function. In theory, the only
-required device is the interrupt controller, since the kernel can run without a
-system clock. In practice, to get access to most, if not all, of the sanity
-check test suite, a system clock is needed as well. Since these two are usually
-tied to the architecture, they are part of the architecture port.
+内核只需要少量的硬件设备就能正常工作。理论上，唯一需要实现的设备是中断控制器，因为内核在无系统时钟下一可以运行。在实际中，为了能够访问大多数健全检测测试套件，通常也需要系统时钟。由于二者通常都是与架构绑定在一起的，所以它们也属于架构相关移植的一部分。
 
-Interrupt Controllers
+中断控制器
 =====================
 
-There can be significant differences between the interrupt controllers and the
-interrupt concepts across architectures.
+不同的架构在中断控制器和中断的概念之间存在巨大的差异。
 
-For example, x86 has the concept of an :abbr:`IDT (Interrupt Descriptor Table)`
-and different interrupt controllers. Although modern systems mostly
-standardized on the :abbr:`APIC (Advanced Programmable Interrupt Controller)`,
-some small Quark-based systems use the :abbr:`MVIC (Micro-controller Vectored
-Interrupt Controller)`. Also, the position of an interrupt in the IDT
-determines its priority.
+例如，x86 架构有 :abbr:`IDT (中断描述符表)` 和中断控制器的概念，且某些基于 Quark 的系统使用 :abbr:`MVIC (微控制器向量中断控制器)`。此外，中断在 IDT 中的位置决定了它们的优先级。
 
-On the other hand, the ARM Cortex-M has the :abbr:`NVIC (Nested Vectored
-Interrupt Controller)` as part of the architecture definition. There is no need
-for an IDT-like table that is separate from the NVIC vector table. The position
-in the table has nothing to do with priority of an IRQ: priorities are
-programmable per-entry.
+另一方面，Cortex-M3/M4 在架构中有 :abbr:`NVIC (嵌套向量中断控制器)` 的概念，因此除 NVIC 向量表外不再需要单独的类似于 IDT 的表格。中断在向量表中的位置与 IRQ 的优先级无关：每个中断的优先级是可编程的。
 
-The ARCv2 has its interrupt unit as part of the architecture definition, which
-is somewhat similar to the NVIC. However, where ARC defines interrupts as
-having a one-to-one mapping between exception and interrupt numbers (i.e.
-exception 1 is IRQ1, and device IRQs start at 16), ARM has IRQ0 being
-equivalent to exception 16 (and weirdly enough, exception 1 can be seen as
-IRQ-15).
+ARCv2 有它自己的控制单元，它在某种程度上与 NVIC 类似。ARC 定义的中断在异常号和中断号（例如 1 号异常是 IRQ1，设备的 IRQ 从 16 开始）之间存在一对一的映射，而 ARM 的 IRC0 等同于 16 号异常（且不可思议的是，1 号异常可以被看做 IRQ-15）。
 
-All these differences mean that very little, if anything, can be shared between
-architectures with regards to interrupt controllers.
+所有的这些意味着，对于控制控制器来说，在不同架构间只有很少的一部分代码能够共享。
 
-System Clock
+系统时钟
 ============
 
-x86 has APIC timers and the HPET as part of its architecture definition. ARM
-Cortex-M has the SYSTICK exception. Finally, ARCv2 has the timer0/1 device.
+x86 架构有 APIC 定时器和 HPET。ARM Cortex-M 有 SYSTIKC 异常，ARCv2 有 0/1 定时器设备。
 
 Kernel timeouts are handled in the context of the system clock timer driver's
 interrupt handler.
@@ -435,26 +358,21 @@ can be simply the following steps, if desired:
 
 However, a real implementation is strongly recommended.
 
-Fault Management
+错误管理
 ****************
 
-Each architecture provides two fatal error handlers:
+每种架构都提供了两个致命错误处理者：
 
-* :code:`_NanoFatalErrorHandler`, called by software for unrecoverable errors.
-* :code:`_SysFatalErrorHandler`, which makes the decision on how to handle
-  the thread where the error is generated, most likely by terminating it.
+* :code:`_NanoFatalErrorHandler`，由软件和不可恢复的错误调用。
+* :code:`_SysFatalErrorHandler`, 用于决定如何处理产生错误的线程，通常是终止它。
 
-See the current architecture implementations for examples.
+相关例子请参考当前架构的实现。
 
-Toolchain and Linking
+工具链和链接
 *********************
 
-Toolchain support has to be added to the build system.
+工具链的支持已经被添加到编译系统中了。
 
-Some architecture-specific definitions are needed in :file:`include/toolchain/gcc.h`.
-See what exists in that file for currently supported architectures.
+:file:`toolchain/gcc.h` 中需要一些架构相关的定义。请参考该文件查看所支持的架构存在哪些定义。
 
-Each architecture also needs its own linker script, even if most sections can
-be derived from the linker scripts of other architectures. Some sections might
-be specific to the new architecture, for example the SCB section on ARM and the
-IDT section on x86.
+每种架构都需要它自己的链接脚本，但是大多数段可以从其它结构的链接脚本中推断出来。在不同的架构中可能需要指定不同的段，例如 AMR 架构需要指定 SCB 段，x86 架构需哟啊指定 IDT 段。

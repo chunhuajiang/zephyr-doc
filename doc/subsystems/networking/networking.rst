@@ -1,11 +1,9 @@
 .. _networking:
 
-Networking
+网络协议栈
 ###########
 
-The networking section contains information regarding the network stack of the
-Zephyr kernel. Use the information to understand the principles behind the
-operation of the stacks and how they were implemented.
+本章介绍 Zephyr 内核所使用的网络协议栈。阅读这些信息有助于您更好地理解协议栈操作的内部机制，以及它们是如何实现的。
 
 .. toctree::
    :maxdepth: 1

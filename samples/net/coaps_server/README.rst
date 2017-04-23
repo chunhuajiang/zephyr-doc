@@ -1,38 +1,37 @@
 .. _coap-server-sample:
-
-CoAP over DTLS sample server
+ 
+基于 DTLS 的 CoAP 服务器端示例
 ############################
 
-Overview
+概览
 ********
-This sample code shows a CoAP over DTLS server using mbedTLS on top of Zephyr.
 
-Building and Running
+此示例代码演示了在 Zephyr 中如何使用 mbedTLS 协议，也就是基于 DTLS（Datagram Transport Layer Security 数据包传输层安全协议）的 CoAP 服务器端的使用。
+
+编译和运行
 ********************
 
-Follow the steps for testing :ref:`networking with Qemu <networking_with_qemu>`.
+以下步骤用于测试 :ref:`使用 QEMU 网络仿真 <networking_with_qemu>`。
 
-In the application directory type:
+在应用程序目录下键入:
 
 .. code-block:: console
 
    $make run
 
-In other terminal window, obtain the libcoap code from:
+在另一个终端窗口，通过以下命令获取 libcoap 代码:
 
 .. code-block:: console
 
 	git clone --recursive -b dtls https://github.com/obgm/libcoap.git
 
-and put it in a well known directory, in your Linux machine, this will be your
-client. In order to compile libcoap you may need to install the following
-libraries, for Ubuntu
+并将其放置在你的 Linux 机器中众所周知的目录当中，这将是你的客户端。为了编译 libcoap，你可能需要为 Ubuntu 安装以下类库。
 
 .. code-block:: console
 
 	sudo apt-get install libtool asciidoc
 
-Move to that directory and compile the libcoap on your host machine
+进入这个目录并在你的主机上编译 libcoap：
 
 .. code-block:: console
 
@@ -40,14 +39,14 @@ Move to that directory and compile the libcoap on your host machine
 	./configure --disable-shared
 	make all
 
-Now you can run the client like
+现在你可以使用如下方法运行客户端：
 
 .. code-block:: console
 
 	cd examples
 	./coap-client -m get coaps://[2001:db8::1]/test -u Client_identity -k passwd
 
-You will get the following output:
+你将获得如下输出：
 
 .. code-block:: console
 
@@ -58,7 +57,7 @@ You will get the following output:
 	Code: 1
 	MID: 29012
 
-From the app directory type the screen should display
+应用程序目录将打印如下信息：
 
 .. code-block:: console
 
@@ -67,10 +66,9 @@ From the app directory type the screen should display
 	*******
  	mbedtls_ssl_read returned -0x7780
 
-If the server does not receive the  messages, restart the app and try to connect
-the client again.
+如果服务器没有收到信息，重启应用程序，并再次尝试连接客户端。
 
-References
+参考
 **********
 
 * https://tls.mbed.org/

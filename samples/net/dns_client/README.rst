@@ -1,61 +1,59 @@
 .. _dns-client-sample:
 
-DNS Client Application
+DNS 客户端应用
 ######################
 
-Overview
+概览
 ********
 
-The DNS resolver or DNS client sample application implements a basic
-DNS resolver according to RFC 1035. Supported DNS answers are:
-IPv4/IPv6 addresses and CNAME.
+本例为 DNS 解析器或 DNS 客户端应用示例，按照 RFC 1035 实现了一个基本 DNS 的解析器。支持的 DNS 应答有：IPv4/IPv6 地址和 CNAME。
 
-If a CNAME is received, the DNS resolver will create another DNS query.
-The number of additional queries is controlled by the
-DNS_RESOLVER_ADDITIONAL_QUERIES Kconfig variable.
+如果接收到一个 CNAME，DNS 解析器将创建另一个 DN 查询。此附加查询的编号由D NS_RESOLVER_ADDITIONAL_QUERIES 这个 kconfig 变量控制。
 
-For more information about DNS configuration variables, see:
-:file:`subsys/net/lib/dns/Kconfig`. The DNS resolver API can be found at
-:file:`include/net/dns_client.h`. The sample code can be found at:
-:file:`samples/net/dns_client`.
+获取更多有关 DNS 配置变量的信息请参考:
+:file:`subsys/net/lib/dns/Kconfig`。
 
-The return codes used by this sample application are described by the following table.
+DNS 解析 API 可查看：
+:file:`include/net/dns_client.h`。
+
+示例代码请查看：
+:file:`samples/net/dns_client`。
+
+下表描述了此示例应用的返回值编码。
 
 =======		=====	================================================
 Macro		Value	Description
 -------		-----	------------------------------------------------
--EINVAL		-22	if an invalid parameter was detected
--EIO		-5	network error
--ENOMEM		-12	memory error, perhaps related to network buffers
+-EINVAL		-22	如果检测到无效参数
+-EIO		-5	网络错误
+-ENOMEM		-12	内存错误，可能与网络缓冲有关
 =======		=====	================================================
 
-A return code of 0 must be interpreted as success.
+返回值 0 必须被中断，表示成功。
 
-Requirements
+需求
 ************
 
-- :ref:`networking with Qemu <networking_with_qemu>`
+- :ref:`使用 QEMU 网络仿真 <networking_with_qemu>`
 
-- screen terminal emulator or equivalent.
+- 屏幕终端仿真或类似设备
 
-- For the Arduino 101 board, the ENC28J60 Ethernet module is required.
+- 对于 Arduino 101 开发板, 需要 ENC28J60 以太网模块.
 
-- dnsmasq application. The dnsmasq version used in this sample is:
+- dnsmasq 应用。 此示例所使用的 dnsmasq 版本为:
 
 .. code-block:: console
 
     dnsmasq -v
     Dnsmasq version 2.76  Copyright (c) 2000-2016 Simon Kelley
 
-Wiring
+接线
 ******
 
-The ENC28J60 module is an Ethernet device with SPI interface.
-The following pins must be connected from the ENC28J60 device to the
-Arduino 101 board:
+ENC28J60 模块是一个 SPI 接口以太网设备。以下引脚必须从 ENC28J60 设备连接至 Arduino 101 开发板
 
 ===========	===================================
-Arduino 101	ENC28J60 (pin numbers on the board)
+Arduino 101	ENC28J60 (主板上的引脚号)
 -----------	-----------------------------------
 D13		SCK  (1)
 D12		SO   (3)
@@ -67,96 +65,87 @@ GDN		GND  (9)
 ===========	===================================
 
 
-Building and Running
+编译和运行
 ********************
 
-Network Configuration
+网络配置
 =====================
 
-Open the project configuration file for your platform, for example:
-:file:`prj_frdm_k64f.conf` is the configuration file for the
-:ref:`frdm_k64f` board. For IPv4 networks, set the following variables:
+打开你的平台所对应的项目配置文件，例如: :file:`prj_frdm_k64f.conf` 是针对 :ref:`frdm_k64f` 开发板的配置文件。 对于 IPv4 网络，设置以下变量：
 
 .. code-block:: console
 
 	CONFIG_NET_IPV4=y
 	CONFIG_NET_IPV6=n
 
-IPv6 is the preferred routing technology for this sample application,
-if CONFIG_NET_IPV6=y is set, the value of CONFIG_NET_IPV4 is ignored.
+对此示例来说，IPv6 是首选路由技术,如果设置了 CONFIG_NET_IPV6=y， CONFIG_NET_IPV4 的值将被忽略。
 
-In this sample application, only static IP addresses are supported,
-those addresses are specified in the project configuration file,
-for example:
+本示例仅支持静态 IP 地址，这些 IP 地址在项目配置文件中指定，例如:
 
 .. code-block:: console
 
 	CONFIG_NET_SAMPLES_MY_IPV6_ADDR="2001:db8::1"
 	CONFIG_NET_SAMPLES_PEER_IPV6_ADDR="2001:db8::2"
 
-are the IPv6 addresses for the DNS client running Zephyr and the
-DNS server, respectively.
+分别是运行于 Zephyr 的 DNS 客户端以及 DNS 服务器的 IPv6 地址。
 
-Alternatively, the IP addresses may be specified in the
-:file:`samples/net/dns_client/src/config.h` file.
+或者，IP 地址也可在:file:`samples/net/dns_client/src/config.h` 文件中指定。
 
-Open the :file:`samples/net/dns_client/src/config.h` file and set the
-server port to match the DNS server setup, for example:
+打开 :file:`samples/net/dns_client/src/config.h` 文件，并服务端口设置为与 DNS 服务器匹配，例如：
 
 .. code-block:: c
 
    #define REMOTE_PORT		5353
 
-assumes that the DNS server is listening at UDP port 5353.
+假设 DNS 服务正在监听 UDP 端口 5353.
 
-DNS server
+DNS 服务
 ==========
 
-The dnsmasq tool may be used for testing purposes. Open a terminal
-window and type:
+dnsmasq 工具可用于测试。打开终端窗口并输入:
 
 .. code-block:: console
 
     $ dnsmasq -p 5353 -d
 
-NOTE: some systems may require root privileges to run dnsmaq, use sudo or su.
+注意： 一些系统可能需要根权限来运行 dnsmasq，则使用 sudo 或 su。
 
-If dnsmasq fails to start with an error like this:
+如果 dnsmasq 启动出现如下错误：
 
 .. code-block:: console
 
     dnsmasq: failed to create listening socket for port 5353: Address already in use
 
-Open a terminal window and type:
+打开终端窗口并输入:
 
 .. code-block:: console
 
     $ killall -s KILL dnsmasq
 
-Try to launch the dnsmasq application again.
+再次启动 dnsmasq 应用。
 
 
 QEMU x86
 ========
 
-Open a terminal window and type:
+打开终端窗口并输入:
 
 .. code-block:: console
 
     $ make
 
 
-Run 'loop_socat.sh' and 'loop-slip-tap.sh' as indicated at:
+按照以下链接指示运行 'loop_socat.sh' 和 'loop-slip-tap.sh':
 
     https://gerrit.zephyrproject.org/r/gitweb?p=net-tools.git;a=blob;f=README
 
-Set the IPv4 ip address:
+设置 IPv4 ip 地址:
 
 .. code-block:: console
 
     $ ip addr add 192.0.2.2/24 dev tap0
 
-Open a terminal where the project was build (i.e. :file:`samples/net/dns_client`) and type:
+在项目创建处打开一个终端 (如 :file:`samples/net/dns_client`)并输入:
 
 .. code-block:: console
 
@@ -165,58 +154,55 @@ Open a terminal where the project was build (i.e. :file:`samples/net/dns_client`
 FRDM K64F
 =========
 
-Open a terminal window and type:
+打开终端窗口并输入:
 
 .. code-block:: console
 
     $ make BOARD=frdm_k64f
 
 
-The FRDM K64F board is detected as a USB storage device. The board
-must be mounted (i.e. to /mnt) to 'flash' the binary:
+FRDM K64F 开发板被检测为一个 USB 存储设备。 开发板必须被挂接（如到 /mnt）以烧写二进制文件：
 
 .. code-block:: console
 
     $ cp outdir/frdm_k64f/zephyr.bin /mnt
 
 
-See :ref:`Freedom-K64F board documentation <frdm_k64f>` for more information
-about this board.
+获取此开发板的更多信息请访问 :ref:`Freedom-K64F board documentation <frdm_k64f>` 。
 
-Open a terminal window and type:
+打开终端窗口并输入:
 
 .. code-block:: console
 
     $ screen /dev/ttyACM0 115200
 
 
-Use 'dmesg' to find the right USB device.
+使用 'dmesg' 来寻找正确的 USB 设备。
 
-Once the binary is loaded into the FRDM board, press the RESET button.
+一旦二进制文件加载到 FRDM 开发板，按下 RESET 按钮。
 
 Arduino 101
 ===========
 
-Open a terminal window and type:
+打开终端窗口并输入:
 
 .. code-block:: console
 
 	$ make BOARD=arduino_101
 
-To load the binary in the development board follow the steps
-in :ref:`arduino_101`.
+使用以下步骤向开发板载入二进制文件 :ref:`arduino_101`.
 
-Open a terminal window and type:
+打开终端窗口并输入:
 
 .. code-block:: console
 
     $ screen /dev/ttyUSB0 115200
 
-Use 'dmesg' to find the right USB device.
+使用 'dmesg' 来寻找正确的USB设备。
 
-Once the binary is loaded into the Arduino 101 board, press the RESET button.
+一旦二进制文件加载到 Arduino 101 开发板, 按下RESET按钮。
 
-Sample Output
+示例输出
 =============
 
 IPv4 (CONFIG_NET_IPV6=n, CONFIG_NET_IPV4=y)
@@ -229,18 +215,14 @@ IPv6 (CONFIG_NET_IPV6=y, CONFIG_NET_IPV4=n)
 .. literalinclude:: sample_output_IPv6.txt
 
 
-Note: IPv6 addresses obtained via dnsmasq and :file:`/etc/hosts`.
+注意: IPv6 地址通过 dnsmasq 被包含并且 :file:`/etc/hosts`.
 
-Known Issues
+已知问题
 ============
 
-- The above sample contains a rc: -22 (-EINVAL). This is the expected behavior
-  for that domain name.
+- 以上示例包含一个 rc: -22 (-EINVAL)。这是该域名的预期行为。
 
-- If a lot of rc: -5 (-EIO) errors are flooding the screen, increment
-  APP_SLEEP_MSECS to 500 or even 1000. See :file:`samples/net/dns_client/src/config.h`.
+- 如果很多 rc: -5 (-EIO) 错误充满屏幕, 增加 APP_SLEEP_MSECS 值到 500 甚至 1000。请参考 :file:`samples/net/dns_client/src/config.h`。
 
-- IPv4: there is still an issue not yet isolated that causes the application
-  to fail during the first two queries. The issue lies between L2 (ARP) and
-  UDP and it only appears during application startup.
+- IPv4: 仍然有一个问题尚未解决，它导致应用程序在前两个查询期间失败。这个问题位于 L2（ARP）和 UDP 之间，只在应用程序启动时出现。
 

@@ -1,26 +1,24 @@
 .. _bluetooth-beacon-sample:
 
-Bluetooth: Beacon
+蓝牙： 信标
 #################
 
-Overview
+概述
 ********
 
-A simple application demonstrating the BLE Broadcaster role functionality by
-advertising an Eddystone URL (the Zephyr website).
+该示例通过广播 Eddystone URL（Zephyr 网站）演示了 BLE 广播者角色。
 
 
 
-Requirements
+需求
 ************
 
-* BlueZ running on the host, or
-* A board with BLE support
+* 运行在主机中的 BlueZ，或者
+* 支持 BLE 的开发板
 
-Building and Running
+编译和运行
 ********************
 
-This sample can be found under :file:`samples/bluetooth/beacon` in the
-Zephyr tree.
+相关源码位于 :file:`samples/bluetooth/beacon`。
 
-See :ref:`bluetooth setup section <bluetooth_setup>` for details.
+详细信息请参考 :ref:`bluetooth setup section <bluetooth_setup>`。

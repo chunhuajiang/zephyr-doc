@@ -1,18 +1,18 @@
 .. _mbedtsl-delsserver-sample:
 
-mbedTLS DTLS sample server
+mbedTLS DTLS 服务器示例
 ############################
 
-Overview
+概览
 ********
-This sample code shows a simple DTLS server using mbedTLS on top of Zephyr.
+本示例演示了在 Zephyr 下使用 mbed TLS 实现的简单的 DTLS（Datagram Transport Layer Security 数据包传输层安全协议）服务器。
 
-Building and Running
+编译和运行
 ********************
 
-Follow the steps for testing :ref:`networking with Qemu <networking_with_qemu>`.
+下列步骤用于测试  :ref:`使用 QEMU 网络仿真 <networking_with_qemu>`。
 
-In the application directory type:
+在应用程序目录下输入:
 
 .. code-block:: console
 
@@ -26,15 +26,14 @@ In the application directory type:
    ok
    . Setting up ecjpake password ... ok
    . Performing the TLS handshake...
-
-In other terminal window, obtain the mbed TLS code from:
+ 
+在另一终端窗口, 包含 mbed TLS 代码：
 
 	https://tls.mbed.org/download/start/mbedtls-2.3.0-apache.tgz
 
-and put it in a well known directory, in your Linux machine, this will be your
-client.
+将它放入 Linux 主机的众所周知的目录下, 作为客户端。
 
-Move to that directory and compile the mbedTLS on your host machine
+在你的主机上进入那个目录并编译 mbedTLS。
 
 .. code-block:: console
 
@@ -44,7 +43,7 @@ Move to that directory and compile the mbedTLS on your host machine
 
    ./programs/ssl/ssl_client2 server_addr=192.0.2.1 dtls=1 ecjpake_pw=passwd
 
-You will get the following output:
+将会输出如下内容:
 
 .. code-block:: console
 
@@ -69,7 +68,7 @@ You will get the following output:
 
    . Closing the connection... done
 
-From the app directory type the screen should display
+应用程序目录窗口会显示：
 
 .. code-block:: console
 
@@ -92,19 +91,17 @@ From the app directory type the screen should display
    . Setting up ecjpake password ... ok
    . Performing the TLS handshake...
 
-If trying to use IPv6 edit the file prj_qemu_x86.conf and chage the line from
-CONFIG_NET_IPV6=n to CONFIG_NET_IPV6=y
+如果要使用 IPv6，编辑文件 prj_qemu_x86.conf，并将 CONFIG_NET_IPV6=n 变为 CONFIG_NET_IPV6=y。
 
-And run the client on mbedTLS as
+在 mbedTLS 上运行客户端：
 
 .. code-block:: console
 
    ./programs/ssl/ssl_client2 server_addr=2001:db8::1 dtls=1 ecjpake_pw=passwd
 
-If the server does not receive the  messages, restart the app and try to connect
-the client again.
+如果服务器没有接收到信息, 重启应用程序，并再次尝试连接客户端。
 
-References
+参考
 **********
 
 * https://tls.mbed.org/

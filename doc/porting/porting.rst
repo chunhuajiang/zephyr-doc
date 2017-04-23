@@ -1,10 +1,9 @@
 .. _porting:
 
-Porting Guides
+移植指导
 ##############
 
-This section contains details regarding porting the Zephyr kernel to new
-architectures, SoCs and boards.
+本章详细介绍了如何将 Zephyr 移植到新的架构、SoC 和开发板。
 
 .. toctree::
    :maxdepth: 1

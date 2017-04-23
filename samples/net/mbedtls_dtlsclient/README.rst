@@ -1,25 +1,24 @@
 .. _mbedtls-dtls-client-sample:
 
-mbedTLS DTLS client
+mbedTLS DTLS 客户端
 ####################
 
-Overview
+概览
 ********
-This sample code shows a simple DTLS client using mbed TLS on top of Zephyr
+本示例演示了在 Zephyr 下使用 mbed TLS 实现的简单 DTLS（Datagram Transport Layer Security 数据包传输层安全协议）客户端。
 
-Building and running
+编译和运行
 ********************
 
-Follow the steps for testing :ref:`networking with Qemu <networking_with_qemu>`.
+下列步骤用于测试 :ref:`使用 QEMU 网络仿真 <networking_with_qemu>`。
 
-Obtain the mbed TLS code from:
+从以下链接包含 mbed TLS 代码:
 
 https://tls.mbed.org/download/start/mbedtls-2.3.0-apache.tgz
 
-and put it in a well known directory on your Linux machine, this will be your
-server.
+将它放入 Linux 主机的众所周知的目录下, 作为服务器。
 
-change to that directory and compile the mbedTLS on your host machine:
+在你的主机上进入那个目录并编译 mbedTLS:
 
 .. code-block:: console
 
@@ -27,7 +26,7 @@ change to that directory and compile the mbedTLS on your host machine:
    $ cd mbedtls-2.3.0
    $ CFLAGS="-I$PWD/configs -DMBEDTLS_CONFIG_FILE='<config-thread.h>'" make
 
-Assign the server IP address and start the DTLS server.
+赋予服务器 IP 地址并启动 DTLS 服务。
 
 .. code-block:: console
 
@@ -41,16 +40,15 @@ Assign the server IP address and start the DTLS server.
    . Setting up the SSL/TLS structure... ok
    . Waiting for a remote connection ...
 
-To stop the server use Ctrl-C and repeat steps described in f) every time
-QEMU gets terminated, due the Netwrok interface (tap) being restarted.
+使用 Ctrl-C 停止服务，在每次 QEMU 终止时由于网络接口（tap）被重启，请重复上面步骤，。
 
-From the application directory type
+在应用程序目录下输入：
 
 .. code-block:: console
 
    $ make run
 
-This will result in Qemu running with the following output:
+在运行 Qemu 时会导致如下输出:
 
 .. code-block:: console
 
@@ -62,7 +60,7 @@ This will result in Qemu running with the following output:
 	> Write to server: ok
 	. Closing the connection... done
 
-On the server side you should see this
+服务端会看到以下内容：
 
 .. code-block:: console
 
@@ -93,14 +91,13 @@ On the server side you should see this
 
 	. Waiting for a remote connection ...
 
-Disregard the last handshake failed message, due the closing connection.
+由于关闭了连接，忽略最后的握手失败信息。
 
-If the server does not receive the  messages, use a network traffic analyzer,
-like Wireshark.
+如果服务器没有接收到信息，使用网络流量分析器，如 Wireshark。
 
-Reset the board.
+重启开发板。
 
-References
+参考
 **********
 
 - https://tls.mbed.org/

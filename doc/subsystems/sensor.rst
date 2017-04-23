@@ -1,120 +1,70 @@
 .. _sensor:
 
-Sensor Drivers
+传感器驱动
 ##############
 
-The sensor subsystem exposes an API to uniformly access sensor devices.
-Common operations are: reading data and executing code when specific
-conditions are met.
+传感器子系统暴露了一个统一访问传感器设备的 API。该 API 的通用操作是：读取数据，并在指定的条件满足时执行代码。
 
-Basic Operation
+基本操作
 ***************
 
-Channels
+通道
 ========
 
-Fundamentally, a channel is a quantity that a sensor device can measure.
+从根本上讲，通道是一个传感器设备可以测量的量。
 
-Sensors can have multiple channels, either to represent different axes of
-the same physical property (e.g. acceleration); or because they can measure
-different properties altogether (ambient temperature, pressure and
-humidity).  Complex sensors cover both cases, so a single device can expose
-three acceleration channels and a temperature one.
+传感器可以有多个通道，既可以表示不同物理属性（例如加速器）的不同轴；又可以同时测量不同的属性（温度、压力、湿度等）。复杂的传感器包括所述的所有情况，因此一个设备可以可以占用三个加速通道和一个温度通道。
 
-It is imperative that all sensors that support a given channel express
-results in the same unit of measurement.  The following is a list of all
-supported channels, along with their description and units of measurement:
+让支持所给通道的所有传感器使用同一个测试单元是非常有必要的。下面列举了所支持的所有通道以及它们的描述和测试单元。
 
 .. doxygenenum:: sensor_channel
 
-Values
+值
 ======
 
-Sensor devices return results as :c:type:`struct sensor_value`.  This
-representation avoids use of floating point values as they may not be
-supported on certain setups.
+传感器设备返回值的类型是 :c:type:`struct sensor_value` 。这种形式能避免在不支持或不希望进行浮点操作的时候进行了浮点操作。
 
-.. doxygenstruct:: sensor_value
-    :members:
+大多数传感器有类型为 :c:macro:`SENSOR_TYPE_INT_PLUS_MICRO` 的值；其它可能的形式在下面列举了出来。应用程序负责解释返回值的 :c:data:`type` 字段。
 
-Fetching Values
+.. doxygenenum:: sensor_value_type
+
+获取值
 ===============
 
-Getting a reading from a sensor requires two operations.  First, an
-application instructs the driver to fetch a sample of all its channels.
-Then, individual channels may be read.  In the case of channels with
-multiple axes, they can be read in a single operation by supplying
-the corresponding :literal:`_XYZ` channel type and a buffer of 3
-:c:type:`struct sensor_value` objects.  This approach ensures consistency
-of channels between reads and efficiency of communication by issuing a
-single transaction on the underlying bus.
+从传感器获取值需要两个操作。首先，应用程序指示驱动程序对它的每个通道进行采样；然后，个体通道被读取。如果通道有多个轴，可以通过一个相应类型为 :literal:`_ANY` 的通道和一个具有 3 个 :c:type:`struct sensor_value` 对象的缓冲一次性读取所有的轴。这种方法能确保在读和通信效率之间保持一致性。
 
-Below is an example illustrating the usage of the BME280 sensor, which
-measures ambient temperature and atmospheric pressure.  Note that
-:c:func:`sensor_sample_fetch` is only called once, as it reads and
-compensates data for both channels.
+下面是使用 BME280 传感器测量环境温度和大气压力的一个例程。注意，函数 :c:func:`sensor_sample_fetch` 只被调用了依次，因为它对所有的通道都进行了读取和补偿。
 
 .. literalinclude:: ../../samples/sensor/bme280/src/main.c
    :language: c
-   :lines: 12-
+   :lines: 31-
    :linenos:
 
-The example assumes that the returned values have type :c:type:`struct
-sensor_value`, which is the case for BME280.  A real application
-supporting multiple sensors should inspect the :c:data:`type` field of
-the :c:data:`temp` and :c:data:`press` values and use the other fields
-of the structure accordingly.
+该例程假设返回值的类型是 :c:type:`struct sensor_value` 。一个真实的支持多传感器的驱动程序应当检查 :c:data:`temp` 和 :c:data:`press` 的 :c:data:`type` 字段，以及结构体中其它的相应字段。
 
-Configuration and Attributes
+配置和属性
 ****************************
 
-Setting the communication bus and address is considered the most basic
-configuration for sensor devices.  This setting is done at compile time, via
-the configuration menu.  If the sensor supports interrupts, the interrupt
-lines and triggering parameters described below are also configured at
-compile time.
+设置通信总线和地址是传感器设备的最基本配置。这个设置是在编译时通过配置菜单完成的。如果传感器支持中断，中段号和触发器参数也是在编译时配置的。
 
-Alongside these communication parameters, sensor chips typically expose
-multiple parameters that control the accuracy and frequency of measurement.
-In compliance with Zephyr's design goals, most of these values are
-statically configured at compile time.
+除了这些通信参数外，传感器芯片通常还暴露了多个控制精确度和测量频率的参数。为了兼容 Zephyr 的设计目标，这些值大多数都是在编译时静态配置的。
 
-However, certain parameters could require runtime configuration, for
-example, threshold values for interrupts.  These values are configured via
-attributes.  The example in the following section showcases a sensor with an
-interrupt line that is triggered when the temperature crosses a threshold.
-The threshold is configured at runtime using an attribute.
+不过，某些参数也需要在运行时配置，例如中断的阈值。这些值通过属性进行配置。下一节中的例程使用了一个带中断的传感器，该中断会在温度超过阈值时被触发器。该阈值是在编译时通过属性配置的。
 
-Triggers
+触发器
 ********
 
-:dfn:`Triggers` in Zephyr refer to the interrupt lines of the sensor chips.
-Many sensor chips support one or more triggers. Some examples of triggers
-include: new data is ready for reading, a channel value has crossed a
-threshold, or the device has sensed motion.
+Zephyr 中的 :dfn:`触发器（Triggers）` 指的是传感器芯片的中断号。许多传感器芯片支持一到多个触发器。触发器的一些例子包括：有新数据可读、通道值超过某个阈值、设备感知到运动等。
 
-To configure a trigger, an application needs to supply a :c:type:`struct
-sensor_trigger` and a handler function.  The structure contains the trigger
-type and the channel on which the trigger must be configured.
 
-Because most sensors are connected via SPI or I2C busses, it is not possible
-to communicate with them from the interrupt execution context.  The
-execution of the trigger handler is deferred to a fiber, so that data
-fetching operations are possible.  A driver can spawn its own fiber to fetch
-data, thus ensuring minimum latency. Alternatively, multiple sensor drivers
-can share a system-wide fiber. The shared fiber approach increases the
-latency of handling interrupts but uses less memory. You can configure which
-approach to follow for each driver. Most drivers can entirely disable
-triggers resulting in a smaller footprint.
+配置触发器时，应用程序需要提供一个结构体 :c:type:`struct sensor_trigger` 以及一个处理函数。上面这个结构体中包含了触发器的类型以及必须被配置的触发通道。
 
-The following example contains a trigger fired whenever temperature crosses
-the 26 degree Celsius threshold. It also samples the temperature every
-second. A real application would ideally disable periodic sampling in the
-interest of saving power. Since the application has direct access to the
-kernel config symbols, no trigger is registered when triggering was disabled
-by the driver's configuration.
+由于大多数传感器使用 SPI 或者 I2C 总线进行连接，因此它们可能在中断执行上下文中无法通信。触发器处理函数的执行会被推迟到线程中，取数据操作才能完成。驱动程序可以创建它自己的线程去取数据以确保最小的延迟。多个传感器驱动程序也可以共享一个全路（system-wide）线程。共享线程的方法会增加处理中断的延迟，但是能减小内存占用。您可以为每个驱动程序配置相应的方法。大多数驱动程序可以完成禁止触发器，以达到减小内存的效果。
+
+
+下面的例程包含了一个触发器，它会在温度跨越 26 摄氏度时被触发。此外，这个例程还会每秒采集一次温度。在真实的应用程序中，如果需要省电，则可以禁止周期性采集。由于应用程序直接访问内核的配置符号，当驱动程序的配置禁止了触发功能时不会注册触发器。
 
 .. literalinclude:: ../../samples/sensor/mcp9808/src/main.c
    :language: c
-   :lines: 12-
+   :lines: 31-
    :linenos:
