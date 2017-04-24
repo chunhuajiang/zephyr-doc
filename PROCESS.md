@@ -30,7 +30,7 @@
 | 支持的开发板    |  arm             |  nRF52-PCA10040   |                                                      |          |
 | 支持的开发板    |  arm             |  ST Nucleo F401RE |                                                      |          |
 | 支持的开发板    |  arm             |  ST Nucleo F411RE |                                                      |          |
-| 支持的开发板    |  arm             |  ST Nucleo L476RG | [abatei](https://github.com/abatei)                  |  领取    |
+| 支持的开发板    |  arm             |  ST Nucleo L476RG | [abatei](https://github.com/abatei)                  | 领取    |
 | 支持的开发板    |  arm             |  Cortex-M3 QEMU   | [abatei](https://github.com/abatei)                  |  领取    |
 | 支持的开发板    |  arm             |  SAM E70 Xplained | [abatei](https://github.com/abatei)                  |  完成  |
 | 支持的开发板    |  arm             |  ARM V2M Beetle   | [abatei](https://github.com/abatei)                  |  完成  |
