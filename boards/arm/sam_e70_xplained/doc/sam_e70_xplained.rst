@@ -3,148 +3,125 @@
 SAM E70 Xplained
 ################
 
-Overview
+概览
 ********
 
-The SAM E70 Xplained evaluation kit is a development platform to evaluate the
-Atmel SAM E70 series microcontrollers.
+SAM E70 Xplained评估套件是用于评估Atmel SAM E70系列微控制器的开发平台。
 
-Hardware
+硬件
 ********
 
-- ATSAME70Q21 ARM Cortex-M7 Processor
-- 12 MHz crystal oscillator
-- 32.768 kHz crystal oscillator (not populated)
+- ATSAME70Q21 ARM Cortex-M7 处理器
+- 12 MHz 晶振
+- 32.768 kHz 晶振 (未插入)
 - AT24MAC402 EEPROM
 - IS42S16100E 16 Mb SDRAM
-- SD card connector
-- Ethernet port
-- Micro-AB USB device
-- Micro-AB USB debug interface supporting CMSIS-DAP, Virtual COM Port and Data
-  Gateway Interface (DGI)
-- JTAG interface connector
-- One reset and one user pushbutton
-- One green user LED
+- SD card 连接器
+- 以太网端口
+- Micro-AB USB 设备
+- 支持CMSIS-DAP的Micro-AB USB debug 接口 , 虚拟COM口及Data Gateway Interface (DGI数据网关接口)
+- JTAG 接口连接器
+- 一个重启按钮及一个用户按钮
+- 一个绿色用户LED
 
-Supported Features
+支持功能
 ==================
 
-The sam_e70_xplained board configuration supports the following hardware
-features:
+sam_e70_xplained 开发板配置支持以下硬件功能：
 
 +-----------+------------+-------------------------------------+
 | Interface | Controller | Driver/Component                    |
 +===========+============+=====================================+
-| NVIC      | on-chip    | nested vector interrupt controller  |
+| NVIC      | on-chip    | 嵌套向量中断控制器  |
 +-----------+------------+-------------------------------------+
 | SYSTICK   | on-chip    | systick                             |
 +-----------+------------+-------------------------------------+
-| USART     | on-chip    | serial port                         |
+| USART     | on-chip    | 串口                         |
 +-----------+------------+-------------------------------------+
-| ETHERNET  | on-chip    | ethernet                            |
+| ETHERNET  | on-chip    | 以太网                            |
 +-----------+------------+-------------------------------------+
-| WATCHDOG  | on-chip    | watchdog                            |
+| WATCHDOG  | on-chip    | 看门狗                            |
 +-----------+------------+-------------------------------------+
 
-Other hardware features are not currently supported by Zephyr.
+当前Zephyr还未支持其它的硬件功能。
 
-The default configuration can be found in the Kconfig
+默认配置可在Kconfig文件中找到
 :file:`boards/arm/sam_e70_xplained/sam_e70_xplained_defconfig`.
 
-Connections and IOs
+连线及IOs
 ===================
 
-The `SAME70-XPLD User Guide`_ has detailed information about board connections.
+`SAME70-XPLD User Guide`_ 详细描述了主板连线信息
 
-System Clock
+系统时钟
 ============
 
-The SAM E70 MCU is configured to use the 12 MHz external oscillator on the board
-with the on-chip PLL to generate a 300 MHz system clock.
+SAM E70 MCU 在主板上配置使用12 MHz外部晶振，配合芯片内的PLL产生300MHz系统时钟。
 
-Serial Port
+串口
 ===========
 
-The ATSAME70Q21 MCU has five UARTs and three USARTs. One of the USARTs is
-configured for the console and is available as a Virtual COM Port via EDBG USB
-chip.
+ATSAME70Q21 MCU 有5个UART和3个USART。其中一个USART配置用于控制台，还可以通过EDBG USB芯片当成虚拟COM口使用。
 
-Programming and Debugging
+编程与调试
 *************************
 
-Flashing
+烧写
 ========
 
-Flashing the Zephyr project onto SAM E70 MCU requires the `OpenOCD tool`_.
-Support for Atmel SAM E microcontroller series was added in OpenOCD release
-0.10.0. The current OpenOCD version available in the Zephyr SDK is 0.9 and
-unfortunately it does not support Atmel SAM E microcontrollers. Since few, if
-any major Linux distributions currently offer OpenOCD version 0.10.0 as a
-package you will have to compile and install it yourself. Make sure to enable
-CMSIS-DAP support as this is the debugging interface used by the on board EDBG
-chip.
+将Zephyr项目烧写进SAM E70 MCU需要 `OpenOCD tool`_ 工具。OpenOCD release 0.10.0加入了对Atmel SAM E系列微控制器的支持。而当前Zephyr SDK中使用的OpenOCD版本是0.9。很不幸，它并不支持Atmel SAM E系列微控制器。当前主要的Linux发行版本很少提供OpenOCD 0.10.0版本包，你需要自行编译和安装它。务必打开对CMSIS-DAP的支持，因为这是主板EDBG芯片所使用的调试接口。
 
-By default SAM E70 chip will boot SAM-BA bootloader located in the ROM, not the
-flashed image. This can be changed with SAM Boot Assistant (`SAM-BA`_) In-system
-Programmer from Atmel by reprogramming GPNVM1 (General-purpose NVM bit 1).
-This operation needs to be performed only once. If you do not need to debug
-your firmware you can also use SAM-BA instead of OpenOCD to flash your project.
+默认情况下，新出厂的SAM E70芯片将从位于ROM的SAM-BA boot loader而非flash镜像启动。可使用Atmel的系统程序SAM Boot Assistant (`SAM-BA`_) 对GPNVM1（General-Purpose NVM的第一个位）重新编程以进行改变。这个操作只需进行一次，如果不需要对固件进行调试，也可以使用SAM-BA而不是OpenOCD来烧写项目。
 
-#. Build the Zephyr kernel and the application:
+#. 编译Zephyr内核及应用程序：
 
    .. code-block:: console
 
       $ cd $ZEPHYR_BASE/samples/hello_world/
       $ make BOARD=sam_e70_xplained
 
-#. Connect the SAM E70 Xplained board to your host computer using the USB debug
-   port.
+#. 使用USB debug接口将SAM E70 Xplained开发板连接至你的电脑主机。
 
-#. Run your favorite terminal program to listen for output. Under Linux the
-   terminal should be :code:`/dev/ttyACM0`. For example:
+#. 运行你喜欢的终端程序监听输出。Linux下终端应为 :code:`/dev/ttyACM0`。例如：
 
    .. code-block:: console
 
       $ minicom -D /dev/ttyACM0 -o
 
-   The -o option tells minicom not to send the modem initialization
-   string. Connection should be configured as follows:
+   -o选项让minicom不发送modem的初始化字串。连接配置如下：
 
    - Speed: 115200
    - Data: 8 bits
    - Parity: None
    - Stop bits: 1
 
-#. To flash the image, assuming the OpenOCD tool is already installed, enter:
+#. 烧写镜像，假设OpenOCD工具已经安装，输入：
 
    .. code-block:: console
 
       $ openocd -f board/atmel_same70_xplained.cfg -c "program outdir/sam_e70_xplained/zephyr.elf verify reset exit"
 
-   The command will also verify that the image was programmed correctly, reset
-   the board and run the Zephyr application.
+   该命令还将验证镜像是否被正确编程，重启开发板并运行Zephyr应用程序。
 
-   You should see "Hello World!" in your terminal.
+   你将在终端看到“Hello World!”
 
-Debugging
+调试
 =========
 
-#. Connect the SAM E70 Xplained board to your host computer using the USB debug
-   port.
+#. 使用USB debug接口将SAM E70 Xplained开发板连接至你的电脑主机。
 
-#. Start GDB server on your host computer
+#. 在电脑主机上启动GDB服务
 
    .. code-block:: console
 
       $ openocd -f board/atmel_same70_xplained.cfg&
 
-#. You can now use GDB remote debugging to connect to the target board. By
-   default GDB server will listen on port 3333.
+#. 现在你可以使用GDB对目标板进行远程连接及调试。GDB服务默认监听3333端口。
 
-References
+参考
 **********
 
-SAM E70 Product Page:
+SAM E70 产品页:
     http://www.atmel.com/products/microcontrollers/arm/sam-e.aspx
 
 .. _SAME70-XPLD User Guide:
