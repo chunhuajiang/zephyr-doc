@@ -64,26 +64,19 @@ def print_items(items, outdir, indent):
 f = open("%s/index.rst" % (sys.argv[2]), "w")
 f.write(""".. _configuration:
 
-Configuration Options Reference Guide
+配置选项参考指南
 #####################################
 
-Introduction
+简介
 ************
 
-Kconfig files describe the configuration symbols supported in the build
-system, the logical organization and structure that group the symbols in menus
-and sub-menus, and the relationships between the different configuration
-symbols that govern the valid configuration combinations.
+Kconfig 文件描述了编译系统所支持的配置符号、逻辑组织和结构（将符号以菜单和子菜单的方式组合起来）、不同配置符号间关系。
 
-The Kconfig files are distributed across the build directory tree. The files
-are organized based on their common characteristics and on what new symbols
-they add to the configuration menus.
+Kconfig 文件遍布于整个编写目录中，它们以其通用特性和被添加到配置菜单的新符号组织在一起。
 
-The configuration options' information is extracted directly from :program:`Kconfig`
-using the :file:`~/doc/scripts/genrest/genrest.py` script.
+配置选项信息由 :program:`Kconfig` 抽取而来，且由脚本文件 :file:`~/doc/scripts/genrest/genrest.py` 产生。
 
-
-Supported Options
+所支持的选项
 *****************
 
 """)
