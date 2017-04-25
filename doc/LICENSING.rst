@@ -1,6 +1,6 @@
 .. _zephyr_licensing:
 
-Licensing of Zephyr Project components
+许可
 ######################################
 
 The Zephyr kernel tree imports or reuses packages, scripts and other files that

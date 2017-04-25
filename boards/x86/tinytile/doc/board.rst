@@ -3,13 +3,12 @@
 tinyTILE
 #########
 
-Overview
+概览
 ********
 
-tinyTILE is an Intel Curie module based board, a miniaturized adaptation of the
-:ref:`Arduino/Genuino 101 <arduino_101>` board, measuring approx 35 x 26mm.
+tinyTILE是一块基于Intel Curie模组的主板，它是 :ref:`Arduino/Genuino 101 <arduino_101>` 开发板的小型化版本,大小约为35 x 26mm。
 
-See :ref:`arduino_101` for information how to use the tinyTILE board with Zephyr.
+参考 :ref:`arduino_101` 获取如何在Zephyr下使用tinyTILE开发板的信息。
 
 .. figure:: TINYTILE.jpg
    :width: 442px
@@ -18,18 +17,18 @@ See :ref:`arduino_101` for information how to use the tinyTILE board with Zephyr
 
    tinyTILE
 
-Features of the tinyTILE include:
+tinyTILE的特点包括：
 
-- Intel® Curie™ module dual-core (Intel® Quark* processor core and ARC* core)
-- Bluetooth® low energy, 6-axis combo sensor and pattern matching engine
-- 14 digital input/output pins (four can be used as PWM output pins)
-- Four PWM output pins
-- Six analog input pins
-- Strictly 3.3 V I/Os only
-- 20 mA DC current per I/O pin
-- 196 kB Flash memory
+- Intel® Curie™ 双核模组(Intel® Quark* 处理器核心与ARC*核心)
+- 低功耗蓝牙，6轴组合传感器和模式匹配引擎
+- 14个I/O引脚 (其中4个PWM输出引脚)
+- 4个PWM输出引脚
+- 6个模拟输入引脚
+- 仅支持 3.3 V I/O
+- 每I/O引脚20 mA DC电流
+- 196 kB Flash闪存
 - 24 kB SRAM
-- 32 MHz clock speed
-- USB connector for serial communication and firmware updates (DFU protocol)
-- 35 mm length and 26 mm width
+- 32 MHz 时钟频率
+- 串口通信USB连接器和固件升级(DFU协议)
+- 长：35 mm ，宽：26 mm 
 
