@@ -1,65 +1,59 @@
 .. _qemu_x86:
 
-X86 Emulation (QEMU)
+X86仿真(QEMU)
 ####################
 
-Overview
+概览
 ********
 
-The Zephyr Kernel uses the qemu_x86 board configuration to emulate pentium-class
-systems running on QEMU.
-This board configuration provides support for an x86 Minute IA CPU and the
-following devices:
+Zephyr内核使用qemu_x86主板配置以在QEMU上模拟运行奔腾级系统。此主板配置提供了对一个x86 Minute IA CPU及以下设备的支持：
 
-* HPET
-* Advanced Programmable Interrupt Controller (APIC)
+* HPET（高精度定时器）
+* Advanced Programmable Interrupt Controller (APIC高级可编程中断控制器)
 * NS16550 UART
 
 
-Hardware
+硬件
 ********
 
-Supported Features
+支持功能
 ==================
 
-The qemu_x86 board configuration supports the following hardware features:
+qemu_x86主板配置支持以下硬件功能:
 
 +--------------+------------+-----------------------+
 | Interface    | Controller | Driver/Component      |
 +==============+============+=======================+
-| HPET         | on-chip    | system clock          |
+| HPET         | on-chip    | 系统时钟         |
 +--------------+------------+-----------------------+
-| APIC         | on-chip    | interrupt controller  |
+| APIC         | on-chip    | 中断控制器  |
 +--------------+------------+-----------------------+
-| NS16550      | on-chip    | serial port           |
+| NS16550      | on-chip    | 串口           |
 | UART         |            |                       |
 +--------------+------------+-----------------------+
 
-Devices
+设备
 =======
 
-HPET System Clock Support
+HPET系统时钟支持
 -------------------------
 
-The qemu_x86 board configuration uses an HPET clock frequency of 25 MHz.
+qemu_x86主板配置使用25 MHz的HPET时钟频率。
 
-Serial Port
+串口
 -----------
 
-The qemu_x86 board configuration uses a single serial communication channel that
-uses the NS16550 serial driver operating in polling mode. To override, enable
-the UART_INTERRUPT_DRIVEN Kconfig option, which allows the system to be
-interrupt-driven.
+qemu_x86主板配置使用了单个串口通信信道，它使用了轮询模式下的NS16550串口驱动。要重写，请打开UART_INTERRUPT_DRIVEN Kconfig选项，它允许系统的中断驱动。
 
-Known Problems or Limitations
+已知问题或限制
 =============================
 
-The following platform features are unsupported:
+不支持以下平台功能：
 
-* Isolated Memory Regions
-* Serial port in Direct Memory Access (DMA) mode
-* Serial Peripheral Interface (SPI) flash
+* 隔离存储区
+* 串口的Direct Memory Access (DMA)模式
+* Serial Peripheral Interface (SPI)闪存
 * General-Purpose Input/Output (GPIO)
 * Inter-Integrated Circuit (I2C)
-* Ethernet
+* 以太网
 * Supervisor Mode Execution Protection (SMEP)

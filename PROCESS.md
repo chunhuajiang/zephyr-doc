@@ -11,13 +11,13 @@
 | 入门指南        | 搭建 Win 开发环境   |  -                | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
 | 入门指南        | 搭建 Linux 开发环境 |  -                | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
 | 入门指南        | 搭建 Mac 开发环境   |  -                | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
-| 支持的开发板    |  x86            |  Arduino101       |  陈蛇                                               |  领取    |
-| 支持的开发板    |  x86             |  x86 qemu         |  陈蛇                                               |  领取    |
-| 支持的开发板    |  x86             |  quark d2000      |  陈蛇                                               |  领取    |
-| 支持的开发板    |  x86             |  tiny TILE        |  陈蛇                                               |  领取    |
+| 支持的开发板    |  x86            |  Arduino101       |  陈蛇                                               |  完成    |
+| 支持的开发板    |  x86             |  x86 qemu         |  陈蛇                                               |  完成    |
+| 支持的开发板    |  x86             |  quark d2000      |  陈蛇                                               |  完成    |
+| 支持的开发板    |  x86             |  tiny TILE        |  陈蛇                                               |  完成    |
 | 支持的开发板    |  arm             |  Genuino101(BLE)  |                                                      |          |
-| 支持的开发板    |  arm             |  Arduino Due      |                                                      |          |
-| 支持的开发板    |  arm             |  CC3200 LaunchXL  |   [josephleung](https://github.com/josephleung)                                                   |          |
+| 支持的开发板    |  arm             |  Arduino Due      |   [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
+| 支持的开发板    |  arm             |  CC3200 LaunchXL  |   [josephleung](https://github.com/josephleung)      |  领取    |
 | 支持的开发板    |  arm             |  Curie (BLE)      |                                                      |          |
 | 支持的开发板    |  arm             |  NXP FRDM-K64F    |   [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 | 支持的开发板    |  arm             |  NXP FRDM-KW41Z   |   [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
@@ -30,10 +30,10 @@
 | 支持的开发板    |  arm             |  nRF52-PCA10040   |                                                      |          |
 | 支持的开发板    |  arm             |  ST Nucleo F401RE |                                                      |          |
 | 支持的开发板    |  arm             |  ST Nucleo F411RE |                                                      |          |
-| 支持的开发板    |  arm             |  ST Nucleo L476RG |                                                      |          |
-| 支持的开发板    |  arm             |  Cortex-M3 QEMU   |                                                      |          |
-| 支持的开发板    |  arm             |  SAM E70 Xplained | [abatei](https://github.com/abatei)                  |  领取    |
-| 支持的开发板    |  arm             |  ARM V2M Beetle   | [abatei](https://github.com/abatei)                  |  领取    |
+| 支持的开发板    |  arm             |  ST Nucleo L476RG | [abatei](https://github.com/abatei)                  | 领取    |
+| 支持的开发板    |  arm             |  Cortex-M3 QEMU   | [abatei](https://github.com/abatei)                  |  领取    |
+| 支持的开发板    |  arm             |  SAM E70 Xplained | [abatei](https://github.com/abatei)                  |  完成  |
+| 支持的开发板    |  arm             |  ARM V2M Beetle   | [abatei](https://github.com/abatei)                  |  完成  |
 | 支持的开发板    |  arc             |  Genuino101 Sensor|                                                      |          |
 | 支持的开发板    |  arc             |  DesignWare(R)    |                                                      |          |
 | 支持的开发板    |  nios ll         |  Altera MAX10     |                                                      |          |
@@ -147,6 +147,6 @@
 |  示例           |    Grove Kit      | Grove LCD                  |                                             |      |
 |  示例           |    Advanced       | Environmental Sensing      |                                             |      |
 |  示例           |    电源管理       | 电源管理                   |                                             |      |
-|  配置选项       |      -            |                  -         |                                             |      |
+|  配置选项       |      -            |                  -       |  [tidyjiang8](https://github.com/tidyjiang8)  |  完成     |
 |  贡献代码       |      -            |                -           |  [tidyjiang8](https://github.com/tidyjiang8)|  完成     |
 |  词汇表         |      -            |   -                        |  [tidyjiang8](https://github.com/tidyjiang8)|  完成     |  
