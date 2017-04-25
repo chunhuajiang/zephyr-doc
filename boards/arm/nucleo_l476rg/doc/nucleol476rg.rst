@@ -3,24 +3,21 @@
 ST Nucleo L476RG
 ################
 
-Overview
+概览
 ********
 
-The Nucleo L476RG board features an ARM Cortex-M4 based STM32L476RG MCU
-with a wide range of connectivity support and configurations. Here are
-some highlights of the Nucleo L476RG board:
+Nucleo L476RG是一块基于STM32L476RG MCU的ARM Cortex-M4开发板，具有广泛的连接支持和配置。以下是Nucleo L476RG开发板的亮点：
 
-
-- STM32 microcontroller in QFP64 package
-- Two types of extension resources:
-       - Arduino Uno V3 connectivity
-       - ST morpho extension pin headers for full access to all STM32 I/Os
-- On-board ST-LINK/V2-1 debugger/programmer with SWD connector
-- Flexible board power supply:
-       - USB VBUS or external source(3.3V, 5V, 7 - 12V)
-       - Power management access point
-- Three LEDs: USB communication (LD1), user LED (LD2), power LED (LD3)
-- Two push-buttons: USER and RESET
+- QFP64包内的STM32微控制器
+- 两种扩展资源类型:
+       - Arduino Uno V3连通性
+       - 可完全访问STM32 I/O的ST morpho扩展引脚接口
+- 带SWD连接器的板载ST-LINK/V2-1 调试/编程
+- 灵活的主板电源供应：
+       - USB VBUS或外部电源(3.3V, 5V, 7 - 12V)
+       - 电源管理接入点
+- 三个LED: USB通信 (LD1), 用户LED (LD2), 电源LED(LD3)
+- 两个按钮: 用户和重启
 
 .. image:: img/nucleo64_ulp_logo_1024.jpg
      :width: 250px
@@ -28,76 +25,76 @@ some highlights of the Nucleo L476RG board:
      :height: 250px
      :alt: Nucleo L476RG
 
-More information about the board can be found at the `Nucleo L476RG website`_.
+关于开发板的更多信息请查阅 `Nucleo L476RG website`_。
 
-Hardware
+硬件
 ********
 
-The STM32L476RG SoC provides the following hardware IPs:
+STM32L476RG SoC提供以下硬件IPs:
 
-- Ultra-low-power with FlexPowerControl (down to 130 nA Standby mode and 100 μA/MHz run mode)
-- Core: ARM® 32-bit Cortex®-M4 CPU with FPU, frequency up to 80 MHz, 100DMIPS/1.25DMIPS/MHz (Dhrystone 2.1)
-- Clock Sources:
-        - 4 to 48 MHz crystal oscillator
-        - 32 kHz crystal oscillator for RTC (LSE)
-        - Internal 16 MHz factory-trimmed RC (±1%)
-        - Internal low-power 32 kHz RC (±5%)
-        - Internal multispeed 100 kHz to 48 MHz oscillator, auto-trimmed by LSE (better than ±0.25 % accuracy)
-        - 3 PLLs for system clock, USB, audio, ADC
-- RTC with HW calendar, alarms and calibration
-- LCD 8 × 40 or 4 × 44 with step-up converter
-- Up to 24 capacitive sensing channels: support touchkey, linear and rotary touch sensors
-- 16x timers:
-        - 2x 16-bit advanced motor-control
-        - 2x 32-bit and 5x 16-bit general purpose
-        - 2x 16-bit basic
-        - 2x low-power 16-bit timers (available in Stop mode)
-        - 2x watchdogs
-        - SysTick timer
-- Up to 114 fast I/Os, most 5 V-tolerant, up to 14 I/Os with independent supply down to 1.08 V
-- Memories
-        - Up to 1 MB Flash, 2 banks read-while-write, proprietary code readout protection
-        - Up to 128 KB of SRAM including 32 KB with hardware parity check
-        - External memory interface for static memories supporting SRAM, PSRAM, NOR and NAND memories
-        - Quad SPI memory interface
-- 4x digital filters for sigma delta modulator
-- Rich analog peripherals (independent supply)
-        - 3× 12-bit ADC 5 MSPS, up to 16-bit with hardware oversampling, 200 μA/MSPS
-        - 2x 12-bit DAC, low-power sample and hold
-        - 2x operational amplifiers with built-in PGA
-        - 2x ultra-low-power comparators
-- 18x communication interfaces
-        - USB OTG 2.0 full-speed, LPM and BCD
-        - 2x SAIs (serial audio interface)
+- FlexPowerControl下的超低功耗 (降至标准模式的130 nA和运行模式下的100 μA/MHz)
+- 内核: 内置FPU的ARM® 32-bit Cortex®-M4 CPU，频率达到80 MHz, 100DMIPS/1.25DMIPS/MHz (Dhrystone 2.1)
+- 时钟源:
+        - 4 to 48 MHz 晶振
+        - 32 kHz RTC (LSE)晶振
+        - 内部16 MHz工厂校准RC (±1%)
+        - 内部低功耗32 kHz RC (±5%)
+        - 内部多速100 kHz至48 MHz振荡器, 自动LSE校准 (超过±0.25 % 精确率)
+        - 用于系统时钟, USB, audio, ADC的3个PLL
+- 带HW日历, 报警及校准的RTC
+- 带升压转换器的8 × 40或4 × 44 LCD
+- 高达24个电容传感通道：支持touchkey，线性和旋转触摸传感器
+- 16x 定时器:
+        - 2x 16-bit 高级电机控制
+        - 2x 32-bit 和 5x 16-bit 通用目的
+        - 2x 16-bit  基础
+        - 2x 低功耗 16-bit 定时器 (停止模式下可用)
+        - 2x 看门狗
+        - SysTick 定时器
+- 高达144个快速 I/Os, 最高5V耐压，多达14个I/O口可独立供电降至1.08 V
+- 内存
+        - 多达1 MB Flash，2路并发读写，专有代码读出保护
+        - 多达128 KB SRAM，包括32 KB带硬件奇偶校验
+        - 支持SRAM、PSRAM、NOR和NAND的静态存储器的外部存储器接口
+        - Quad SPI内存接口
+- 适用于sigma delta调制器的4x数字滤波器
+- 丰富的模拟外设（独立电源）
+        - 3× 12-bit ADC 5 MSPS, 多达16-bit硬件采样, 200 μA/MSPS
+        - 2x 12-bit DAC, 低功耗采样和保持
+        - 2x 内置PGA运算放大器
+        - 2x 超低功耗比较器
+- 18x 通信接口
+        - 全速USB OTG 2.0, LPM 和 BCD
+        - 2x SAIs (serial audio interface串行音频接口)
         - 3x I2C FM+(1 Mbit/s), SMBus/PMBus
         - 6x USARTs (ISO 7816, LIN, IrDA, modem)
         - 3x SPIs (4x SPIs with the Quad SPI)
-        - CAN (2.0B Active) and SDMMC interface
+        - CAN (2.0B Active) 和 SDMMC 接口
         - SWPMI single wire protocol master I/F
-- 14-channel DMA controller
-- True random number generator
-- CRC calculation unit, 96-bit unique ID
-- Development support: serial wire debug (SWD), JTAG, Embedded Trace Macrocell™
+- 14-通道 DMA 控制器
+- 真随机数发生器
+- CRC计算单元，96-bit唯一ID
+- 开发支持: serial wire debug (SWD), JTAG, Embedded Trace Macrocell™
 
 
-More information about STM32L476RG can be found here:
+更多有关STM32L476RG的信息请参阅:
        - `STM32L476RG on www.st.com`_
        - `STM32L476 reference manual`_
 
-Supported Features
+支持功能
 ==================
 
-The Zephyr nucleo_l476rg board configuration supports the following hardware features:
+Zephyr的nucleo_l476rg主板配置支持以下功能:
 
 +-----------+------------+-------------------------------------+
-| Interface | Controller | Driver/Component                    |
+| 接口 | 控制器 | 驱动/元件                    |
 +===========+============+=====================================+
-| NVIC      | on-chip    | nested vector interrupt controller  |
+| NVIC      | on-chip    | 嵌套向量中断控制器  |
 +-----------+------------+-------------------------------------+
-| UART      | on-chip    | serial port-polling;                |
-|           |            | serial port-interrupt               |
+| UART      | on-chip    | 串行端口轮询;                |
+|           |            | 串行端口中断               |
 +-----------+------------+-------------------------------------+
-| PINMUX    | on-chip    | pinmux                              |
+| PINMUX    | on-chip    | 引脚复用                              |
 +-----------+------------+-------------------------------------+
 | GPIO      | on-chip    | gpio                                |
 +-----------+------------+-------------------------------------+
@@ -106,20 +103,19 @@ The Zephyr nucleo_l476rg board configuration supports the following hardware fea
 | PWM       | on-chip    | pwm                                 |
 +-----------+------------+-------------------------------------+
 
-Other hardware features are not yet supported on this Zephyr port.
+本Zephyr端口还不支持其它硬件
 
-The default configuration can be found in the defconfig file:
+默认配置可在defconfig文件中找到:
 
 	``boards/arm/nucleo_l476rg/nucleo_l476rg_defconfig``
 
 
-Connections and IOs
+连接和IO
 ===================
 
-Nucleo L476RG Board has 8 GPIO controllers. These controllers are responsible for pin muxing,
-input/output, pull-up, etc.
+Nucleo L476RG开发板有8路GPIO控制器。这些控制器负责引脚利用、输入/输出、上拉等等。
 
-Available pins:
+可用引脚:
 ---------------
 .. image:: img/nucleo_l476rg_arduino.png
      :width: 720px
@@ -132,9 +128,9 @@ Available pins:
      :height: 540px
      :alt: Nucleo L476RG Morpho connectors
 
-For mode details please refer to `STM32 Nucleo-64 board User Manual`_.
+更多信息请参考 `STM32 Nucleo-64 board User Manual`_。
 
-Default Zephyr Peripheral Mapping:
+默认Zephyr外设映射：
 ----------------------------------
 
 - UART_1_TX : PA9
@@ -149,44 +145,37 @@ Default Zephyr Peripheral Mapping:
 - USER_PB : PC13
 - LD2 : PA5
 
-System Clock
+系统时钟
 ------------
 
-Nucleo L476RG System Clock could be driven by internal or external oscillator,
-as well as main PLL clock. By default System clock is driven by PLL clock at 80MHz,
-driven by 16MHz high speed internal oscillator.
+Nucleo L476RG系统时钟可由内部或外部晶振及主PLL时钟驱动。默认情况下，系统时钟由80MHz PLL时钟驱动，通过16MHz高速内部振荡器驱动。
 
-Serial Port
+串口
 -----------
 
-Nucleo L476RG board has 6 U(S)ARTs. The Zephyr console output is assigned to UART2.
-Default settings are 115200 8N1.
+Nucleo L476RG开发板拥有6 U(S)ARTs。Zephyr控制台输出分配给UART2。默认设置为115200 8N1。
 
-
-Programming and Debugging
+编程与调试
 *************************
 
-Flashing
+烧写
 ========
 
-Nucleo L476RG board includes an ST-LINK/V2-1 embedded debug tool interface.
-This interface is not supported by the openocd version 0.9 included by the Zephyr SDK v0.9.
-Until we update the Zephyr SDK, use openocd v0.10.0 from the openocd-stm32 project on GitHub
-to get the minimum set of scripts needed to flash and debug STM32 development boards.
+Nucleo L476RG开发板包括一个ST-LINK/V2-1 嵌入式调试工具接口。此接口不被Zephyr SDK 0.9的openocd 0.9版本支持，直到我们更新Zephyr SDK。使用来自GitHub上的openocd-stm32项目的openocd v0.10.0可以获取烧写及调试STM32开发板所需的最小脚本集。
 
 .. code-block:: console
 
    $ git clone  https://github.com/erwango/openocd-stm32.git
 
-Then follow instructions in README.md
+以下说明来自README.md
 
 
-Flashing an application to Nucleo L476RG
+在Nucleo L476RG中烧写应用程序
 ----------------------------------------
 
-The sample application :ref:'hello_world` is being used in this tutorial:
+本说明使用示例应用程序 :ref:'hello_world` :
 
-To build the Zephyr kernel and application, enter:
+编译Zephyr内核及应用程序，输入:
 
 .. code-block:: console
 
@@ -195,31 +184,30 @@ To build the Zephyr kernel and application, enter:
    $ cd $ZEPHYR_BASE/samples/hello_world/
    $ make BOARD=nucleo_l476rg
 
-Connect the Nucleo L476RG to your host computer using the USB port.
-Then, enter the following command:
+使用USB端口将Nucleo L476RG连接至你的计算机主机，然后输入如下命令：
 
 .. code-block:: console
 
    $ cd <openocd-stm32_path>
    $ stm32_flsh l4 $ZEPHYR_BASE/samples/hello_world/outdir/nucleo_l476rg/zephyr.bin
 
-Run a serial host program to connect with your Nucleo board.
+在主机上运行串口程序并连接至Nucleo board。
 
 .. code-block:: console
 
    $ minicom -D /dev/ttyACM0
 
-You should see the following message:
+你将看到以下信息:
 
 .. code-block:: console
 
    $ Hello World! arm
 
 
-Debugging
+调试
 =========
 
-Access gdb with the following make command:
+使用以下make命令访问gdb:
 
 .. code-block:: console
 

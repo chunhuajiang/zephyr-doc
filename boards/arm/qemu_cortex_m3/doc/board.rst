@@ -1,68 +1,62 @@
 .. _qemu_cortex_m3:
 
-ARM Cortex-M3 Emulation (QEMU)
+ARM Cortex-M3 模拟器 (QEMU)
 ##############################
 
-Overview
+概览
 ********
 
-The Zephyr kernel uses the qemu_cortex_m3 board configuration to emulate the TI
-LM3S6965 platform running on QEMU. It provides support for an ARM Cortex-M3 CPU
-and the following devices:
+Zephyr内核使用qemu_cortex_m3主板配置来模拟在QEMU上运行TI LM3S6965平台。它提供对ARM Cortex-M3 CPU和以下设备的支持：
 
-* Nested Vectored Interrupt Controller
+* 嵌套向量中断控制器
 * System Tick System Clock
 * Stellaris UART
 
 .. note::
-   This board configuration makes no claims about its suitability for use
-   with an actual ti_lm3s6965 hardware system, or any other hardware system.
+   此主板配置对使用实际ti_lm3s6965硬件系统及其它硬件系统没有适用性要求。
 
-Hardware
+硬件
 ********
-Supported Features
+支持功能
 ==================
 
-The qemu_cortex_m3 board configuration supports the following hardware features:
+qemu_cortex_m3主板配置支持以下硬件功能：
 
 +--------------+------------+----------------------+
-| Interface    | Controller | Driver/Component     |
+| 接口         | 控制器      | 驱动/元件     |
 +==============+============+======================+
-| NVIC         | on-chip    | nested vectored      |
-|              |            | interrupt controller |
+| NVIC         | on-chip    | 嵌套向量中断控制器     |
 +--------------+------------+----------------------+
-| Stellaris    | on-chip    | serial port          |
+| Stellaris    | on-chip    | 串口                 |
 | UART         |            |                      |
 +--------------+------------+----------------------+
-| SYSTICK      | on-chip    | system clock         |
+| SYSTICK      | on-chip    | 系统时钟              |
 +--------------+------------+----------------------+
 
-The kernel currently does not support other hardware features on this platform.
+此平台内核当前不支持上的其它硬件功能
 
-Devices
+设备
 ========
-System Clock
+系统时钟
 ------------
 
-The qemu_cortex_m3 board configuration uses a system clock frequency of 12 MHz.
+qemu_cortex_m3主板配置所使用的系统时钟为12 MHz。
 
-Serial Port
+串口
 -----------
 
-The qemu_cortex_m3 board configuration uses a single serial communication
-channel with the CPU's UART0.
+qemu_cortex_m3主板配置使用单个CPU UART0串口通信信道。
 
-Known Problems or Limitations
+已知问题和限制
 ==============================
 
-The following platform features are unsupported:
+不支持以下平台功能:
 
-* Memory protection through optional MPU.  However, using a XIP kernel
-  effectively provides TEXT/RODATA write protection in ROM.
-* SRAM at addresses 0x1FFF0000-0x1FFFFFFF
-* Writing to the hardware's flash memory
+* 可选MPU内存保护。但是可在ROM内使用XIP内核有效提供TEXT/RODATA写保护。
+* 地址为0x1FFF0000-0x1FFFFFFF的SRAM
+* 写硬件flash闪存
 
-References
+参考
 **********
 
 1. The Definitive Guide to the ARM Cortex-M3, Second Edition by Joseph Yiu (ISBN
