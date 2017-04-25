@@ -3,55 +3,34 @@
 Arduino/Genuino 101
 ###################
 
-Overview
+概述
 ********
 
-The Arduino/Genuino 101 is a learning and development board which contains an
-Intel® Curie™ Module. This board is designed to integrate the core's low
-power-consumption and high performance with the Arduino's ease-of-use. The
-Arduino 101 adds Bluetooth Low Energy capabilities and has an on-board 6-axis
-accelerometer/gyroscope, providing exciting opportunities for building creative
-projects in the connected world.
+Arduino/Genuino 101 是一个基于 Intel® Curie™ 模组的开发板。 开发板设计整合了低功耗、高性能核心且具备 Arduino 的易用性。Arduino 101 增加了低耗蓝牙功能以及一个板载 6 轴加速计/陀螺仪，为连接世界的创造性项目提供令人兴奋的机会。
 
 .. figure:: img/arduino_101.jpg
    :width: 442px
    :align: center
    :alt: Arduino/Genuino 101
 
-   Arduino/Genuino 101 (Credit: Intel)
+   Arduino/Genuino 101 (来源: Intel)
 
-The Intel Quark* SE SoC in the Curie module contains a single core 32 MHz x86
-(Intel Quark* processor) and the 32 MHz Argonaut RISC Core (ARC)* EM processor.
-The two processors operate simultaneously and share memory. The ARC processor is
-also referenced as the digital signal processor (DSP) sensor hub or a sensor
-subsystem depending on what document you’re looking at. In theory, the DSP can
-run using a minimal amount of power, gathering and processing sensor data while
-the x86 processor waits in a low power mode, which would be ideal for always-on
-applications.
+Curie 模组中的 Intel Quark* SE SoC 包含一个单核 32 MHz x86(Intel Quark* 处理器)以及 32 MHz Argonaut RISC Core (ARC)* EM 处理器。两个处理器同时运行并共享内存。ARC 处理器也被当作数字信号处理器（DSP）的传感器集线器或传感器子系统，这取决于你看的文档。理论上，DSP 可使用最小功率运行，理想状态下，它可以在 x86 处理器在低功耗模式等待时收集和处理传感器数据。
 
-Zephyr can be flashed to an Arduino 101 for experimentation and testing
-purposes; keep in mind that running the Zephyr OS on the Arduino 101 is not
-supported by Arduino LLC.
+Zephyr 可被烧写进 Arduino 101 以用于实验和测试目的。注意，在 Arduino 101 上运行 Zephyr OS 不被 Arduino LLC 支持。
 
-Hardware
+硬件
 ********
 
-Board Layout
+主板布局
 ============
 
-General information for the board can be found at the
-`Arduino 101 website <https://www.arduino.cc/en/Main/ArduinoBoard101>`_,
-which also includes schematics and BRD files
-for the board.
+主板的一般信息可在 `Arduino 101 website <https://www.arduino.cc/en/Main/ArduinoBoard101>`_ 找到，其中包含主板原理图及 BRD 文件。
 
-Arduino 101 Pinout
+Arduino 101 引脚
 ==================
 
-When using the Zephyr kernel, the pinout mapping for the Arduino 101 becomes a
-little more complicated. The table below details which pins in Zephyr map to
-those on the Arduino 101 board for control. Full details of the pinmux
-implementation, what valid options can be configured, and where things map can
-be found in the :file:`boards/x86/arduino_101/pinmux.c` file.
+在使用 Zephyr 内核时，对于 Arduino 101 的引脚映射变得稍微复杂。下表详述了 Zephyr 对 Arduino 101 开发板控制引脚的映射。关于引脚复用详情、可配置的有效选项、以及在何处映射可参阅 :file:`boards/x86/arduino_101/pinmux.c` 文件。
 
 
 +-------------+----------+------------+
@@ -100,20 +79,17 @@ be found in the :file:`boards/x86/arduino_101/pinmux.c` file.
 | ADC5        | AIN9     | 9          |
 +-------------+----------+------------+
 
-.. note::
+.. 注意::
 
-   IO-3 and IO-5 require both pins to be set for functionality changes.
+   IO-3 and IO-5 需要同时设置以适应功能改变。
 
-Supported Features
+支持功能
 ==================
 
-The Zephyr kernel supports multiple hardware features on the Arduino 101 through
-the use of drivers. Some drivers are functional on the x86 side only, some on
-the ARC side only, and a few are functional on both sides. The table below shows
-which drivers and functionality can be found on which architectures:
+通过驱动程序的使用，Zephyr 内核可在 Arduino 101 上支持多种硬件功能。某些驱动程序仅支持 x86,另一些仅支持 ARC，有少数两者都支持。下表显示了驱动程序和功能所对应的架构：
 
 +-----------+------------+-----+-----+-----------------------+
-| Interface | Controller | ARC | x86 | Driver/Component      |
+| 接口 | 控制器 | ARC | x86 | 驱动/元件      |
 +===========+============+=====+=====+=======================+
 | APIC      | on-chip    | N   | Y   | interrupt_controller  |
 +-----------+------------+-----+-----+-----------------------+
@@ -133,27 +109,18 @@ which drivers and functionality can be found on which architectures:
 | mailbox   | on-chip    | Y   | Y   | ipm                   |
 +-----------+------------+-----+-----+-----------------------+
 
-Required Hardware and Software
+硬件及软件需求
 ==============================
 
-Before flashing the Zephyr kernel onto an Arduino 101, a few additional pieces
-of hardware are required.
+在将 Zephyr 内核烧写进 Arduino 101 之前，需要一些额外的硬件。
 
-* The USB port for power will work; however, we recommend the 7V-12V barrel
-  connector be used when working with the JTAG connector.
-* If you wish to grab any data off the serial port, you will need a TTL-to-USB
-  adapter. The following adapters require male-to-male jumper cables in order to
-  connect to the Arduino 101 board.
+* 可使用 USB 端口电源；但还是推荐使用 7V-12V 电池电源与 JTAG 连接器。
+* 如果希望从串口抓取任何数据，需要使用 TTL 转 USB 适配器。以下适配器在连接 Arduino 101 开发板时需要使用雄跨电缆。 
 
-  * USB to 3.3V TTL Serial Cable
-  * FTDI USB to TTL Serial Part #TTL-232R-3V3 http://www.ftdichip.com/Products/Cables/USBTTLSerial.htm
+  * USB 转 3.3V TTL 串行线
+  * FTDI USB 转 TTL 串口部分 #TTL-232R-3V3 http://www.ftdichip.com/Products/Cables/USBTTLSerial.htm
 
-We recommend using the ``dfu-util`` tool to flash the Arduino 101 board.
-For Linux environments, verify that ``udev`` has the proper rules for granting
-you access to the Arduino 101 board in DFU mode. You can easily add the required
-rules, using the ``create_dfu_udev_rule`` script provided with the
-`Intel Curie Boards package`_ for the Arduino Desktop IDE. You can get and run
-this script standalone with the following commands:
+我们推荐使用 ``dfu-util`` 工具来烧写 Arduino 101 开发板。对于 Linux 环境来说，可验证 ``udev`` 在 DFU 模式下是否有适当规则以允许你访问 Arduino 101 开发板。使用为Arduino桌面IDE的`Intel Curie Boards package`_ 所提供的``create_dfu_udev_rule`` 脚本，你可以很方便地添加规则。你可以使用以下命令获取并运行此脚本：
 
 .. code-block:: console
 
@@ -162,134 +129,104 @@ this script standalone with the following commands:
    $ sudo ./create_dfu_udev_rule
    $ rm create_dfu_udev_rule
 
-If you'd like to flash using JTAG, the following additional hardware is needed:
+如果你希望使用 JTAG 进行烧写，需要以下额外硬件:
 
 * Flyswatter2 JTAG debugger
 * ARM Micro JTAG Connector, Model: ARM-JTAG-20-10
 
-Connecting Serial Output
+连接串口输出
 ========================
 
-The default configuration defined in the Zephyr kernel supports serial output
-via the UART1 on the board. To read the output, you will need a USB to 3.3V TTL
-serial cable. To enable serial output:
+Zephyr 内核配置中，默认支持串口通过开发板的 UART1 口输出。你需要使用 USB 转 3.3V TTL 串口线来接收串口输出：
 
-* Connect the Serial Cable RX pin to the Arduino 101's TX->1 pin.
-* Connect the Serial Cable TX pin to the Arduino 101's RX<-0 pin.
-* Connect the Serial Cable GND pin to the Arduino 101's GND pin.
+* 将串口线 RX 引脚连接至 Arduino 101 的 TX->1 引脚。
+* 将串口线 TX 引脚连接至 Arduino 101 的 RX<-0 引脚。
+* 将串口线 GND 引脚连接至 Arduino 101 的 GND 引脚。
 
-Once connected, on your development environment, you will need to:
+一旦连接，你需要在开发环境中：
 
-* Open a serial port emulator (i.e. on Linux minicom, screen, etc)
-* Attach to the USB to TTL Serial cable, for example, on Linux this may be
-  /dev/ttyUSB0
-* Set the communication details to:
+* 打开一个串口模拟器 (如 Linux 下的 minicom, screen, 等等)
+* 将 USB 附加到 TTL 串口线，例如，在 Linux 中它可能是 /dev/ttyUSB0
+* 参数设置为:
 
   * Speed: 115200
   * Data: 8 bits
   * Parity: None
   * Stopbits: 1
 
-Programming and Debugging
+编程与调试
 *************************
 
-The Arduino 101 is powered by a Quark CPU and a sensor subsystem powered by an
-ARC processor. When building applications, depending on the usage, two Zephyr
-images need to be built and flashed.
+Arduino 101 由 Quark CPU 供电，传感器子系统由 ARC 处理器供电。在创建应用程序时，根据使用情况, 需要编译和烧写两个Zephyr镜像。
 
-The Arduino 101 has a bootloader that supports flashing over USB using the DFU
-protocol. Additionally, the factory installed bootloader supports flashing of
-the firmware for the Bluetooth device of the Curie module.
+Arduino 101 自带的 bootloarder 支持通过 USB 使用 DFU 协议进行烧写。此外，工厂安装的引导程序支持 Curie 模组的蓝牙设备的固件烧写。
 
-Use the ``arduino_101`` board definition to build a kernel for the Quark core. Use
-the ``arduino_101_sss`` board definition when targeting the sensor subsystem.
+创建 Quark 内核时使用 ``arduino_101`` 定义，目标为传感器子系统时使用 ``arduino_101_sss`` 定义。
 
-When your application is targeting the Quark processor only, it is important to
-disable the sensor subsystem processor using the ``CONFIG_ARC_INIT=n`` option,
-otherwise the board will appear to hang waiting for the sensor subsystem
-processor to boot.
-
+当应用程序目标仅为Quark处理器时，一定要使用 ``CONFIG_ARC_INIT=n`` 选项来禁用传感器子系统处理器。否则将出现开发板挂起等待传感器子系统处理器启动的情况。
 
 Bootloader (Boot ROM)
 =====================
 
-Support for the `QMSI Bootloader`_ has been removed starting from Zephyr 1.4.0.
-Thus, the factory boot ROM can be kept supporting the flashing of the board over
-DFU and flashing the Bluetooth firmware.
+从Zephyr 1.4.0开始，已经移除了对 `QMSI Bootloader`_ 的支持。因此，出厂的启动ROM可确保通过DFU烧写开发板，并烧写蓝牙固件。
 
-If you have previously installed a different boot ROM it is recommended to
-restore the factory boot ROM image using the `Flashpack Utility`_. Consult
-the README available in the `Flashpack Utility`_ package and follow the
-instructions for your environment.
+如果你之前已经安装了一个不同的启动ROM，推荐使用 `Flashpack Utility`_ 恢复出厂启动ROM镜像。 参阅 `Flashpack Utility`_ 包中的README，根据你的环境进行使用。
 
-Flashing
+烧写
 ========
 
-The ``dfu-util`` flashing application will only recognize the Arduino 101 as a
-DFU-capable device within five seconds after the Master Reset button is pressed
-on the board. You can run this application, either manually, or with the help of
-``make``:
+使用 ``dfu-util`` 烧写应用程序 会在按下开发板的主重启按钮后的 5 秒钟内将 Arduino 101 识别为 DFU-capable 设备。你可以使用手动或者``make`` 来运行应用程序:
 
-* Manual method: Type the ``dfu-util`` command line, press the Master Reset
-  button, and then quickly press Return to execute the dfu-util command. If
-  dfu-util fails saying "No DFU capable USB device available", try again more
-  quickly after pressing the Master Reset button.
-* Make method: Define the environment variable ``ZEPHYR_FLASH_OVER_DFU=y`` and
-  run ``make flash``. You will be prompted to reset the board when make is ready
-  to flash it. If you regularly use this method, you can add the following line
-  into your ``~/.zephyrrc`` file:
+* 手动方法: 键入 ``dfu-util`` 命令行，按下主重启按钮，并快速按下回车键以执行 deu-util 命令。如果 dfu-util 命令执行失败并显示 "No DFU capable USB device available"，请尝试在按下主重启按钮后操作更快些。
+* Make 方法: 定义环境变量 ``ZEPHYR_FLASH_OVER_DFU=y`` 并执行 ``make flash``。在make命令准备进行烧写时，将提示重启开发板。如果你经常使用这个方法，可在 ``~/.zephyrrc`` 文件中添加以下命令行：
 
 .. code-block:: console
 
    export ZEPHYR_FLASH_OVER_DFU=y
 
-Flashing the Sensor Subsystem Core
+烧写传感器子系统内核
 ----------------------------------
-When building for the ARC processor, the board type is listed as
-``arduino_101_sss``.
+创建ARC处理器时，开发板类型显示为 ``arduino_101_sss``。
 
-The sample application :ref:`hello_world` is used for this tutorial.
-Change directories to your local checkout copy of Zephyr, and run:
+示例应用程序 :ref:`hello_world` 用于此教程。
+切换到Zephyr本地校验副本目录，并运行：
 
 .. code-block:: console
 
    $ cd $ZEPHYR_BASE/samples/hello_world
    $ make BOARD=arduino_101_sss
 
-Once the image has been built, flash it with either this command using the
-manual method:
+一旦镜像被创建，即可使用手动方法烧写：
 
 .. code-block:: console
 
    $ dfu-util -a sensor_core -D outdir/arduino_101_sss/zephyr.bin
 
-or with this command using the make-assisted method:
+也可使用 make-assisted 方法烧写:
 
 .. code-block:: console
 
    $ ZEPHYR_FLASH_OVER_DFU=y make BOARD=arduino_101_sss flash
 
-Flashing the x86 Application Core
+烧写x86应用程序内核
 ---------------------------------
 
-When building for the x86 processor, the board type is listed as
-``arduino_101``.
+创建x86处理器时, 开发板类型显示为``arduino_101``。
 
-Change directories to your local checkout copy of Zephyr, and run:
+切换到Zephyr本地校验副本目录，并运行：
 
 .. code-block:: console
 
    $ cd $ZEPHYR_BASE/samples/hello_world
    $ make BOARD=arduino_101
 
-Once the image has been built, flash it with either this command using the
-manual method:
+一旦镜像被创建，即可使用手动方法烧写：
 
 .. code-block:: console
 
    $ dfu-util -a x86_app -D outdir/arduino_101/zephyr.bin
 
-or with this command using the make-assisted method:
+也可使用 make-assisted 方法烧写:
 
 .. code-block:: console
 
@@ -297,89 +234,71 @@ or with this command using the make-assisted method:
 
 .. _bluetooth_firmware_arduino_101:
 
-Flashing the Bluetooth Core
+烧写蓝牙内核
 ---------------------------
 
-To be interoperable with the Zephyr Bluetooth stack the Bluetooth controller of
-the Arduino 101 (Nordic Semiconductor nRF51) needs to be flashed with a
-compatible firmware.
+要让Zephyr蓝牙栈和Arduino 101蓝牙控制器（Nordic Semiconductor nRF51）协同工作，需要烧写一个兼容的固件。
 
-The Arduino 101 factory-installed firmware on this controller is not supported
-by the Zephyr project, so you need to flash a new one onto it.
+此控制器上的Arduino 101出厂固件不支持Zephyr项目，所以需要烧写一个新的。
 
-Luckily, starting with Zephyr 1.6, Zephyr itself is able to act as the firmware
-for the controller. The application you need is ``samples/bluetooth/hci_uart`` and
-the target board is called ``arduino_101_ble``.
+幸运的是，从Zephyr 1.6开始，Zephyr本身可以作为控制器的固件。你需要的应用程序是 ``samples/bluetooth/hci_uart`` ，目标开发板是 ``arduino_101_ble``。
 
-To build the Bluetooth controller image, follow the instructions below:
+创建蓝牙控制器镜像，请按照以下说明进行操作:
 
 .. code-block:: console
 
    $ cd $ZEPHYR_BASE/samples/bluetooth/hci_uart
    $ make BOARD=arduino_101_ble
 
-Once the image has been built, flash it with either this command using the
-manual method:
+一旦镜像被创建，即可使用手动方法烧写：
 
 .. code-block:: console
 
    $ dfu-util -a ble_core -D outdir/arduino_101_ble/zephyr.bin
 
-or with this command using the make-assisted method:
+也可使用 make-assisted 方法烧写:
 
 .. code-block:: console
 
    $ ZEPHYR_FLASH_OVER_DFU=y make BOARD=arduino_101_ble flash
 
-After successfully completing these steps your Arduino 101 should now have a HCI
-compatible BLE firmware.
+在成功完成这些步骤后，你的Arduino 101现在已拥有一个HCI兼容BLE固件。
 
 
-Flashing using JTAG Adapter
+使用JTAG适配器烧写
 ---------------------------
 
-We recommend using the ``dfu-util`` tool to flash the Arduino 101 board for typical
-development work. JTAG is intended for advanced development and debugging.
+一般的开发工作，我们推荐使用 ``dfu-util`` 工具烧写Arduino 101开发板。JTAG用于高级开发与调试。
 
-* Connect the ARM Micro JTAG Connector to the Flyswatter2.
+* 将ARM Micro JTAG Connector连接至Flyswatter2.
 
-* Locate the micro JTAG header on the Arduino 101 board. It is adjacent to the
-  SCL and SDA pins in the Arduino headers, highlighted as the red square in the
-  figure below.
+* 观察Arduino 101开发板的微JTAG接口。Arduino接口连接了SCL和SDA引脚，如下图红色方框所示：
 
   .. figure:: img/arduino_101_flat.jpg
      :width: 442px
      :align: center
      :alt: Arduino/Genuino 101 JTAG
 
-* Beside the micro JTAG header is a small white dot indicating the location of
-  pin 1 on the header. The green arrow on the figure points to the dot.
+* 微JTAG接口旁的小白点指示接口pin 1所在位置。图中绿色键头所指。
 
-* Connect the ARM Micro JTAG Connector to the Arduino 101 micro JTAG header.
+* 将ARM Micro JTAG连接器连接至Arduino 101微JTAG接口.
 
-Ensure that both the cable and header pin 1 locations line up. The cable from
-the ARM Micro JTAG Connector uses a red wire on the cable to denote which end on
-the cable has the pin 1.
+确保线缆和接口的pin 1定位准确。来自ARM Micro JTAG连接器的线缆使用红色线指示哪个接头连接pin 1。
 
-For Linux environments, to control the Flyswatter2 your Linux account needs to be
-granted HAL layer interaction permissions. This is done through the group
-'plugdev'. Verifying the group exists and adding your username can be
-accomplished with the usermod command:
+对于Linux环境来说，要控制Flyswatter2，你的Linux账户需要授予硬件抽像层交互权限，这由'plugdev'组实现。可使用usermod命令实现组存在验证以及添加用户名：
 
 .. code-block:: console
 
    $ sudo usermod -a -G plugdev $LOGNAME
 
-If the group does not exist, you can add it by running the following command:
+如果组不存在，可以运行以下命令进行添加：
 
 
 .. code-block:: console
 
    $ sudo groupadd -r plugdev
 
-For Linux environments, verify that ``udev`` has the proper rules for giving your
-user control of the Flyswatter2 device. Adding the following rule to udev will
-give members of the plugdev group control of the Flyswatter2.
+对于Linux开发环境，需要验证Flyswatter2设备所指定用户控制的 ``udev`` 的规则是否正确。添加以下规则将给予plugdev组成员以Flyswatter2控制权。
 
 .. code-block:: console
 
@@ -390,14 +309,13 @@ give members of the plugdev group control of the Flyswatter2.
    EOF
    $ exit
 
-Once your udev rules are setup, you will need to reload the rules:
+udev规则安装完毕后，需要重载规则：
 
 .. code-block:: console
 
    $ sudo udevadm control --reload-rules
 
-Plug the USB Type B cable into the Flyswatter2 and your computer. On Linux, you
-should see something similar to the following in your dmesg:
+使用USB B型线缆连接Flyswatter2和你的电脑。在Linux中，你将在dmesg中看到类似下面的信息:
 
 .. code-block:: console
 
@@ -415,29 +333,28 @@ should see something similar to the following in your dmesg:
    usb 1-2.1.1: FTDI USB Serial Device converter now attached to ttyUSB1
 
 
-Debugging
+调试
 =========
 
-The instructions below will help you debug the Arduino 101 on the x86 core or
-the ARC core, respectively.
+以下指南将帮助你分别调试Arduino 101上的x86核心或ARC核心。
 
-Application Core (x86)
+Core (x86)应用程序
 ----------------------
 
-Build and flash the x86 application with the following commands:
+使用以下命令编译和烧写x86应用程序：
 
 .. code-block:: console
 
    $ cd <my x86 app>
    $ make BOARD=arduino_101 flash
 
-Launch the debug server on the x86 core:
+在x86核心上启动debug server:
 
 .. code-block:: console
 
    $ make BOARD=arduino_101 debugserver
 
-Connect to the debug server at the x86 core from a second console:
+在第二个控制台将debug server连接至x86核心：
 
 .. code-block:: console
 
@@ -447,32 +364,30 @@ Connect to the debug server at the x86 core from a second console:
    (gdb) b main
    (gdb) c
 
-Sensor Subsystem Core (ARC)
+传感器子系统Core (ARC)
 ---------------------------
 
-Enable ARC INIT from the x86 core. This can be done by flashing an x86
-application that sets the ``CONFIG_ARC_INIT=y`` option, such as the booting stub
-provided with the Zephyr Test Framework.
+使能x86核心的ARC INIT。这可以通过烧写设置了 ``CONFIG_ARC_INIT=y`` 选项的x86应用程序来完成，例如Zephyr测试框架所提供的booting stub。
 
 .. code-block:: console
 
    $ cd $ZEPHYR_BASE/tests/booting/stub
    $ make BOARD=arduino_101 flash
 
-Build and flash the ARC application with the following commands:
+使用以下命令编译和烧写ARC应用程序：
 
 .. code-block:: console
 
    $ cd <my arc app>
    $ make BOARD=arduino_101_sss flash
 
-Launch the debug server on the ARC core:
+在ARC核心上启动debug server:
 
 .. code-block:: console
 
    $ make BOARD=arduino_101_sss debugserver
 
-Connect to the debug server at the ARC core from a second console:
+在第二个控制台将debug server连接至ARC核心：
 
 .. code-block:: console
 
@@ -483,15 +398,10 @@ Connect to the debug server at the ARC core from a second console:
    (gdb) c
 
 
-Bluetooth Firmware
+蓝牙固件
 ------------------
 
-You will only see normal log messages on the console, by default, without any
-way of accessing the HCI traffic between Zephyr and the nRF51 controller.
-However, there is a special Bluetooth logging mode that converts the console to
-use a binary protocol that interleaves both normal log messages as well as the
-HCI traffic. Set the following Kconfig options to enable this protocol before
-building your application:
+你仅能在控制台上看到普通日志信息，默认情况下无任何途径访问Zephyr和nRF51控制器间的人机交互信息。尽管如此，还是有一个专门的蓝牙日志模式将控制台转换为二进制协议，可插入普通日志信息及人机交互信息。在编译应用程序前，设置以下Kconfig选项以使用这个协议：
 
 .. code-block:: console
 
@@ -499,27 +409,20 @@ building your application:
    CONFIG_UART_CONSOLE=n
    CONFIG_UART_QMSI_1_BAUDRATE=1000000
 
-The first item replaces the BLUETOOTH_DEBUG_LOG option, the second one
-disables the default printk/printf hooks, and the third one matches the console
-baudrate with what's used to communicate with the nRF51, in order not to create
-a bottleneck.
+第一项重置了BLUETOOTH_DEBUG_LOG选项，第二项禁用了默认的printk/printf钩子，为了不产生瓶颈，第三项匹配与nRF51通信所使用的控制台波特率。
 
-To decode the binary protocol that will now be sent to the console UART you need
-to use the btmon tool from BlueZ 5.40 or later:
+为将发送至控制台UART的二进制协议译码，你将使用BlueZ 5.40及之后版本的btmon工具：
 
 
 .. code-block:: console
 
    $ btmon --tty <console TTY> --tty-speed 1000000
 
-Release Notes
+发行说明
 *************
-When debugging on ARC, it is important that the x86 core be started and running
-BEFORE attempting to debug on ARC. This is because the IPM console calls will
-hang waiting for the x86 core to clear the communication.
+在调试ARC时，切记，试图调试ARC前必须首先启动并运行x86核心。这是因为IPM控制台调用会挂起并等待x86核心清除通信。
 
-
-References
+参考
 **********
 
 .. _QMSI Bootloader: https://github.com/quark-mcu/qm-bootloader

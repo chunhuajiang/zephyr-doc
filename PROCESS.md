@@ -11,13 +11,13 @@
 | 入门指南        | 搭建 Win 开发环境   |  -                | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
 | 入门指南        | 搭建 Linux 开发环境 |  -                | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
 | 入门指南        | 搭建 Mac 开发环境   |  -                | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
-| 支持的开发板    |  x86            |  Arduino101       |  陈蛇                                               |  领取    |
-| 支持的开发板    |  x86             |  x86 qemu         |  陈蛇                                               |  领取    |
-| 支持的开发板    |  x86             |  quark d2000      |  陈蛇                                               |  领取    |
-| 支持的开发板    |  x86             |  tiny TILE        |  陈蛇                                               |  领取    |
+| 支持的开发板    |  x86            |  Arduino101       |  陈蛇                                               |  完成    |
+| 支持的开发板    |  x86             |  x86 qemu         |  陈蛇                                               |  完成    |
+| 支持的开发板    |  x86             |  quark d2000      |  陈蛇                                               |  完成    |
+| 支持的开发板    |  x86             |  tiny TILE        |  陈蛇                                               |  完成    |
 | 支持的开发板    |  arm             |  Genuino101(BLE)  |                                                      |          |
-| 支持的开发板    |  arm             |  Arduino Due      |                                                      |          |
-| 支持的开发板    |  arm             |  CC3200 LaunchXL  |   [josephleung](https://github.com/josephleung)                                                   |          |
+| 支持的开发板    |  arm             |  Arduino Due      |   [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
+| 支持的开发板    |  arm             |  CC3200 LaunchXL  |   [josephleung](https://github.com/josephleung)      |  领取    |
 | 支持的开发板    |  arm             |  Curie (BLE)      |                                                      |          |
 | 支持的开发板    |  arm             |  NXP FRDM-K64F    |   [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 | 支持的开发板    |  arm             |  NXP FRDM-KW41Z   |   [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
