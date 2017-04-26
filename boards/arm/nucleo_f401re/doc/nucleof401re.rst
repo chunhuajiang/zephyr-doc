@@ -3,24 +3,22 @@
 ST Nucleo F401RE
 ################
 
-Overview
+概览
 ********
 
-The Nucleo F401RE board features an ARM Cortex-M4 based STM32F401RE MCU
-with a wide range of connectivity support and configurations Here are
-some highlights of the Nucleo F401RE board:
+Nucleo F401RE是一块基于STM32F401RE MCU的ARM Cortex-M4开发板，具有广泛的连接支持和配置。以下是Nucleo F401RE开发板的亮点：:
 
 
-- STM32 microcontroller in QFP64 package
-- Two types of extension resources:
-       - Arduino Uno V3 connectivity
-       - ST morpho extension pin headers for full access to all STM32 I/Os
-- On-board ST-LINK/V2-1 debugger/programmer with SWD connector
-- Flexible board power supply:
-       - USB VBUS or external source(3.3V, 5V, 7 - 12V)
-       - Power management access point
-- Three LEDs: USB communication (LD1), user LED (LD2), power LED (LD3)
-- Two push-buttons: USER and RESET
+- QFP64包内的STM32微控制器
+- 两种扩展资源类型:
+       - Arduino Uno V3连通性
+       - 可完全访问STM32 I/O的ST morpho扩展引脚接口
+- 带SWD连接器的板载ST-LINK/V2-1 调试/编程
+- 灵活的主板电源供应:
+       - USB VBUS或外部电源(3.3V, 5V, 7 - 12V)
+       - 电源管理接入点
+- 三个LED: USB通信 (LD1), 用户LED (LD2), 电源LED(LD3)
+- 两个按钮: 用户和重启
 
 .. image:: img/nucleo64_perf_logo_1024.png
      :width: 720px
@@ -28,70 +26,69 @@ some highlights of the Nucleo F401RE board:
      :height: 720px
      :alt: Nucleo F401RE
 
-More information about the board can be found at the `Nucleo F401RE website`_.
+关于开发板的更多信息请查阅 `Nucleo F401RE website`_。
 
-Hardware
+硬件
 ********
 
-Nucleo F401RE provides the following hardware components:
+Nucleo F401RE提供以下硬件:
 
-- STM32F401RET6 in LQFP64 package
-- ARM®32-bit Cortex®-M4 CPU with FPU
-- 84 MHz max CPU frequency
-- VDD from 1.7 V to 3.6 V
+- LQFP64包内STM32F411RET6
+- 内置FPU的ARM® 32-bit Cortex®-M4 CPU
+- 84 MHz 的最高CPU频率
+- 1.7 V 至 3.6 V VDD
 - 512 KB Flash
 - 96 KB SRAM
-- GPIO with external interrupt capability
-- 12-bit ADC with 16 channels
+- 具有外部中断功能的GPIO
+- 16通道12-bit ADC with 16 channels
 - RTC
-- Advanced-control Timer
-- General Purpose Timers (7)
-- Watchdog Timers (2)
+- 高级控制定时器
+- 通用目的定时器 (7)
+- 看门狗定时器 (2)
 - USART/UART (3)
 - I2C (3)
 - SPI (4)
 - SDIO
 - USB 2.0 OTG FS
-- DMA Controller
+- DMA 控制器
 
-More information about STM32F401RE can be found here:
+更多有关 STM32F401RE 的信息请参阅:
        - `STM32F401RE on www.st.com`_
        - `STM32F401 reference manual`_
 
-Supported Features
+支持的功能
 ==================
 
-The Zephyr nucleo_401re board configuration supports the following hardware features:
+Zephyr的nucleo_401re主板配置支持以下硬件功能:
 
 +-----------+------------+-------------------------------------+
-| Interface | Controller | Driver/Component                    |
+| 接口      | 控制器      | 驱动/元件                          |
 +===========+============+=====================================+
-| NVIC      | on-chip    | nested vector interrupt controller  |
+| NVIC      | on-chip    | 嵌套向量中断控制器                  |
 +-----------+------------+-------------------------------------+
-| UART      | on-chip    | serial port-polling;                |
-|           |            | serial port-interrupt               |
+| UART      | on-chip    | 串行端口轮询;                       |
+|           |            | 串行端口中断                        |
 +-----------+------------+-------------------------------------+
-| PINMUX    | on-chip    | pinmux                              |
+| PINMUX    | on-chip    | 引脚复用                            |
 +-----------+------------+-------------------------------------+
 | GPIO      | on-chip    | gpio                                |
 +-----------+------------+-------------------------------------+
 | PWM       | on-chip    | pwm                                 |
 +-----------+------------+-------------------------------------+
 
-Other hardware features are not yet supported on Zephyr porting.
+本Zephyr端口还不支持其它硬件。
 
-The default configuration can be found in the defconfig file:
+默认配置可在defconfig文件中找到:
 
 	``boards/arm/nucleo_f401re/nucleo_f401re_defconfig``
 
 
-Pin Mapping
+引脚映射
 ===========
 
-Nucleo F401RE Board has 6 GPIO controllers. These controllers are responsible for pin muxing,
-input/output, pull-up, etc.
+Nucleo F401RE开发板有6路GPIO控制器。这些控制器负责引脚利用、输入/输出、上拉等等。
 
-Available pins:
+可用引脚:
 ---------------
 .. image:: img/nucleo_f401re_arduino.png
      :width: 720px
@@ -104,9 +101,9 @@ Available pins:
      :height: 540px
      :alt: Nucleo F401RE Morpho connectors
 
-For mode details please refer to `STM32 Nucleo-64 board User Manual`_.
+更多信息请参考 `STM32 Nucleo-64 board User Manual`_。
 
-Default Zephyr Peripheral Mapping:
+默认Zephyr外设映射:
 ----------------------------------
 - UART_1_TX : PB6
 - UART_1_RX : PB7
@@ -116,39 +113,35 @@ Default Zephyr Peripheral Mapping:
 - USER_PB : PC13
 - LD2 : PA5
 
-System Clock
+系统时钟
 ============
 
-Nucleo F401RE System Clock could be driven by internal or external oscillator,
-as well as main PLL clock. By default System clock is driven by PLL clock at 84MHz,
-driven by 8MHz high speed external clock.
+Nucleo F401RE 系统时钟可由内部或外部晶振及主PLL时钟驱动。默认情况下，系统时钟由84MHz PLL时钟驱动，通过8MHz高速内部振荡器驱动。
 
-Serial Port
+串口
 ===========
 
-Nucleo F401RE board has 3 UARTs. The Zephyr console output is assigned to UART2.
-Default settings are 115200 8N1.
+Nucleo F401RE 开发板拥有3个UART。Zephyr控制台输出分配给UART2。默认设置为115200 8N1。
 
 
-Programming and Debugging
+编程与调试
 *************************
 
-Flashing
+烧写
 ========
 
-Nucleo F401RE board includes an ST-LINK/V2-1 embedded debug tool interface.
-This interface is supported by the openocd version included in Zephyr SDK.
+Nucleo F401RE 开发板包括一个ST-LINK/V2-1 嵌入式调试工具接口。此接口被Zephyr SDK中的openocd所支持。
 
-Flashing an application to Nucleo F401RE
+在Nucleo F401RE中烧写应用程序
 ----------------------------------------
 
-The sample application :ref:`hello_world` is being used in this tutorial:
+本说明使用示例应用程序 :ref:`hello_world` :
 
 .. code-block:: console
 
    $<zephyr_root_path>/samples/hello_world
 
-To build the Zephyr kernel and application, enter:
+编译Zephyr内核及应用程序，输入:
 
 .. code-block:: console
 
@@ -157,30 +150,29 @@ To build the Zephyr kernel and application, enter:
    $ cd $ZEPHYR_BASE/samples/hello_world/
    $ make BOARD=nucleo_f401re
 
-Connect the Nucleo F401RE to your host computer using the USB port.
-Then, enter the following command:
+使用USB端口将 Nucleo F401RE 连接至你的计算机主机，然后输入如下命令：
 
 .. code-block:: console
 
    $ make BOARD=nucleo_f401re flash
 
-Run a serial host program to connect with your Nucleo board:
+在主机上运行串口程序并连接至Nucleo board。
 
 .. code-block:: console
 
    $ minicom -D /dev/ttyACM0
 
-You should see the following message:
+你将看到以下信息:
 
 .. code-block:: console
 
    Hello World! arm
 
 
-Debugging
+调试
 =========
 
-Access gdb with the following make command:
+使用以下make命令访问gdb:
 
 .. code-block:: console
 
