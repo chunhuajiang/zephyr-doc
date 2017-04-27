@@ -1,16 +1,14 @@
-.. _mps2_an385_board:
+﻿.. _mps2_an385_board:
 
 ARM V2M MPS2
 ############
 
-Overview
+概览
 ********
 
-The mps2_an385 board configuration is used by Zephyr applications that run on
-the V2M MPS2 board. It provides support for the ARM Cortex-M3 (AN385) CPU and
-the following devices:
+mps2_an385主板配置被Zephyr应用程序用于在V2M MPS2开发板上运行。它提供了对 ARM Cortex-M3 (AN385) CPU 及以下设备的支持：
 
-- Nested Vectored Interrupt Controller (NVIC)
+- 嵌套向量中断控制器 (NVIC)
 - System Tick System Clock (SYSTICK)
 - Cortex-M System Design Kit UART
 
@@ -20,124 +18,117 @@ the following devices:
      :height: 335px
      :alt: ARM V2M MPS2
 
-More information about the board can be found at the `V2M MPS2 Website`_.
+有关此开发板的更多信息请参阅 `V2M MPS2 Website`_。
 
-The Application Note AN385 can be found at `Application Note AN385`_.
+AN385操作说明请参阅 `Application Note AN385`_。
 
-Hardware
+硬件
 ********
 
-ARM V2M MPS2 provides the following hardware components:
+ARM V2M MPS2 提供了以下硬件:
 
 - ARM Cortex-M3 (AN385)
-- ARM IoT Subsystem for Cortex-M
-- Form factor: 140x120cm
-- SRAM: 8MB single cycle SRAM, 16MB PSRAM
-- Video: QSVGA touch screen panel, 4bit RGB VGA connector
+- Cortex-M的ARM IoT 子系统
+- 外形尺寸: 140x120cm
+- SRAM: 8MB单周期SRAM, 16MB PSRAM
+- Video: QSVG触屏面板, 4bit RGB VGA 连接器
 - Audio: Audio Codec
 - Debug:
 
-  - ARM JTAG20 connector
-  - ARM parallel trace connector (MICTOR38)
-  - 20 pin Cortex debug connector
-  - 10 pin Cortex debug connector
-  - ILA connector for FPGA debug
+  - ARM JTAG20 连接器
+  - ARM 并行跟踪连接器 (MICTOR38)
+  - 20 pin Cortex 调试连接器
+  - 10 pin Cortex 调试连接器
+  - 用于FPGA调试的ILA连接器
 
-- Expansion
+- 扩展
 
   - GPIO
   - SPI
 
 
-Supported Features
+支持的功能
 ==================
 
-The mps2_an385 board configuration supports the following hardware features:
+mps2_an385主板配置支持以下硬件功能:
 
 +-----------+------------+-------------------------------------+
-| Interface | Controller | Driver/Component                    |
+| 接口      | 控制器     | 驱动/元件                           |
 +===========+============+=====================================+
-| NVIC      | on-chip    | nested vector interrupt controller  |
+| NVIC      | on-chip    | 嵌套向量中断控制器                  |
 +-----------+------------+-------------------------------------+
 | SYSTICK   | on-chip    | systick                             |
 +-----------+------------+-------------------------------------+
-| UART      | on-chip    | serial port-polling;                |
-|           |            | serial port-interrupt               |
+| UART      | on-chip    | 串行端口轮询;                       |
+|           |            | 串行端口中断                        |
 +-----------+------------+-------------------------------------+
 | GPIO      | on-chip    | gpio                                |
 +-----------+------------+-------------------------------------+
-| WATCHDOG  | on-chip    | watchdog                            |
+| WATCHDOG  | on-chip    | 看门狗                              |
 +-----------+------------+-------------------------------------+
-| TIMER     | on-chip    | counter                             |
+| TIMER     | on-chip    | 计数器                              |
 +-----------+------------+-------------------------------------+
-| DUALTIMER | on-chip    | counter                             |
+| DUALTIMER | on-chip    | 计数器                              |
 +-----------+------------+-------------------------------------+
 
-Other hardware features are not currently supported by the port.
-See the `V2M MPS2 Website`_ for a complete list of V2M MPS2 board hardware
-features.
+本Zephyr端口还不支持其它硬件。
+V2M MPS2开发板的完整硬件功能列表请参阅 `V2M MPS2 Website`_ 。
 
-The default configuration can be found in the defconfig file:
+默认配置可在defconfig文件中找到:
 
 .. code-block:: console
 
    boards/arm/mps2_an385/mps2_an385_defconfig
 
-Interrupt Controller
+中断控制器
 ====================
 
-MPS2 is a Cortex-M3 based SoC and has 15 fixed exceptions and 45 IRQs.
+MPS2是一块基于Cortex-M3的SoC，具有15个固定异常和45个IRQ。
 
-A Cortex-M3/4-based board uses vectored exceptions. This means each exception
-calls a handler directly from the vector table.
+基于Cortex-M3/4的开发板使用矢量异常，这意味着每个异常都从向量表直接调用处理程序（句柄）。
 
-Handlers are provided for exceptions 1-6, 11-12, and 14-15. The table here
-identifies the handlers used for each exception.
+为异常提供的句柄为 1-6、11-12和14-15。下表标识了每个异常所使用的句柄。
 
 +------+------------+----------------+--------------------------+
-| Exc# | Name       | Remarks        | Used by Zephyr Kernel    |
+| Exc# | 名称       | 注释           | Zephyr内核用于           |
 +======+============+================+==========================+
-| 1    | Reset      |                | system initialization    |
+| 1    | Reset      |                | 系统初始化               |
 +------+------------+----------------+--------------------------+
-| 2    | NMI        |                | system fatal error       |
+| 2    | NMI        |                | 系统致命错误             |
 +------+------------+----------------+--------------------------+
-| 3    | Hard fault |                | system fatal error       |
+| 3    | Hard fault |                | 系统致命错误             |
 +------+------------+----------------+--------------------------+
-| 4    | MemManage  | MPU fault      | system fatal error       |
+| 4    | MemManage  | MPU 故障       | 系统致命错误             |
 +------+------------+----------------+--------------------------+
-| 5    | Bus        |                | system fatal error       |
+| 5    | Bus        |                | 系统致命错误             |
 +------+------------+----------------+--------------------------+
-| 6    | Usage      | undefined      | system fatal error       |
-|      | fault      | instruction,   |                          |
-|      |            | or switch      |                          |
-|      |            | attempt to ARM |                          |
-|      |            | mode           |                          |
+| 6    | Usage      | 未定义指令或试 | 系统致命错误             |
+|      | fault      | 图切换至ARM模  |                          |
+|      |            | 式             |                          |
 +------+------------+----------------+--------------------------+
-| 11   | SVC        |                | context switch and       |
-|      |            |                | software interrupts      |
+| 11   | SVC        |                | 上下文切换和软件中断     |
 +------+------------+----------------+--------------------------+
-| 12   | Debug      |                | system fatal error       |
+| 12   | Debug      |                | 系统致命错误             |
 |      | monitor    |                |                          |
 +------+------------+----------------+--------------------------+
-| 14   | PendSV     |                | context switch           |
+| 14   | PendSV     |                | 上下文切换               |
 +------+------------+----------------+--------------------------+
-| 15   | SYSTICK    |                | system clock             |
+| 15   | SYSTICK    |                | 系统时钟                 |
 +------+------------+----------------+--------------------------+
 
-Pin Mapping
+引脚映射
 ===========
 
-The ARM V2M MPS2 Board has 4 GPIO controllers. These controllers are responsible
-for pin muxing, input/output, pull-up, etc.
+ARM V2M MPS2开发板有4个GPIO控制器。这些控制器负责引脚复用、输入/输出、上拉等等。
 
-All GPIO controller pins are exposed via the following sequence of pin numbers:
+GPIO 控制器引脚所对应的引脚号为： 
 
-- Pins 0 - 15 are for GPIO 0
-- Pins 16 - 31 are for GPIO 1
-- Pins 32 -  47 are for GPIO 2
-- Pins 48 -  51 are for GPIO 3
+- GPIO 0：Pins 0 - 15  
+- GPIO 1：Pins 16 - 31  
+- GPIO 2：Pins 32 -  47  
+- GPIO 3：Pins 48 -  51 
 
-Mapping from the ARM MPS2 Board pins to GPIO controllers:
+ARM MPS2开发板引脚到GPIO控制器的映射：
 
 .. hlist::
    :columns: 3
@@ -195,7 +186,7 @@ Mapping from the ARM MPS2 Board pins to GPIO controllers:
    - D50 : EXT_50
    - D51 : EXT_51
 
-Peripheral Mapping:
+外设映射：
 
 .. hlist::
    :columns: 3
@@ -217,43 +208,40 @@ Peripheral Mapping:
    - I2C_4_SDA : D40
    - I2C_4_SCL : D41
 
-For mode details please refer to `MPS2 Technical Reference Manual (TRM)`_.
+获取更多详细信息请参阅 `MPS2 Technical Reference Manual (TRM)`_。
 
-System Clock
+系统时钟
 ============
 
-The V2M MPS2 main clock is 24 MHz.
+V2M MPS2 主时钟为 24 MHz。
 
-Serial Port
+串口
 ===========
 
-The V2M MPS2 processor has five UARTs. Both the UARTs have only two wires for
-RX/TX and no flow control (CTS/RTS) or FIFO. The Zephyr console output, by
-default, is utilizing UART0.
+V2M MPS2有5个UARTs。所有UART仅有两根线用于发送/接收，而且无流控制(CTS/RTS)或FIFO。Zephyr控制台输出默认使用UART0。
 
-Programming and Debugging
+编程与调试
 *************************
 
-Flashing
+烧写
 ========
 
-V2M MPS2 provides:
+V2M MPS2 提供:
 
-- A USB connection to the host computer, which exposes a Mass Storage and an
-  USB Serial Port.
-- A Serial Flash device, which implements the USB flash disk file storage.
-- A physical UART connection which is relayed over interface USB Serial port.
+- 一个连接至电脑主机的USB连接器，显示为大容量存储器及USB串口。
+- 一个串行Flash设备，实现了USB flash存储器文件存储。
+- 一个物理UART连接器， 它是USB串口的中继接口。
 
-Flashing an application to V2M MPS2
+在V2M MPS2中烧写应用程序
 -----------------------------------
 
-The sample application :ref:`hello_world` is being used in this tutorial:
+本指南使用了示例应用程序 :ref:`hello_world` :
 
 .. code-block:: console
 
    $ZEPHYR_BASE/samples/hello_world
 
-To build the Zephyr kernel and application, enter:
+编译Zephyr内核及应用程序，请输入:
 
 .. code-block:: console
 
@@ -262,11 +250,7 @@ To build the Zephyr kernel and application, enter:
    $ cd $ZEPHYR_BASE/samples/hello_world/
    $ make BOARD=mps2_an385
 
-Connect the V2M MPS2 to your host computer using the USB port and you should
-see a USB connection which exposes a Mass Storage and a USB Serial Port.
-Copy the generated zephyr.bin in the exposed drive.
-Reset the board and you should be able to see on the corresponding Serial Port
-the following message:
+将V2M MPS2通过USB口连接至你的电脑主机，你将看到一个USB连接器，显示为大容量存储器及一个USB串口。拷贝生成的zephyr.bin到所显示的驱动器。重启开发板，你将看到相应的串口信息：
 
 .. code-block:: console
 

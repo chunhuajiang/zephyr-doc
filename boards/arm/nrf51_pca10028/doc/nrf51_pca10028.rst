@@ -1,162 +1,144 @@
-.. _nrf51_pca10028:
+﻿.. _nrf51_pca10028:
 
 nRF51-PCA10028
 ##############
 
-Overview
+概览
 ********
 
-Zephyr applications use the nrf51_pca10028 board configuration to run on the
-nRF51 Development Kit (PCA10028) hardware. It provides support for the Nordic Semiconductor
-nRF51822 ARM Cortex-M0 CPU and the following devices:
+Zephyr应用程序使用 nrf51_pca10028 主板配置在nRF51开发板(PCA10028)硬件上运行。它提供了对Nordic Semiconductor nRF51822 ARM Cortex-M0 CPU及以下设备的支持：
 
-* :abbr:`NVIC (Nested Vectored Interrupt Controller)`
-* :abbr:`RTC (nRF RTC System Clock)`
+* :abbr:`NVIC (嵌套向量中断控制器)`
+* :abbr:`RTC (nRF RTC 系统时钟)`
 * UART
 * GPIO
 * FLASH
-* RADIO (Bluetooth Low Energy)
-* Segger RTT (RTT Console)
+* RADIO (低功耗蓝牙)
+* Segger RTT (RTT 控制台)
 
 .. figure:: img/nrf51_pca10028.jpg
      :width: 442px
      :align: center
      :alt: nRF51 PCA10028 DK
 
-     nRF51 PCA10028 DK (Credit: Nordic Semi)
+     nRF51 PCA10028 开发板 (生产厂商: Nordic Semi)
 
-More information about the board can be found at the
-`nRF51 DK website`_. The `Nordic Semiconductor Infocenter`_
-contains the processor's information and the datasheet.
+更多有关开发板的信息可参阅`nRF51 DK website`_。 `Nordic Semiconductor Infocenter`_则包含了处理器信息及数据手册。
 
-Hardware
+硬件
 ********
 
-nRF51 DK has two external oscillators. The frequency of
-the slow clock is 32.768 kHz. The frequency of the main clock
-is 16 MHz.
+nRF51 DK 有两个外部振荡器。较慢时钟的频率为 32.768 kHz。主时钟频率为16 MHz。
 
-Supported Features
+支持的功能
 ==================
 
-The nrf51_pca10028 board configuration supports the following nRF51
-hardware features:
+nrf51_pca10028 主板配置支持以下硬件功能：
 
 +-----------+------------+----------------------+
-| Interface | Controller | Driver/Component     |
+| 接口      | 控制器     | 驱动/元件            |
 +===========+============+======================+
-| NVIC      | on-chip    | nested vectored      |
-|           |            | interrupt controller |
+| NVIC      | on-chip    | 嵌套向量中断控制器   |
 +-----------+------------+----------------------+
-| RTC       | on-chip    | system clock         |
+| RTC       | on-chip    | 系统时钟             |
 +-----------+------------+----------------------+
-| UART      | on-chip    | serial port          |
+| UART      | on-chip    | 串口                 |
 +-----------+------------+----------------------+
 | GPIO      | on-chip    | gpio                 |
 +-----------+------------+----------------------+
 | FLASH     | on-chip    | flash                |
 +-----------+------------+----------------------+
-| RADIO     | on-chip    | bluetooth            |
+| RADIO     | on-chip    | 蓝牙                 |
 +-----------+------------+----------------------+
-| RTT       | on-chip    | console              |
+| RTT       | on-chip    | 控制台               |
 +-----------+------------+----------------------+
 
-Other hardware features are not supported by the Zephyr kernel.
-See `nRF51 DK website`_ and `Nordic Semiconductor Infocenter`_
-for a complete list of nRF51 Development Kit board hardware features.
+其它的硬件功能不被Zephyr内核支持。参考 `nRF51 DK website`_ 及 `Nordic Semiconductor Infocenter`_获取完整的nRF52开发板硬件功能列表。
 
-Connections and IOs
+连接及IO
 ===================
 
 LED
 ---
 
-* LED1 (green) = P0.21
-* LED2 (green) = P0.22
-* LED3 (green) = P0.23
-* LED4 (green) = P0.24
+* LED1 (绿) = P0.21
+* LED2 (绿) = P0.22
+* LED3 (绿) = P0.23
+* LED4 (绿) = P0.24
 
-Push buttons
+按钮
 ------------
 
 * BUTTON1 = SW1 = P0.17
 * BUTTON2 = SW2 = P0.18
 * BUTTON3 = SW3 = P0.19
 * BUTTON4 = SW4 = P0.20
-* BOOT = SW5 = boot/reset
+* BOOT = SW5 = 启动/重启
 
-Programming and Debugging
+编程和调试
 *************************
 
-Flashing
+烧写
 ========
 
-Follow the instructions in the :ref:`nordic_segger` page to install and configure
-all the necessary software.
+在 :ref:`nordic_segger` 页的以下指令用于安装和配置所有需要的软件。
 
-This tutorial uses the sample application
-shell :file:`$ZEPHYR_BASE/samples/subsys/shell/shell`, and uses the information that can be found in
-:ref:`nordic_segger_flashing`.
+本指南使用了示例应用程序
+shell :file:`$ZEPHYR_BASE/samples/subsys/shell/shell`，使用信息可以查找:ref:`nordic_segger_flashing`。
 
-#. To build the Zephyr kernel, enter:
+#. 编译Zephyr内核请输入:
 
    .. code-block:: console
 
       $ cd $ZEPHYR_BASE
       $ make -C samples/subsys/shell/shell BOARD=nrf51_pca10028
 
-#. Connect the micro-USB cable to the nRF51 DK and to your computer.
+#. 通过micro-USB线缆将nRF51 DK连接至你的计算机。
 
-#. Erase the flash memory in the nRF51822:
+#. 擦除nRF51822上的flash闪存：
 
    .. code-block:: console
 
       $ nrfjprog --eraseall -f nrf51
 
-#. Flash the application using the nrfjprog tool:
+#. 使用nrfjprog工具烧写应用程序：
 
    .. code-block:: console
 
       $ nrfjprog --program outdir/zephyr.hex -f nrf51
 
-#. Run your favorite terminal program to listen for output.
+#. 运行你喜欢的程序监听输出。
 
    .. code-block:: console
 
       $ minicom -D <tty_device> -b 115200
 
-   Replace :code:`<tty_device>` with the port where the board
-   nRF51 DK can be found. For example, under Linux,
-   :code:`/dev/ttyACM0`.
+   将 :code:`<tty_device>` 替换为nRF51 DK所使用的端口。例如Linux下的 :code:`/dev/ttyACM0`。
 
-   The ``-b`` option sets baudrate ignoring the value
-   from config.
+   ``-b`` 选项设置波特率而忽略配置值。
 
-#. Press the Reset button and you should see the output of
-   shell application in your terminal.
+#. 按下重启按钮，你将在终端看到shell应用程序的输出。
 
-Debugging
+调试
 =========
 
-Refer to the :ref:`nordic_segger` page to learn about debugging Nordic boards with a
-Segger IC.
+参阅 :ref:`nordic_segger` 页学习有关Nordic开发板使用Segger IC进行调试的内容。
 
 
-Testing the LEDs and buttons in the nRF51 DK
+
+测试nRF51 DK开发板的LED及按钮
 ********************************************
 
-There are 2 samples that allow you to test that the buttons (switches) and LEDs on
-the board are working properly with Zephyr:
+有两个示例可让你测试Zephyr下开发板的按钮及LED是否正确运行：
 
 .. code-block:: console
 
    samples/basic/blinky
    samples/basic/button
 
-You can build and flash the examples to make sure Zephyr is running correctly on
-your board. The button and LED definitions can be found in :file:`boards/arm/nrf51_pca10028/board.h`.
+你可编译并烧写示例以确定Zephyr是否可以在你的开发板上正确运行。按钮及LED定义可在 :file:`boards/arm/nrf51_pca10028/board.h`中找到。
 
-References
+参考
 **********
 
 .. target-notes::
