@@ -1,81 +1,59 @@
-.. _em_starterkit:
+﻿.. _em_starterkit:
 
-DesignWare(R) ARC(R) EM Starter Kit
+DesignWare(R) ARC(R) EM 入门套件
 ###################################
 
-Overview
+概览
 ********
 
-The DesignWare(R) ARC(R) EM Starter Kit is a low-cost, versatile solution
-enabling rapid software development and software debugging, and profiling
-for the ARC EM Family of processors. The EM Family includes the EM4, EM6,
-EM5D, EM7D, EM9D, and EM11D cores. The Zephyr RTOS can be used with the
-EM Starter Kit.
+The DesignWare(R) ARC(R) EM 入门套件是一款低成本、多功能的解决方案，可进行快速软件开发，软件调试，以及对ARC EM系列处理器进行学习分析。EM系列包括 EM4、EM6、EM5D、EM7D、EM9D和EM11D内核。Zephyr RTOS可用于EM入门套件。
 
 .. image:: ARC_EM_Starter_Kit_Board_Photo.jpg
    :width: 442px
    :align: center
    :alt: DesignWare(R) ARC(R) EM Starter Kit (synopsys.com)
 
-The ARC EM Starter Kit consists of a hardware platform, including pre-installed
-FPGA images of different ARC EM processor configurations with peripherals.
-Documentation for this board can be found at the following URL:
+ARC EM 入门套件由一个硬件平台组成，包括不同外设的ARC EM处理器配置预安装FPGA镜像。此开发板文档可在以下URL中找到：
 https://www.embarc.org.
 
-See also this URL for details about the board:
+也可阅读以下URL获取此开发板的详细信息:
 https://www.synopsys.com/dw/ipdir.php?ds=arc_em_starter_kit
 
-The default configuration for EM Starter Kit boards can be found in
-:file:`boards/arc/em_starterkit/em_starterkit_defconfig`.
+EM入门套件板的默认配置可在以下路径找到 :file:`boards/arc/em_starterkit/em_starterkit_defconfig`.
 
-The default SOC for this board is the EM9D. This configuration is a Harvard
-Architecture, with a separate instruction bus and data bus. Instruction memory
-is called ICCM and data memory is called DCCM. The configuration file for EM9D
-is found in :file:`arch/arc/soc/em9d/Kconfig.defconfig`.
+此开发板的默认SOC为 EM9D。它的配置为Harvard体系结构，具有单独的指令总线和数据总线。指令存储器称为ICCM，数据存储器称为DCCM。EM9D配置文件可在 :file:`arch/arc/soc/em9d/Kconfig.defconfig` 中找到。
 
-If you have a larger program, you can select the EM7D or EM11D, which gives
-access to 128KB DRAM with i-cache and d-cache. The configuration file for EM7D
-is found in :file:`arch/arc/soc/em7d/Kconfig.defconfig` and EM11D is found in
-:file:`arch/arc/soc/em11d/Kconfig.defconfig`.
+如果使用更大的程序，可选择EM7D或EM11D，它可以访问到带i-cache和d-cache的128KB DRAM。EM7D配置文件在:file:`arch/arc/soc/em7d/Kconfig.defconfig`。EM11D的在:file:`arch/arc/soc/em11d/Kconfig.defconfig`。
 
-Hardware
+硬件
 ********
-Board Layout
+主板布局
 ============
 
-The ARC EM Starter Kit main board has 6 Pmod connectors. These can be configured
-to support attachment of GPIO, I2C, UART or SPI devices.
+ARC EM 入门套件主板有6个Pmod连接器。它们可以被配置为支持I2C、GPIO、UART或SPI设备附件。
 
-The board also has a 16MB SPI-FLASH and an SDCard for storage. There are 9 LEDs,
-3 buttons, and 4 dip switches that can be used with GPIO.
+此主板配置了一个16MB SPI-FLASH 及一个SDCard存储器。还有9个LEDs，3个按钮及4个可用于GPIO的dip开关。
 
-The Xilinx Spartan(R)-6 LX150 FPGA can auto-load one of 3 FPGA SOC bit files
-which have the EM7D, EM9D, or EM11D SOC.
+Xilinx Spartan(R)-6 LX150 FPGA可自动装载3个FPGA SOC二进制文件中的一个：EM7D、EM9D或EM11D SOC。
 
-Documentation and general information for the board can be found at the
-`embARC-website`_, which also includes some free sample software.
+开发板的文档和一般信息可在`embARC-website`_中找到，其中还包含一些免费示例软件。
 
-Supported Features
+支持的功能
 ==================
 
-The Zephyr kernel supports multiple hardware features on the EM Starter Kit
-through the use of device drivers.
+Zephy内核通过设备驱动程序可支持EM入门套件的多个硬件功能。
 
-The EM Starter Kit supports 6 Digilent Pmod(TM) Interfaces, which enables the
-use of a large variety of pluggable modules for storage, communications,
-sensors, displays, etc. With the Pmod interface, you can prototype your
-applications using the Zephyr RTOS.
+EM入门套件支持 6个Digilent Pmod(TM) Interfaces，它使存储、通信、传感器、显示器等多种可插拔模块的使用成为可能。通过使用Pmod接口，你可使用Zephyr RTOS实现应用程序。
 
-The table below shows which drivers are supported and which functionality can be
-found on which architectures:
+下表显示了对哪些驱动的支持，以及各功能所对应的体系：
 
 +-----------+------------+-----+-------+-----------------------+
-| Interface | Controller |EM9D | EM11D | Driver/Component      |
+| 接口      | 控制器     |EM9D | EM11D | 驱动/元件             |
 +===========+============+=====+=======+=======================+
-| INT       | on-chip    | Y   | Y     | interrupt_controller  |
+| INT       | on-chip    | Y   | Y     | 中断控制器            |
 +-----------+------------+-----+-------+-----------------------+
-| UART      | usb +      | Y   | Y     | serial port-polling;  |
-|           | 2 Pmods    |     |       | serial port-interrupt |
+| UART      | usb +      | Y   | Y     | 串行端口轮询;         |
+|           | 2 Pmods    |     |       | 串行端口中断          |
 +-----------+------------+-----+-------+-----------------------+
 | SPI       | 2 Pmods    | Y   | Y     | spi                   |
 +-----------+------------+-----+-------+-----------------------+
@@ -88,82 +66,61 @@ found on which architectures:
 | PWM       | n/a        | N   | N     | pwm                   |
 +-----------+------------+-----+-------+-----------------------+
 
-The board has 3 (debounced and interrupting) buttons for use with GPIO, 4 dip
-switches, 9 LEDs, SDCard on SPI, and a 16MB SPI-Flash memory.
+开发板有3个(消抖和中断)使用GPIO的按钮，4个dip开关，9个LED，使用SPI的SDCard和一个16MB SPI-Flash 闪存。
 
-The SPI-Flash also holds 3 (or 4) separate FPGA CPU bit files, selectable via
-dip switch.
+SPI-Flash还持有了3可4个单独的FPGA CPU二进制文件，可通过dip开关进行选择。
 
-The SPI-Flash is also programmed with a bootloader. The booloader can copy a
-program image from SPI-Flash into executable memory.  Zephyr initialization will
-copy the initialized data section to the data memory if CONFIG_XIP is used.
+SPI-Flash还可通过bootloader进行编程。booloader可将程序镜像从SPI-Flash拷贝到可执行内存。如果设置了CONFIG_XIP，Zephyr在初始化时将拷贝初始数据段至数据存储器。
 
 
-Programming and Debugging
+编程和调试
 *************************
 
-Required Hardware and Software
+需要的硬件和软件
 ==============================
 
-To use Zephyr RTOS applications on the EM Starter Kit board, a few additional
-pieces of hardware are required.
+要在EM入门套件板中使用Zephyr RTOS应用程序，需要一些额外的硬件。
 
-* USB Cable (delivered as part of the ARC EM Starter Kit)
+* USB线缆 (ARC EM入门套件的一部分)
 
-* The USB cable provides power to the board; however, if the board is to run
-  standalone, the universal switching power adaptor (110-240V AC to 5V DC),
-  provided in the package, can be used to power the board.
+* USB线缆向主板提供电源；尽管如此，如果主板独立运行，通用开关电源适配器(110-240V AC to 5V DC)也可给主板供电，它包含在套件内。
 
 * :ref:`The Zephyr SDK <zephyr_sdk>`
 
-* Terminal emulator software for use with the USB-UART. Suggestion:
-  http://www.putty.org.
+* USB-UART终端模拟软件，建议使用： http://www.putty.org.
 
-* (optional) A collection of Pmods.
-  See http://store.digilentinc.com/pmod-peripheral-modules or develop your
-  custom interfaces to attach to the Pmod connector.
+* (可选项) Pmods集合。参考 http://store.digilentinc.com/pmod-peripheral-modules 或开发自定义接口连接到Pmod连接器。
 
-Building Sample Applications
+编译示例应用程序
 ==============================
 
-You can try many of the sample applications or tests, but let us discuss
-the one called :ref:`hello_world`.
-It is found in :file:`$ZEPHYR_BASE/samples/hello_world`.
+你可尝试很多示例应用程序和测试，但我们只讨论其中的一个 :ref:`hello_world`。它可在 :file:`$ZEPHYR_BASE/samples/hello_world`中找到。
 
-You may need to write a prj_arc.conf file if the sample doesn't have one.
-Next, you can use the make menuconfig rule to configure the target. By
-providing the argument "BOARD=em_starterkit", you can select the ARC
-EM Starter Kit board support for Zephyr.
+如果示例中没有，你可能需要写一个prj_arc.conf文件。接下来，你可以使用menuconfig规则配置目标
+通过提供 "BOARD=em_starterkit"参数，你可以选择Zephyr所支持的ARC EM入门套件板。
 
 .. code-block:: console
 
    $ make menuconfig BOARD=em_starterkit
 
-On this board you will also need to consider the "ARC SoC Selection" and set
-it either to EM9D or EM11D. To boot up the EM9D on the board, all dip
-switches should be UP except for switch 1. Other configuration choices
-are made in the normal way. To boot up the EM11D on the board,
-all dip switches should be UP except for switch 2. Next press the button
-above the letter C in the "ARC" logo on the silkscreen.
+对于这块开发板，你还需要考虑 "ARC SoC Selection"，将其设置为EM9D或EM11D。要在开发板中启动EM9D，除了开关1，所有dip开关都应处于UP状态。其它选项正常选择即可。要启动开发板上的EM11D，除了开关2，所有dip开关都应处于UP状态。接下来按下“ARC” logo中字母C上方的按钮。
 
-To build the application, execute make:
+编译应用程序，执行make命令:
 
 .. code-block:: console
 
    $ make BOARD=em_starterkit
 
-Connecting Serial Output
+连接串口输出
 =========================
 
-In the default configuration, Zephyr's EM Starter Kit images support serial output
-via the UART1 on the board.  To enable serial output:
+在默认配置下，Zephyr的EM入门套件镜像支持通过主板上的UART1支持串口输出。要启用串口输出:
 
-On your development environment, you will need to:
+在开发环境中需要:
 
-* Open a serial port emulator (i.e. on Linux minicom, putty, screen, etc)
-* Specify the tty driver name, for example, on Linux this may be :file:`/dev/ttyUSB1`
-* Set the communication settings to:
-
+* 打开串口模拟器 (如Linux下的minicom, putty, screen等等)
+* 指定tty驱动名称，例如在Linux下，可能为 :file:`/dev/ttyUSB1`
+* 通信属性设置为:
 
 ========= =====
 Parameter Value
@@ -174,30 +131,22 @@ Parity:    None
 Stopbits:  1
 ========= =====
 
-Debugging
+调试
 ==========
-Before you can debug, you will need to download and install the
-Synopsys versions of ARC GNU tools. Unfortunately the Zephyr-SDK versions
-of openocd and gdb have some functionality limitations and don't yet
-work well with the ARC EM Starter Kit.
+在调试之前，你需要下载并安装ARC GNU工具的Synopsys版本。不幸的是，当前Zephyr-SDK版本的openocd和gdb存在着一些功能性限制，在ARC EM入门套件中不能很好地工作。
 
-The Synopsys tools are found on GITHUB here:
+Synopsys工具可在GITHUB中找到:
 
 https://github.com/foss-for-synopsys-dwc-arc-processors/toolchain/releases/tag/arc-2016.03
 
-For Linux, you will need:
+在Linux中，你需要:
 
 * arc_gnu_2016.03_ide_linux_install.tar.gz
 * arc_gnu_2016.03_prebuilt_elf32_be_linux_install.tar.gz
 
-You can untar these into any directory. Suggestion: /usr/local/arc.  Follow the
-instructions for how to set up to use these tools.  You will need your path
-changed to refer to the bin directories for these so that these cross
-development tools can be found.
+可将它们解压至任意目录，建议: /usr/local/arc。接下来按照说明设置这些工具，你需要更改路径以找到它们的bin目录，这样就可以找到这些交叉开发工具了。
 
-It is also useful to create a bash script to launch openocd, since if you are
-like me, you will find it hard to remember the arguments. Here is the one I use,
-placed in a file called ocd.
+创建一个bash脚本来运行openock也是非常有用的，因为像我一样，很难记住这些参数。我所使用的放置在一个叫ocd的文件中。
 
 .. code-block:: console
 
@@ -207,11 +156,9 @@ placed in a file called ocd.
   #where the environment variable ARCGNU_IDE refers to the install dir of the
   #openocd IDE
 
-This command to openocd uses port 3333 with gdb client, and provides the board
-cfg file for the ARC EM Starter Kit.
+此命令让 openocd 使用gdb客户端的 3333 端口，并提供ARC EM入门套件的的主板cfg文件。
 
-I have also found it useful to have a script, named debug.sh, to provide all the
-arguments to gdb:
+我还发现有个脚本非常有用，名字叫debug.sh，它提供了gdb的所有参数:
 
 .. code-block:: console
 
@@ -224,16 +171,11 @@ arguments to gdb:
     -ex "set remotetimeout 2000" \
     outdir/em_starterkit/zephyr.elf
 
-The target remote and load will attach to openocd and load the elf file into
-memory. You can also set breakpoints on CPU exception handlers, or fatal
-error handlers.
+远程目标将附加到openocd上，并将elf文件加载到内存。你也可以在CPU异常处理程序或致命错误处理程序中设置断点。
 
-Now to use these two scripts is easy. Boot up the SOC by pressing the "C" button.
-Be sure the digilent cable is attached from your host to the EM Starter Kit
-board.
+现在使用这两个脚本变得非常容易。按下“C”按钮启动SOC，确保digilent线缆已从EM入门套件板连接至你的主机。
 
-In any terminal window, invoke the "ocd" script first. It should establish
-contact with the board and output many messages. For example:
+在任意终端窗口，首先调用"ocd"脚本。它将跟开发板建立关联并输出很多信息，例如：
 
 .. code-block:: console
 
@@ -248,8 +190,7 @@ contact with the board and output many messages. For example:
    target state: halted
    target state: halted
 
-In a second console window, navigate to the directory for your sample application,
-and invoke the debug.sh script:
+在第二个控制台窗口，导航到你的示例应用程序的目录，并调用debug.sh脚本:
 
 .. code-block:: console
 
@@ -285,38 +226,29 @@ and invoke the debug.sh script:
    Breakpoint 2 at 0x3628: file /home/johndoe/repository/zephyr/arch/arc/core/sys_fatal_error_handler.c, line 73.
    (gdb)
 
-At this point you can do your normal debug session. Set breakpoints and then
-'c' to continue into the program.
+此时，你可以执行正常的debug对话。设置断点并按‘c’继续执行程序。
 
-Flashing
+烧写
 ========
 
-Most of the time you will not be flashing your program but will instead
-debug it using openocd and gdb. The program can be download via the USB
-cable into the code and data memories.
+大多数时候，你无需烧写应用程序，而是使用openocd和gdb进行调试。程序可通过USB线缆下载至代码和数据内存。
 
-When you are ready to deploy the program so that it boots up automatically
-on reset or power-up, you can follow the steps to place the program on
-SPI-FLASH.
-
-For instructions on how to write your program to SPI-FLASH,
-refer to the documentation on the ARC EM Starter Kit at the
-`embARC-website`_, which includes instructions for how to place an
-executable image onto the SPI-FLASH in such a way that it is understood
-by the bootloader.
+当你准备好布署应用程序，以便它开机自动复位或上电，你可以依据步骤来将程序放置在SPI-FLASH。
 
 
+关于如何将程序写入SPI-FLASH，可参考`embARC-website`_中有关ARC EM入门套件的文档，它包含了如何将可执行镜像文件以bootloader可理解的方式放入SPI-FLASH的说明。
 
-Release Notes
+
+发行说明
 *************
 
-The following is a list of TODO items:
+以下是待办事项列表：
 
-* :jira:`ZEP-1153`: Zephyr needs i-cache API (all targets)
-* :jira:`ZEP-713`: Zephyr ARC port doesn't yet support nested regular interrupts.
-* pinmux driver: Possibly it can be written to configure PMods too.
+* :jira:`ZEP-1153`: Zephyr所需的i-cache API (所有目标)
+* :jira:`ZEP-713`: Zephyr ARC端口还不支持嵌套规则中断。
+* 引脚复用驱动: 可能在配置PMod时需要写它。
 
-References
+参考
 **********
 
 .. _embARC-website: https://www.embarc.org

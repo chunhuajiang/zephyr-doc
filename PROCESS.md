@@ -15,10 +15,10 @@
 | 支持的开发板    |  x86             |  x86 qemu         |  陈蛇                                               |  完成    |
 | 支持的开发板    |  x86             |  quark d2000      |  陈蛇                                               |  完成    |
 | 支持的开发板    |  x86             |  tiny TILE        |  陈蛇                                               |  完成    |
-| 支持的开发板    |  arm             |  Genuino101(BLE)  |   [abatei](https://github.com/abatei)                |  领取    |
+| 支持的开发板    |  arm             |  Genuino101(BLE)  |   [abatei](https://github.com/abatei)                |  完成    |
 | 支持的开发板    |  arm             |  Arduino Due      |   [tidyjiang8](https://github.com/tidyjiang8)        |  领取    |
 | 支持的开发板    |  arm             |  CC3200 LaunchXL  |   [josephleung](https://github.com/josephleung)      |  领取    |
-| 支持的开发板    |  arm             |  Curie (BLE)      |   [abatei](https://github.com/abatei)                |  领取    |
+| 支持的开发板    |  arm             |  Curie (BLE)      |   [abatei](https://github.com/abatei)                |  完成    |
 | 支持的开发板    |  arm             |  NXP FRDM-K64F    |   [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 | 支持的开发板    |  arm             |  NXP FRDM-KW41Z   |   [tidyjiang8](https://github.com/tidyjiang8)        |  完成    |
 | 支持的开发板    |  arm             |  Hexiwear         | [abatei](https://github.com/abatei)                  | 完成     |
@@ -34,9 +34,9 @@
 | 支持的开发板    |  arm             |  Cortex-M3 QEMU   | [abatei](https://github.com/abatei)                  |  完成    |
 | 支持的开发板    |  arm         |  SAM E70 Xplained | [abatei](https://github.com/abatei)              |  完成  |
 | 支持的开发板    |  arm         |  ARM V2M Beetle   | [abatei](https://github.com/abatei)              |  完成  |
-| 支持的开发板    |  arc             |  Genuino101 Sensor|  [abatei](https://github.com/abatei)                |   领取   |
-| 支持的开发板    |  arc             |  DesignWare(R)    |  [abatei](https://github.com/abatei)                 |  领取    |
-| 支持的开发板    |  nios ll         |  Altera MAX10     |  [abatei](https://github.com/abatei)                 |  领取    |
+| 支持的开发板    |  arc             |  Genuino101 Sensor|  [abatei](https://github.com/abatei)                |   完成   |
+| 支持的开发板    |  arc             |  DesignWare(R)    |  [abatei](https://github.com/abatei)                 |  完成    |
+| 支持的开发板    |  nios ll         |  Altera MAX10     |  [abatei](https://github.com/abatei)                 |  完成    |
 |  内核入门       |  概述             | 源码树结构         | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
 |  内核入门       |  概述             | 与第一版的改动    | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
 |  内核入门       |  线程             | 生命周期          | [tidyjiang8](https://github.com/tidyjiang8)          |  完成     |
