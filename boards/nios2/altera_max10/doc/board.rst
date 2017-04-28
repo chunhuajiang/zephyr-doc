@@ -1,14 +1,13 @@
-.. _altera_max10:
+﻿.. _altera_max10:
 
 Altera MAX10
 ############
 
-Overview
+概览
 ********
 
 
-The Zephyr kernel is supported on the Altera MAX10 Rev C development kit, using
-the Nios II Gen 2 soft CPU.
+Zephyr内核支持 Altera MAX10 Rev C 开发板，它使用了Nios II Gen 2 soft CPU。
 
 .. figure:: img/max_10_dev_kit_top_photo.jpg
    :width: 442px
@@ -17,48 +16,40 @@ the Nios II Gen 2 soft CPU.
 
    Altera’s MAX* 10  (Credit: Altera)
 
-Hardware
+硬件
 ********
 
-DIP Switch settings
+DIP开关设置
 ===================
 
-There are two sets of switches on the back of the board. Of particular
-importance is SW2:
+电路板背面有两套开关。尤其重要的是SW2：
 
-* Switch 2 (CONFIG_SEL) should be in the OFF (up) position so that the first
-  boot image is CFM0
-* Switch 3 (VTAP_BYPASS) needs to be in the ON (down) position or the flashing
-  scripts won't work
-* Switch 4 (HSMC_BYPASSN) should be OFF (up)
+* 开关2 (CONFIG_SEL) 应该在 OFF (up) 位置，这样第一启动镜像就是CFM0
+* 开关3 (VTAP_BYPASS) 需要在 ON (down) 位置或者烧写脚本将不工作
+* 开关4 (HSMC_BYPASSN) 应为 OFF (up)
 
 .. image:: img/Altera_MAX10_switches.jpg
    :width: 442px
    :align: center
    :alt: Altera’s MAX* 10 Switches
 
-Other switches are user switches, their position is application-specific.
+其它开关为用户开关，它们的位置由应用程序指定。
 
-Necessary Software
+必要的软件
 ==================
 
-You will need the Altera Quartus SDK in order to work with this device. The
-`Altera Lite Distribution`_ of Quartus may be obtained without
-charge.
+为了在这些设备上正常工作，你将需要Altera Quartus SDK。`Altera Lite Distribution`_ of Quartus 可免费获得。
 
-For convenience, once installed you should put the binaries provided by the SDK
-in your path. Below is an example, adjust ALTERA_BASE to where you installed the
-SDK:
+为了方便起见，一旦安装，应将SDK所提供的二进制文件放入你所处的路径。下面是一个例子，将ALTERA_BASE改为你安装SDK的地方：
 
 .. code-block:: console
 
    export ALTERA_BASE=/opt/altera_lite/16.0
    export PATH=$PATH:$ALTERA_BASE/quartus/bin:$ALTERA_BASE/nios2eds/bin
 
-You may need to adjust your udev rules so that you can talk to the USB Blaster
-II peripheral, which is the built-in JTAG interface for this device.
+你可能需要调整udev规则，这样就可以告诉USB Blaster II外设，哪个是此设备的内置JTAG接口。
 
-The following works for Fedora 23:
+以下是Fedora 23中使用的命令:
 
 .. code-block:: console
 
@@ -78,8 +69,7 @@ The following works for Fedora 23:
    NAME="bus/usb/$env{BUSNUM}/$env{DEVNUM}",\
    RUN+="/bin/chmod 0666 %c"
 
-You can test connectivity with the SDK jtagconfig tool, you should see something
-like:
+可使用SDK jtagconfig工具测试连通性, 你将看到类似如下信息：
 
 .. code-block:: console
 
@@ -89,107 +79,91 @@ like:
      020D10DD   VTAP10
 
 
-Reference CPU
+CPU相关
 =============
 
-A reference CPU design of a Nios II/f core is included in the Zephyr tree. The
-CPU may be found in the :file:`arch/nios2/soc/nios2f-zephyr/cpu` directory.
+Nios II/f 内核的CPU相关设计包含在Zephyr树中。可在 :file:`arch/nios2/soc/nios2f-zephyr/cpu` 目录中找到。
 
-To flash this CPU, use the :file:`arch/nios2/soc/nios2f-zephyr/cpu/nios2-configure-sof`
-tool:
+烧写此CPU，请使用 :file:`arch/nios2/soc/nios2f-zephyr/cpu/nios2-configure-sof`工具：
 
 .. code-block:: console
 
    $ nios2-configure-sof ghrd_10m50da.sof
 
-This CPU is a Nios II/F core with a 16550 UART, JTAG UART, and the Avalon Timer.
-For any Nios II SOC definition, you can find out more details about the CPU
-configuration by inspecting system.h in the SOC's include directory.
+此CPU为Nios II/F内核，具有一个 16550 UART、JTAG UART、和Avalon定时器。对于 Nios II SOC 的定义，你可在SOC所包含的目录中查阅system.h来找到关于CPU配置的更详细信息。
 
-Console Output
+控制台输出
 ==============
 
 16550 UART
 ----------
 
-By default, the kernel is configured to send console output to the 16550 UART.
-You can monitor this on your workstation by connecting to the top right mini USB
-port on the board (it will show up in /dev as a ttyUSB node), and then running
-minicom with flow control disabled, 115200-8N1 settings.
+默认情况下，内核被配置为向16550 UART发送控制台输出。
+您可以通过连接到主板右上方迷你USB端口（它将作为ttyUSB节点出现在 /dev中）来监视工作站上的这一点。
+然后运行minicom，并禁用流控制，参数设置为 115200-8N1 。
 
 JTAG UART
 ---------
 
-You can also have it send its console output to the JTAG UART. Set these in your
-project configuration:
+你还可以将控制台输出发送到JTAG UART。在你的项目配置中设置:
 
 .. code-block:: console
 
    CONFIG_UART_ALTERA_JTAG=y
    CONFIG_UART_CONSOLE_ON_DEV_NAME="jtag_uart0"
 
-To view these messages on your local workstation, run the terminal application
-in the SDK:
+要在本地工作站看到这些信息，在SDK中运行终端应用程序：
 
 .. code-block:: console
 
    $ nios2-terminal
 
-Programming and Debugging
+编程和调试
 *************************
 
-Flashing
+烧写
 ========
 
-Flashing Kernel into UFM
+将内核烧入 UFM
 ------------------------
-This is as simple as:
+这一步很简单:
 
 .. code-block:: console
 
    $ make flash
 
-This provisions the Zephyr kernel and the CPU configuration onto the board,
-using the scripts/support/quartus-flash.py script. After it completes the kernel
-will immediately boot.
+使用 scripts/support/quartus-flash.py 脚本，将向主板提供Zephyr内核以及CPU配置。完成后内核将立即重启。
 
 
-Flashing Kernel directly into RAM over JTAG
+直接通过JTAG将内核烧写进RAM
 -------------------------------------------
 
-The SDK included the nios2-download tool which will let you flash a kernel
-directly into RAM and then boot it from the __start symbol.
+SDK所包含的nios2-download工具可让你将内核直接烧写进RAM，并从 __start 标记启动。
 
-In order for this to work, your entire kernel must be located in RAM. Make sure
-the following config options are disabled:
+为了让它工作，整个内核都必须位于RAM之中。确保禁用以下配置选项：
 
 .. code-block:: console
 
    CONFIG_XIP=n
    CONFIG_INCLUDE_RESET_VECTOR=n
 
-Then, after building your kernel, push it into device's RAM:
+内核编译完成后，将它压入设备的RAM内：
 
 .. code-block:: console
 
    $ nios2-download --go outdir/zephyr.elf
 
-If you have a console session running (either minicom or nios2-terminal) you
-should see the application's output. There are additional arguments you can pass
-to nios2-download so that it spawns a GDB server that you can connect to,
-although it's typically simpler to just use nios2-gdb-server as described below.
+如果在运行一个控制台会话minicom或nios2-terminal) ，你将会看到应用程序输出。你可以向nios2-download传递额外参数从而启动GDB服务并连接它，如下所述，仅仅使用nios2-gdb-server是非常简单的。
 
-Debugging
+调试
 =========
 
-The Altera SDK includes a GDB server which can be used to debug a MAX10 board.
-You can either debug a running image that was flashed onto the device in User
-Flash Memory (UFM), or load an image over the JTAG using GDB.
+Altera SDK包含了一个GDB服务器，它可用于调试MAX10主板。你还可以调试已经烧入User Flash Memory (UFM)的设备的正在运行的镜像，或使用GDB通过JTAG加载镜像。
 
-Debugging With UFM Flashed Image
+使用UFM Flashed镜像进行调试
 --------------------------------
 
-This can be accomplished with the "make debug" build target:
+可通过"make debug"编译目标来完成此功能：
 
 .. code-block:: console
 
@@ -246,58 +220,50 @@ This can be accomplished with the "make debug" build target:
    #2  0x00003ccc in __start () at /projects/zephyr2/arch/nios2/core/crt0.S:155
    (gdb)
 
-To start debugging manually:
+手动启动调试：
 
 
 .. code-block:: console
 
    nios2-gdb-server --tcpport 1234 --stop --reset-target
 
-And then connect with GDB:
+然后连接至GDB:
 
 
 .. code-block:: console
 
    nios2-poky-elf-gdb  outdir/zephyr.elf -ex "target remote :1234"
 
-Debugging With JTAG Flashed Image
+使用JTAG Flashed镜像进行调试
 ---------------------------------
 
-In order for this to work, execute-in-place must be disabled, since the GDB
-'load' command can only put text and data in RAM. Ensure this is in your
-configuration:
+为进行此项工作，execute-in-place必须禁用，因为GDB的'load'命令仅能将文本和数据压入RAM。确保它在你的配置中：
 
 .. code-block:: console
 
    CONFIG_XIP=n
 
-It is OK for this procedure to leave the reset vector enabled, unlike
-nios2-download (which errors out if it finds sections outside of SRAM) it will
-be ignored.
+此程序可以离开复位向量启用，不同于nios2-download (如果发现SRAM之外的部分出错,则会出错)，它将被忽略。
 
-In a terminal, launch the nios2 GDB server. It doesn't matter what kernel (if
-any) is on the device, but you should have at least flashed a CPU using
-nios2-configure-sof. You can leave this process running.
+在终端内运行nios2 GDB服务器，它并不关心设备上使用的内核（如果有的话），但你至少应该使用nios2-configure-sof烧写CPU，你可以离开这个进程运行。
 
 .. code-block:: console
 
    $ nios2-gdb-server --tcpport 1234 --tcppersist --init-cache --reset-target
 
-Build your zephyr kernel, and load it into a GDB built for Nios II (included in
-the Zephyr SDK):
+编译你的zephyr内核，并将其载入为Nios II(在Zephyr SDK中)所创建的GDB中：
 
 .. code-block:: console
 
    $ nios2-poky-elf-gdb outdir/zephyr.elf
 
-Then connect to the GDB server:
+然后连接至GDB服务器：
 
 .. code-block:: console
 
    (gdb) target remote :1234
 
-And then load the kernel image over the wire. The CPU will not start from the
-reset vector, instead it will boot from the __start symbol:
+然后通过线缆载入内核镜像。CPU将不再从复位向量启动，转而从__start标记启动。
 
 
 .. code-block:: console
@@ -319,7 +285,7 @@ reset vector, instead it will boot from the __start symbol:
 
 
 
-References
+参考
 **********
 
 * `CPU Documentation <https://www.altera.com/en_US/pdfs/literature/hb/nios2/n2cpu-nii5v1gen2.pdf>`_
