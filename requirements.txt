@@ -1,0 +1,4 @@
+doxygen
+phinx==1.4.4
+breathe
+sphinx-rtd-theme
