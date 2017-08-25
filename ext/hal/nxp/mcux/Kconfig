@@ -1,0 +1,11 @@
+# Kconfig - MCUXpresso SDK
+#
+# Copyright (c) 2016, Freescale Semiconductor, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config HAS_MCUX
+	bool
+	select HAS_CMSIS
+	depends on SOC_FAMILY_KINETIS

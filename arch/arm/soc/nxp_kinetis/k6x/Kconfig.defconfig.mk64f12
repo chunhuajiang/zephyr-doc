@@ -1,0 +1,91 @@
+# Kconfig - FSL FRDM K64F platform configuration options
+
+#
+# Copyright (c) 2014-2016 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+if SOC_MK64F12
+
+config SOC
+	string
+	default mk64f12
+
+if ADC
+
+config ADC_MCUX_ADC16
+	def_bool y
+
+endif # ADC
+
+if PINMUX
+
+config PINMUX_MCUX
+	def_bool y
+
+endif # PINMUX
+
+config GPIO
+	def_bool y
+
+if GPIO
+
+config GPIO_MCUX
+	def_bool y
+
+endif # GPIO
+
+if I2C
+
+config I2C_MCUX
+	def_bool y
+
+endif # I2C
+
+if PWM
+
+config PWM_MCUX_FTM
+	def_bool y
+
+endif # PWM
+
+config SPI
+	def_bool n
+
+if SPI
+
+config SPI_MCUX_DSPI
+	def_bool y
+
+endif # SPI
+
+if NET_L2_ETHERNET
+
+config ETH_MCUX
+	def_bool y
+
+endif # NET_L2_ETHERNET
+
+if RANDOM_GENERATOR
+
+config RANDOM_MCUX_RNGA
+	def_bool y
+
+endif # RANDOM_GENERATOR
+
+if FLASH
+
+config SOC_FLASH_MCUX
+	def_bool y
+
+endif # FLASH
+
+if SERIAL
+
+config UART_MCUX
+	def_bool y
+
+endif # SERIAL
+
+endif # SOC_MK64F12

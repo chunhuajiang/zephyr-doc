@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2016 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config HAS_NORDIC_MDK
+	bool
+
+config HAS_NORDIC_HAL
+	bool
+
+config HAS_NORDIC_DRIVERS
+	bool
+	select HAS_NORDIC_HAL

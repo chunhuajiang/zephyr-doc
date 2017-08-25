@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2015 Intel corporation
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/**
+ * @file Software interrupts utility code - ARC implementation
+ */
+
+#include <kernel.h>
+#include <irq_offload.h>
+
+static irq_offload_routine_t offload_routine;
+static void *offload_param;
+
+/* Called by trap_s exception handler */
+void _irq_do_offload(void)
+{
+	offload_routine(offload_param);
+}
+
+void irq_offload(irq_offload_routine_t routine, void *parameter)
+{
+	int key;
+
+	key = irq_lock();
+	offload_routine = routine;
+	offload_param = parameter;
+
+	__asm__ volatile ("trap_s 0");
+
+	irq_unlock(key);
+}
+

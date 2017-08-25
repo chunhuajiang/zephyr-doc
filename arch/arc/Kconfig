@@ -1,0 +1,299 @@
+# ARC EM4 options
+
+#
+# Copyright (c) 2014 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+choice
+	prompt "ARC SoC Selection"
+	depends on ARC
+
+	source "arch/arc/soc/*/Kconfig.soc"
+endchoice
+
+
+menu "ARC Options"
+	depends on ARC
+
+config ARCH
+	default "arc"
+
+config ARCH_DEFCONFIG
+	string
+	default "arch/arc/defconfig"
+
+config CPU_HAS_MPU
+	bool
+	# Omit prompt to signify "hidden" option
+	default n
+	help
+	  This option is enabled when the CPU has a Memory Protection Unit (MPU).
+
+config CPU_HAS_FPU
+	# Hidden config selected by CPU family
+	bool
+	default n
+	help
+	This option is enabled when the CPU has hardware floating point
+	unit.
+
+menu "ARC EM4 processor options"
+
+config	CPU_ARCEM4
+	bool
+	default y
+	select CPU_ARCV2
+	select ATOMIC_OPERATIONS_C
+	help
+	This option signifies the use of an ARC EM4 CPU
+
+endmenu
+
+menu "ARCv2 Family Options"
+
+config	CPU_ARCV2
+	bool
+	default y
+	help
+	  This option signifies the use of a CPU of the ARCv2 family.
+
+config	DATA_ENDIANNESS_LITTLE
+	bool
+	default y
+	help
+	  This is driven by the processor implementation, since it is fixed in
+	  hardware. The BSP should set this value to 'n' if the data is
+	  implemented as big endian.
+
+config	NUM_IRQ_PRIO_LEVELS
+	int
+	prompt "Number of supported interrupt priority levels"
+	range 1 16
+	help
+	  Interrupt priorities available will be 0 to NUM_IRQ_PRIO_LEVELS-1.
+	  The minimum value is 1.
+
+	  The BSP must provide a valid default for proper operation.
+
+config	NUM_IRQS
+	int
+	prompt "Upper limit of interrupt numbers/IDs used"
+	range 17 256
+	help
+	  Interrupts available will be 0 to NUM_IRQS-1.
+	  The minimum value is 17 as the first 16 entries in the vector
+	  table are for CPU exceptions.
+
+	  The BSP must provide a valid default. This drives the size of the
+	  vector table.
+
+config	RGF_NUM_BANKS
+	int
+	prompt "Number of General Purpose Register Banks"
+	depends on CPU_ARCV2
+	range 1 2
+	default 2
+	help
+	The ARC CPU can be configured to have more than one register
+	bank. If fast interrupts are supported (FIRQ), the 2nd
+	register bank, in the set, will be used by FIRQ interrupts.
+	If fast interrupts are supported but there is only 1
+	register bank, the fast interrupt handler must save
+	and restore general purpose registers.
+
+config	ARC_STACK_CHECKING
+	bool "Enable Stack Checking"
+	depends on CPU_ARCV2
+	select THREAD_STACK_INFO
+	default n
+	help
+	  ARCV2 has a special feature allowing to check stack overflows. This
+	  enables code that allows using this debug feature
+
+config	FAULT_DUMP
+	int
+	prompt "Fault dump level"
+	default 2
+	range 0 2
+	help
+	Different levels for display information when a fault occurs.
+
+	2: The default. Display specific and verbose information. Consumes
+		the most memory (long strings).
+
+	1: Display general and short information. Consumes less memory
+		(short strings).
+
+	0: Off.
+
+config IRQ_OFFLOAD
+	bool "Enable IRQ offload"
+	default n
+	help
+	Enable irq_offload() API which allows functions to be synchronously
+	run in interrupt context. Uses one entry in the	IDT.  Mainly useful
+	for test cases.
+
+config	XIP
+	default n if NSIM
+	default y
+
+config GEN_ISR_TABLES
+	default y
+
+config GEN_IRQ_START_VECTOR
+	default 16
+
+config HARVARD
+	prompt "Harvard Architecture"
+	bool
+	default n
+	help
+	The ARC CPU can be configured to have two busses;
+	one for instruction fetching and another that serves as a data bus.
+
+config CODE_DENSITY
+	prompt "Code Density Option"
+	bool
+	default n
+	help
+	Enable code density option to get better code density
+
+menu "Floating Point Options"
+depends on CPU_HAS_FPU
+
+config FLOAT
+	bool
+	prompt "Floating point registers"
+	default n
+	help
+	This option allows tasks and fibers to use the floating point registers.
+	By default, only a single task or fiber may use the registers.
+
+	Disabling this option means that any task or fiber that uses a
+	floating point register will get a fatal exception.
+
+config FP_SHARING
+	bool
+	prompt "Floating point register sharing"
+	depends on FLOAT
+	default n
+	help
+	This option allows multiple tasks and fibers to use the floating point
+	registers.
+
+endmenu
+
+menu "ARC MPU Options"
+depends on CPU_HAS_MPU
+
+config ARC_MPU_ENABLE
+	bool "Enable MPU"
+	depends on CPU_HAS_MPU
+	select ARC_MPU
+	default n
+	help
+	  Enable MPU
+
+source "arch/arc/core/mpu/Kconfig"
+
+endmenu
+
+config ICCM_SIZE
+	int "ICCM Size in kB"
+	help
+	This option specifies the size of the ICCM in kB.  It is normally set by
+	the board's defconfig file and the user should generally avoid modifying
+	it via the menu configuration.
+
+config ICCM_BASE_ADDRESS
+	hex "ICCM Base Address"
+	help
+	This option specifies the base address of the ICCM on the board.  It is
+	normally set by the board's defconfig file and the user should generally
+	avoid modifying it via the menu configuration.
+
+config DCCM_SIZE
+	int "DCCM Size in kB"
+	help
+	This option specifies the size of the DCCM in kB.  It is normally set by
+	the board's defconfig file and the user should generally avoid modifying
+	it via the menu configuration.
+
+config DCCM_BASE_ADDRESS
+	hex "DCCM Base Address"
+	help
+	This option specifies the base address of the DCCM on the board.  It is
+	normally set by the board's defconfig file and the user should generally
+	avoid modifying it via the menu configuration.
+
+config SRAM_SIZE
+	int "SRAM Size in kB"
+	help
+	This option specifies the size of the SRAM in kB.  It is normally set by
+	the board's defconfig file and the user should generally avoid modifying
+	it via the menu configuration.
+
+config SRAM_BASE_ADDRESS
+	hex "SRAM Base Address"
+	help
+	This option specifies the base address of the SRAM on the board.  It is
+	normally set by the board's defconfig file and the user should generally
+	avoid modifying it via the menu configuration.
+
+config FLASH_SIZE
+	int "Flash Size in kB"
+	help
+	This option specifies the size of the flash in kB.  It is normally set by
+	the board's defconfig file and the user should generally avoid modifying
+	it via the menu configuration.
+
+config FLASH_BASE_ADDRESS
+	hex "Flash Base Address"
+	help
+	This option specifies the base address of the flash on the board.  It is
+	normally set by the board's defconfig file and the user should generally
+	avoid modifying it via the menu configuration.
+
+config CACHE_LINE_SIZE_DETECT
+	bool
+	prompt "Detect d-cache line size at runtime"
+	default n
+	help
+	This option enables querying the d-cache build register for finding
+	the d-cache line size at the expense of taking more memory and code
+	and a slightly increased boot time.
+
+	If the CPU's d-cache line size is known in advance, disable this
+	option and manually enter the value for CACHE_LINE_SIZE.
+
+config CACHE_LINE_SIZE
+	int
+	prompt "Cache line size" if !CACHE_LINE_SIZE_DETECT
+	default 32
+	help
+	Size in bytes of a CPU d-cache line.
+
+	Detect automatically at runtime by selecting CACHE_LINE_SIZE_DETECT.
+
+config ARCH_CACHE_FLUSH_DETECT
+	bool
+	default n
+
+config CACHE_FLUSHING
+	bool
+	default n
+	prompt "Enable d-cache flushing mechanism"
+	help
+	This links in the sys_cache_flush() function, which provides a
+	way to flush multiple lines of the d-cache.
+	If the d-cache is present, set this to y.
+	If the d-cache is NOT present, set this to n.
+
+endmenu
+
+source "arch/arc/soc/*/Kconfig"
+
+endmenu

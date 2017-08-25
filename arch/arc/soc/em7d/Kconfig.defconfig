@@ -1,0 +1,61 @@
+#
+# Copyright (c) 2014 Wind River Systems, Inc.
+# Copyright (c) 2016 Synopsys, Inc. All rights reserved.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+if SOC_EM7D
+
+config SOC
+	default em7d
+
+config NUM_IRQ_PRIO_LEVELS
+	# This processor supports 4 priority levels:
+	# 0 for Fast Interrupts (FIRQs) and 1-3 for Regular Interrupts (IRQs).
+	default 4
+
+config NUM_IRQS
+	# must be > the highest interrupt number used
+	default 38 if BOARD_EM_STARTERKIT_R23
+	default 36 if BOARD_EM_STARTERKIT_R22
+
+config RGF_NUM_BANKS
+	default 1
+
+config SYS_CLOCK_HW_CYCLES_PER_SEC
+	default 25000000 if BOARD_EM_STARTERKIT_R23
+	default 30000000 if BOARD_EM_STARTERKIT_R22
+
+config HARVARD
+	def_bool n
+
+config FLASH_BASE_ADDRESS
+	default 0x00000000
+
+config FLASH_SIZE
+	default 0
+	# em7d has no FLASH so size is 0.
+
+config SRAM_BASE_ADDRESS
+	default 0x10000000
+
+config SRAM_SIZE
+	default 131072
+
+config ICCM_BASE_ADDRESS
+	default 0x00000000
+
+config ICCM_SIZE
+	default 256
+
+config DCCM_BASE_ADDRESS
+	default 0x80000000
+
+config DCCM_SIZE
+	default 128
+
+config CACHE_FLUSHING
+	def_bool y
+
+endif #SOC_EM7D

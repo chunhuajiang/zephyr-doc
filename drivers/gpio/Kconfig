@@ -1,0 +1,68 @@
+# Kconfig - GPIO configuration options
+
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig GPIO
+	bool
+	prompt "GPIO Drivers"
+	default n
+	help
+	  Include GPIO drivers in system config
+
+if GPIO
+
+config SYS_LOG_GPIO_LEVEL
+	int
+	prompt "GPIO drivers log level"
+	default 0
+	depends on SYS_LOG
+	help
+	Sets log level for GPIO drivers
+
+	Levels are:
+
+	- 0 OFF, do not write
+
+	- 1 ERROR, only write SYS_LOG_ERR
+
+	- 2 WARNING, write SYS_LOG_WRN in addition to previous level
+
+	- 3 INFO, write SYS_LOG_INF in addition to previous levels
+
+	- 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+
+source "drivers/gpio/Kconfig.dw"
+
+source "drivers/gpio/Kconfig.pcal9535a"
+
+source "drivers/gpio/Kconfig.qmsi"
+
+source "drivers/gpio/Kconfig.sch"
+
+source "drivers/gpio/Kconfig.mcux"
+
+source "drivers/gpio/Kconfig.mmio32"
+
+source "drivers/gpio/Kconfig.atmel_sam3"
+
+source "drivers/gpio/Kconfig.stm32"
+
+source "drivers/gpio/Kconfig.nrf5"
+
+source "drivers/gpio/Kconfig.cmsdk_ahb"
+
+source "drivers/gpio/Kconfig.cc32xx"
+
+source "drivers/gpio/Kconfig.pulpino"
+
+source "drivers/gpio/Kconfig.fe310"
+
+source "drivers/gpio/Kconfig.cc2650"
+
+source "drivers/gpio/Kconfig.esp32"
+
+endif # GPIO

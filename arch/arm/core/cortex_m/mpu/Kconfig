@@ -1,0 +1,47 @@
+# Kconfig - Memory Protection Unit (MPU) configuration options
+
+#
+# Copyright (c) 2017 Linaro Limited
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config ARM_CORE_MPU
+	bool "ARM Core MPU functionalities"
+	depends on CPU_HAS_MPU
+	select THREAD_STACK_INFO
+	default n
+	help
+	  ARM Core MPU functionalities
+
+config MPU_STACK_GUARD
+	bool "Thread Stack Guards"
+	depends on ARM_CORE_MPU
+	default n
+	help
+	  Enable Thread Stack Guards via MPU
+
+config ARM_MPU
+	bool "ARM MPU Support"
+	depends on CPU_HAS_MPU
+	depends on SOC_FAMILY_ARM || SOC_FAMILY_STM32 || SOC_FAMILY_NRF5
+	select ARM_CORE_MPU
+	default n
+	help
+	  MCU has ARM MPU
+
+config NXP_MPU
+	bool "NXP MPU Support"
+	depends on CPU_HAS_MPU
+	depends on SOC_FAMILY_KINETIS
+	select ARM_CORE_MPU
+	default n
+	help
+	  MCU has NXP MPU
+
+config MPU_ALLOW_FLASH_WRITE
+	bool "Add MPU access to write to flash"
+	depends on ARM_MPU || NXP_MPU
+	default n
+	help
+	  Enable this to allow MPU RWX access to flash memory

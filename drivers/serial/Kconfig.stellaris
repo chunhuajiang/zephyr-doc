@@ -1,0 +1,39 @@
+menuconfig UART_STELLARIS
+	bool "Stellaris serial driver"
+	default n
+	select SERIAL_HAS_DRIVER
+	select SERIAL_SUPPORT_INTERRUPT
+	help
+	This option enables the Stellaris serial driver.
+	This specific driver can be used for the serial hardware
+	available at the Texas Instrument LM3S6965 board.
+
+# ---------- Port 0 ----------
+
+menuconfig UART_STELLARIS_PORT_0
+	bool "Enable Stellaris UART Port 0"
+	default n
+	depends on UART_STELLARIS
+	help
+	  This tells the driver to configure the UART port at boot, depending on
+	  the additional configure options below.
+
+# ---------- Port 1 ----------
+
+menuconfig UART_STELLARIS_PORT_1
+	bool "Enable Stellaris UART Port 1"
+	default n
+	depends on UART_STELLARIS
+	help
+	  This tells the driver to configure the UART port at boot, depending on
+	  the additional configure options below.
+
+# ---------- Port 2 ----------
+
+menuconfig UART_STELLARIS_PORT_2
+	bool "Enable Stellaris UART Port 2"
+	default n
+	depends on UART_STELLARIS
+	help
+	  This tells the driver to configure the UART port at boot, depending on
+	  the additional configure options below.

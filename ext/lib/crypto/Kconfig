@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menu "Cryptography"
+
+source "ext/lib/crypto/tinycrypt/Kconfig"
+source "ext/lib/crypto/mbedtls/Kconfig"
+
+endmenu

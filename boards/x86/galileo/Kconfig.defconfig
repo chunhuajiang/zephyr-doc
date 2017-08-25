@@ -1,0 +1,137 @@
+
+if BOARD_GALILEO
+
+config BOARD
+	default galileo
+
+config PINMUX
+	def_bool y
+
+config I2C
+	def_bool y
+
+config GPIO
+	def_bool y
+
+config PWM
+	def_bool y
+
+config SPI
+	def_bool y
+
+config ADC
+	def_bool y
+
+config SHARED_IRQ
+	def_bool y
+
+config PCI_ENUMERATION
+	def_bool y
+
+if ADC
+
+config ADC_TI_ADC108S102
+	def_bool y
+
+if ADC_TI_ADC108S102
+
+config ADC_TI_ADC108S102_SPI_PORT_NAME
+	default "SPI_0"
+config ADC_TI_ADC108S102_SPI_CONFIGURATION
+	default 0x81
+config ADC_TI_ADC108S102_SPI_MAX_FREQ
+	default 0x20000000
+
+endif # ADC_TI_AC108S102
+
+endif # ADC
+
+if GPIO && I2C
+
+config GPIO_PCAL9535A
+	def_bool y
+
+if GPIO_PCAL9535A
+
+config GPIO_PCAL9535A_0
+	def_bool y
+
+if GPIO_PCAL9535A_0
+
+config GPIO_PCAL9535A_0_DEV_NAME
+	default "EXP0"
+config GPIO_PCAL9535A_0_I2C_ADDR
+	default 0x25
+config GPIO_PCAL9535A_0_I2C_MASTER_DEV_NAME
+	default I2C_0_NAME
+
+endif # GPIO_PCAL9535A_0
+
+config GPIO_PCAL9535A_1
+	def_bool y
+
+if GPIO_PCAL9535A_1
+
+config GPIO_PCAL9535A_1_DEV_NAME
+	default "EXP1"
+config GPIO_PCAL9535A_1_I2C_ADDR
+	default 0x26
+config GPIO_PCAL9535A_1_I2C_MASTER_DEV_NAME
+	default I2C_0_NAME
+
+endif # GPIO_PCAL9535A_1
+
+config GPIO_PCAL9535A_2
+	def_bool y
+
+if GPIO_PCAL9535A_2
+
+config GPIO_PCAL9535A_2_DEV_NAME
+	default "EXP2"
+config GPIO_PCAL9535A_2_I2C_ADDR
+	default 0x27
+config GPIO_PCAL9535A_2_I2C_MASTER_DEV_NAME
+	default I2C_0_NAME
+
+endif # GPIO_PCAL9535A_2
+
+endif # GPIO_PCAL9535A
+
+endif # GPIO && I2C
+
+if PWM && I2C
+
+config PWM_PCA9685
+	def_bool y
+
+if PWM_PCA9685
+
+config PWM_PCA9685_0
+	def_bool y
+
+if PWM_PCA9685_0
+
+config PWM_PCA9685_0_DEV_NAME
+	default "PWM0"
+config PWM_PCA9685_0_I2C_ADDR
+	default 0x47
+config PWM_PCA9685_0_I2C_MASTER_DEV_NAME
+	default I2C_0_NAME
+
+endif # PWM_PCA9685_0
+endif # PWM_PCA9685
+endif # PWM && I2C
+
+# SPI uses GPIO pin for CS, so it needs to be initialized after
+# the gpio_dw driver ( and the pinmux driver for port 1)
+config SPI_INIT_PRIORITY
+	default 90 if SPI_INTEL
+
+# Pin multiplexer uses PCAL9535A, needs to be initialized after it
+config PINMUX_INIT_PRIORITY
+	default 80 if PINMUX
+
+config ADC_INIT_PRIORITY
+	default 95
+
+endif # BOARD_GALILEO

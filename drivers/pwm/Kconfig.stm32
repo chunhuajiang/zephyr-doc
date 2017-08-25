@@ -1,0 +1,46 @@
+# Kconfig.stm32 - STM32 PWM configuration options
+#
+#
+# Copyright (c) 2016 Linaro Limited.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig PWM_STM32
+	bool "STM32 MCU PWM driver"
+	default n
+	depends on PWM && SOC_FAMILY_STM32
+	help
+	  This option enables the PWM driver for STM32 family of
+	  processors. Say y if you wish to use PWM port on STM32
+	  MCU.
+
+config PWM_STM32_1
+	bool "STM32 PWM 1 Output"
+	depends on PWM_STM32
+	default n
+	help
+	  Enable output for PWM1 in the driver. Say y here
+	  if you want to use PWM1 output.
+
+config PWM_STM32_1_DEV_NAME
+	string "STM32 PWM Device Name"
+	default "PWM_1"
+	depends on PWM_STM32_1
+	help
+	  Specify the device name for the PWM driver.
+
+config PWM_STM32_2
+	bool "STM32 PWM 2 Output"
+	depends on PWM_STM32
+	default n
+	help
+	  Enable output for PWM2 in the driver. Say y here
+	  if you want to use PWM2 output.
+
+config PWM_STM32_2_DEV_NAME
+	string "STM32 PWM Device Name"
+	default "PWM_2"
+	depends on PWM_STM32_2
+	help
+	  Specify the device name for the PWM driver.

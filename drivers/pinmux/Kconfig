@@ -1,0 +1,61 @@
+# Kconfig - Pinmux configuration options
+
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# PinMux options
+#
+menuconfig PINMUX
+	bool "Enable board pinmux driver"
+	default n
+
+if PINMUX
+
+source "drivers/pinmux/dev/Kconfig"
+
+config PINMUX_NAME
+	string "Pinmux driver name"
+	depends on PINMUX
+	default "PINMUX"
+	help
+	The name of the pinmux driver.
+
+config PINMUX_INIT_PRIORITY
+	int
+	prompt "Init priority"
+	default 45
+	depends on PINMUX
+	help
+	  Pinmux driver initialization priority.
+	  Pinmux driver almost certainly should be initialized before the
+	  rest of hardware devices (which may need specific pins already
+	  configured for them), and usually after generic GPIO drivers.
+	  Thus, its priority should be between KERNEL_INIT_PRIORITY_DEFAULT
+	  and KERNEL_INIT_PRIORITY_DEVICE. There are exceptions to this
+	  rule for particular boards. Don't change this value unless you
+	  know what you are doing.
+
+config PINMUX_QMSI
+	bool "Enable QMSI pinmux dev driver"
+	depends on PINMUX && QMSI
+	default n
+	help
+	  Enables the pinmux dev driver for QMSI supported boards.
+
+source "drivers/pinmux/Kconfig.mcux"
+
+source "drivers/pinmux/Kconfig.stm32"
+
+source "drivers/pinmux/Kconfig.beetle"
+
+source "drivers/pinmux/Kconfig.fe310"
+
+source "drivers/pinmux/Kconfig.cc2650"
+
+source "drivers/pinmux/Kconfig.esp32"
+
+endif # PINMUX

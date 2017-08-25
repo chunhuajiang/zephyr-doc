@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menu "File System"
+
+config FILE_SYSTEM
+	bool "File system support"
+	select DISK_ACCESS
+	default n
+	help
+	Enables support for file system.
+
+if FILE_SYSTEM
+
+config FILE_SYSTEM_SHELL
+	bool "Enable file system shell"
+	depends on CONSOLE_SHELL
+	help
+	This shell provides basic browsing of the contents of the
+	file system.
+
+config FILE_SYSTEM_FAT
+	bool "FAT file system support"
+	default y
+	help
+	Enables FAT file system support.
+
+endif # FILE_SYSTEM
+
+endmenu

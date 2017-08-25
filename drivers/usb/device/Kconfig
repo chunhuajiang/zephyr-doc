@@ -1,0 +1,44 @@
+# Kconfig - USB device configuration options
+
+#
+# Copyright (c) 2016 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+if USB
+
+config USB_DW
+	bool
+	prompt "Designware USB Device Controller Driver"
+	default n
+	help
+	Designware USB Device Controller Driver.
+
+config USB_DW_IRQ_PRI
+	int "DesignWare USB Driver Interrupt priority"
+	depends on USB_DW
+	help
+	USB interrupt priority.
+
+config SYS_LOG_USB_DRIVER_LEVEL
+	int
+	prompt "USB driver log level"
+	depends on SYS_LOG
+	default 0
+	help
+	Sets log level for USB driver
+
+	Levels are:
+
+	- 0 OFF, do not write
+
+	- 1 ERROR, only write SYS_LOG_ERR
+
+	- 2 WARNING, write SYS_LOG_WRN in addition to previous level
+
+	- 3 INFO, write SYS_LOG_INF in addition to previous levels
+
+	- 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+
+endif # USB

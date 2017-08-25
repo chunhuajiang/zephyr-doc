@@ -1,0 +1,128 @@
+# Kconfig - Bluetooth drivers configuration options
+
+#
+# Copyright (c) 2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+comment "Bluetooth HCI Driver Options"
+
+config BT_UART
+	bool
+
+choice
+	prompt "Bluetooth HCI driver"
+	default BT_H4
+
+config BT_H4
+	bool "H:4 UART"
+	select UART_INTERRUPT_DRIVEN
+	select BT_UART
+	select BT_RECV_IS_RX_THREAD
+	depends on SERIAL
+	help
+	  Bluetooth H:4 UART driver. Requires hardware flow control
+	  lines to be available.
+
+config BT_H5
+	bool "H:5 UART [EXPERIMENTAL]"
+	select UART_INTERRUPT_DRIVEN
+	select BT_UART
+	depends on SERIAL
+	help
+	  Bluetooth three-wire (H:5) UART driver. Implementation of HCI
+	  Three-Wire UART Transport Layer.
+
+config BT_SPI
+	bool "SPI HCI"
+	depends on SPI
+	help
+	  Supports Bluetooth ICs using SPI as the communication protocol.
+	  HCI packets are sent and received as single Byte transfers,
+	  prepended after a known header.  Headers may vary per device, so
+	  additional platform specific knowledge may need to be added as
+	  devices are.
+
+config BT_NO_DRIVER
+	bool "No default HCI driver"
+	help
+	  This is intended for unit tests where no internal driver
+	  should be selected.
+
+endchoice
+
+if !HAS_DTS
+config BT_UART_ON_DEV_NAME
+	string "Device Name of UART Device for Bluetooth"
+	default "UART_0"
+	depends on BT_UART
+	help
+	  This option specifies the name of UART device to be used
+	  for Bluetooth.
+endif
+
+config BT_SPI_DEV_NAME
+	string "Device Name of SPI Device for Bluetooth"
+	default "SPI_0"
+	depends on BT_SPI
+	help
+	  This option specifies the name of SPI device to be used for Bluetooth.
+	  On the controller side, this SPI device is used to encapsulate the
+	  RAW HCI frames to send further up the stack. On the BLE stack side,
+	  this device is used to reply back with HCI frames that are sent over
+	  the air.
+
+if BT_SPI
+
+config BT_SPI_BLUENRG
+	bool "Enable compatibility with BlueNRG-based devices"
+	default n
+	help
+	  Enable support for devices compatible with the BlueNRG Bluetooth
+	  Stack. Current driver supports: ST X-NUCLEO BLE series.
+
+config BT_SPI_CHIP_SELECT_DEV_NAME
+	string "Chip Select (CS) line driver name"
+	depends on BT_SPI_BLUENRG
+	help
+	  This option specifies the name of GPIO driver controlling
+	  the Chip Select (CS) line.
+
+config BT_SPI_IRQ_DEV_NAME
+	string "IRQ line driver name"
+	help
+	  This option specifies the name of GPIO driver controlling
+	  the chip's IRQ line.
+
+config BT_SPI_RESET_DEV_NAME
+	string "Reset line driver name"
+	help
+	  This option specifies the name of GPIO driver controlling
+	  the chip's Reset line.
+
+config BT_SPI_CHIP_SELECT_PIN
+	int "SPI Chip Select (CS) line number"
+	depends on BT_SPI_BLUENRG
+	help
+	  This option specifies the Chip Select (CS) line number on the SPI
+	  device
+
+config BT_SPI_IRQ_PIN
+	int "SPI IRQ line number"
+	help
+	  This option specifies the IRQ line number on the SPI device
+
+config BT_SPI_RESET_PIN
+	int "SPI Reset line number"
+	help
+	  This option specifies the Reset line number on the SPI device
+
+config BT_SPI_MAX_CLK_FREQ
+	int "Maximum clock frequency for the HCI SPI interface"
+	default 5000000
+	help
+	  This option specifies the maximum clock rate the HCI SPI
+	  interface is capable of running at.
+
+endif # BT_SPI

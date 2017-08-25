@@ -1,0 +1,4 @@
+
+config BOARD_PANTHER
+	bool "Panther"
+	depends on SOC_SERIES_QUARK_SE

@@ -1,0 +1,315 @@
+# Kconfig - x86 general configuration options
+
+#
+# Copyright (c) 2014-2015 Wind River Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+choice
+	prompt "x86 SoC Selection"
+	depends on X86
+
+	source "arch/x86/soc/*/Kconfig.soc"
+endchoice
+
+menu "x86 Options"
+	depends on X86
+
+config ARCH
+	default "x86"
+
+
+config ARCH_DEFCONFIG
+	string
+	default "arch/x86/defconfig"
+
+
+source "arch/x86/core/Kconfig"
+
+#
+# Hidden CPU family configs which are to be selected by
+# individual SoC.
+#
+config CPU_ATOM
+	# Hidden
+	bool
+	select CMOV
+	select CPU_HAS_FPU
+	help
+	This option signifies the use of a CPU from the Atom family.
+
+config CPU_MINUTEIA
+	# Hidden
+	bool
+	help
+	This option signifies the use of a CPU from the Minute IA family.
+#
+# End hidden CPU family configs
+#
+
+config CPU_HAS_FPU
+	# Hidden config selected by CPU family
+	bool
+	default n
+	help
+	This option is enabled when the CPU has hardware floating point
+	unit.
+
+menu "Processor Capabilities"
+
+config X86_IAMCU
+	bool
+	default n
+	prompt "IAMCU calling convention"
+	help
+	The IAMCU calling convention changes the X86 C calling convention to
+	pass some arguments via registers allowing for code size and performance
+	improvements.  Great care needs to be taken if you have assembly code
+	that will be called from C or C code called from assembly code, the
+	assembly code will need to be updated to conform to the new calling
+	convention.  If in doubt say N
+
+config X86_MMU
+	bool
+	default n
+	prompt "Memory Management Unit"
+	help
+	This options enables the memory management unit present in x86. Enabling
+	this will create boot time page table structure.
+
+config X86_STACK_PROTECTION
+	bool
+	default n
+	depends on X86_MMU
+	select SET_GDT
+	select GDT_DYNAMIC
+	prompt "MMU-based stack overflow protection"
+	help
+	This option leverages the MMU to cause a system fatal error if the
+	bounds of the current process stack are overflowed. This is done
+	by preceding all stack areas with a 4K guard page.
+
+menu "Floating Point Options"
+depends on CPU_HAS_FPU
+
+config FLOAT
+	bool
+	prompt "Floating point registers"
+	default n
+	help
+	This option allows threads to use the x87 FPU/MMX registers. The
+	registers may be used by any number of cooperative threads or by
+	a single preemptible thread, but not both, since the kernel does not
+	preserve FPU context information when switching between threads.
+	Additional options must be enabled to permit the use of SSE registers or
+	to permit floating point register use by multiple preemptible threads.
+
+	Disabling this option means that any thread that uses the floating
+	point registers will get a fatal exception.
+
+config FP_SHARING
+	bool
+	prompt "Floating point register sharing"
+	depends on FLOAT
+	default n
+	help
+	This option allows multiple preemptible threads to use the floating
+	point registers. Any preemptible thread that uses the registers must
+	provide stack space where the kernel can save FPU context info during
+	a preemptive context switch. A thread that uses only the x87 FPU/MMX
+	registers must provide 108 bytes of added stack space, while a thread
+	the uses the SSE registers must provide 464 bytes of added stack space.
+
+config SSE
+	bool
+	prompt "SSE registers"
+	depends on FLOAT
+	default n
+	help
+	This option enables the use of SSE registers by threads.
+
+config SSE_FP_MATH
+	bool
+	prompt "Compiler-generated SSEx instructions"
+	depends on SSE
+	default n
+	help
+	This option allows the compiler to generate SSEx instructions for
+	performing floating point math. This can greatly improve performance
+	when exactly the same operations are to be performed on multiple
+	data objects; however, it can also significantly reduce performance
+	when preemptive task switches occur because of the larger register
+	set that must be saved and restored.
+
+	Disabling this option means that the compiler utilizes only the
+	x87 instruction set for floating point operations.
+endmenu
+
+choice
+prompt "Reboot implementation"
+depends on REBOOT
+default REBOOT_RST_CNT
+
+config REBOOT_RST_CNT
+	bool
+	prompt "Reboot via RST_CNT register"
+	help
+	Reboot via the RST_CNT register, going back to BIOS.
+
+endchoice
+
+
+config ISA_IA32
+	bool
+	default y
+	help
+	This option signifies the use of a CPU based on the Intel IA-32
+	instruction set architecture.
+
+config IA32_LEGACY_IO_PORTS
+	bool
+	prompt "Support IA32 legacy IO ports"
+	default n
+	depends on ISA_IA32
+	help
+	This option enables IA32 legacy IO ports. Note these are much slower
+	than memory access, so they should be used in last resort.
+
+config CMOV
+	def_bool n
+	help
+	This option signifies the use of an Intel CPU that supports
+	the CMOV instruction.
+
+config CACHE_LINE_SIZE_DETECT
+	bool
+	prompt "Detect cache line size at runtime"
+	default y
+	help
+	This option enables querying the CPUID register for finding the cache line
+	size at the expense of taking more memory and code and a slightly increased
+	boot time.
+
+	If the CPU's cache line size is known in advance, disable this option and
+	manually enter the value for CACHE_LINE_SIZE.
+
+config CACHE_LINE_SIZE
+	int
+	prompt "Cache line size" if !CACHE_LINE_SIZE_DETECT
+	default 0 if CACHE_LINE_SIZE_DETECT
+	default 64 if CPU_ATOM
+	default 0
+	help
+	Size in bytes of a CPU cache line.
+
+	Detect automatically at runtime by selecting CACHE_LINE_SIZE_DETECT.
+
+config CLFLUSH_INSTRUCTION_SUPPORTED
+	bool
+	prompt "CLFLUSH instruction supported"
+	depends on !CLFLUSH_DETECT && CACHE_FLUSHING
+	default n
+	help
+	An implementation of sys_cache_flush() that uses CLFLUSH is made
+	available, instead of the one using WBINVD.
+
+	This option should only be enabled if it is known in advance that the
+	CPU supports the CLFLUSH instruction. It disables runtime detection of
+	CLFLUSH support thereby reducing both memory footprint and boot time.
+
+config CLFLUSH_DETECT
+	bool
+	prompt "Detect support of CLFLUSH instruction at runtime"
+	depends on CACHE_FLUSHING
+	default n
+	help
+	This option should be enabled if it is not known in advance whether the
+	CPU supports the CLFLUSH instruction or not.
+
+	The CPU is queried at boot time to determine which of the multiple
+	implementations of sys_cache_flush() linked into the image is the
+	correct one to use.
+
+	If the CPU's support (or lack thereof) of CLFLUSH is known in advance, then
+	disable this option and set CLFLUSH_INSTRUCTION_SUPPORTED as appropriate.
+
+config ARCH_CACHE_FLUSH_DETECT
+	bool
+	default y
+	depends on CLFLUSH_DETECT
+
+config CACHE_FLUSHING
+	bool
+	default n
+	prompt "Enable cache flushing mechanism"
+	help
+	This links in the sys_cache_flush() function. A mechanism for flushing the
+	cache must be selected as well. By default, that mechanism is discovered at
+	runtime.
+endmenu
+
+menu "Board Capabilities"
+config PIC_DISABLE
+	bool "Disable PIC"
+	default n
+	help
+	This option disables all interrupts on the PIC
+
+config IRQ_OFFLOAD
+	bool "Enable IRQ offload"
+	default n
+	help
+	Enable irq_offload() API which allows functions to be synchronously
+	run in interrupt context. Uses one entry in the	IDT.  Mainly useful
+	for test cases.
+
+config IRQ_OFFLOAD_VECTOR
+	int "IDT vector to use for IRQ offload"
+	default 63 if MVIC
+	default 32 if !MVIC
+	range 32 255
+	depends on IRQ_OFFLOAD
+	help
+	Specify the IDT vector to use for the IRQ offload interrupt handler.
+	The default should be fine for most arches, but on systems like MVIC
+	where there is a fixed IRQ-to-vector mapping another value may be
+	needed to avoid collision.
+
+config X86_KERNEL_OOPS
+	bool "Enable handling of kernel oops as an exception"
+	default y
+	help
+	Enable handling of k_oops() API as a CPU exception, which will provide
+	extra debugging information such as program counter and register
+	values when the oops is triggered. Requires an entry in the IDT.
+
+config X86_KERNEL_OOPS_VECTOR
+	int "IDT vector to use for kernel oops"
+	default 62 if MVIC
+	default 33 if !MVIC
+	range 32 255
+	depends on X86_KERNEL_OOPS
+	help
+	Specify the IDT vector to use for the kernel oops exception handler.
+	The default should be fine for most arches, but on systems like MVIC
+	where there is a fixed IRQ-to-vector mapping another value may be
+	needed to avoid collision.
+
+config XIP
+	default n
+
+config X86_FIXED_IRQ_MAPPING
+	bool
+	default n
+	help
+	Specify whether the current interrupt controller in use has a fixed
+	mapping between IDT vectors and IRQ lines.
+
+endmenu
+
+
+
+source "arch/x86/soc/*/Kconfig"
+
+endmenu

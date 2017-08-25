@@ -1,0 +1,63 @@
+
+if BOARD_ARDUINO_101
+
+config BOARD
+	default "arduino_101"
+
+config TEXT_SECTION_OFFSET
+	default 0x30
+
+config SS_RESET_VECTOR
+	default 0x40034000
+
+config ROM_SIZE
+	default 144
+
+if FLASH && SPI
+
+config SPI_FLASH_W25QXXDV
+	def_bool y
+
+config GPIO
+	def_bool y
+
+config SPI_CS_GPIO
+	def_bool y
+
+config SPI_0_CS_GPIO_PIN
+	default 24
+
+if SPI_FLASH_W25QXXDV
+
+config SPI_FLASH_W25QXXDV_SPI_NAME
+	default "SPI_0"
+config SPI_FLASH_W25QXXDV_SPI_SLAVE
+	default 1
+
+if DISK_ACCESS_FLASH
+
+config DISK_FLASH_DEV_NAME
+	default SPI_FLASH_W25QXXDV_DRV_NAME
+
+config DISK_FLASH_START
+	default 0x0
+
+config DISK_FLASH_MAX_RW_SIZE
+	default SPI_FLASH_W25QXXDV_MAX_DATA_LEN
+
+config DISK_ERASE_BLOCK_SIZE
+	default 0x1000
+
+config DISK_FLASH_ERASE_ALIGNMENT
+	default 0x1000
+
+config DISK_VOLUME_SIZE
+	default 0x200000
+
+endif # DISK_ACCESS_FLASH
+
+endif # SPI_FLASH_W25QXXDV
+
+endif # FLASH && SPI
+
+endif # BOARD_ARDUINO_101

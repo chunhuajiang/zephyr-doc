@@ -1,0 +1,7 @@
+CC3220 Info taken from:
+* http://www.ti.com/lit/ug/swru465/swru465.pdf
+
+Notes for CC3220SF:
+ * Text must start at 0x800 offset in flash.  The first 0x800 bytes are
+   reserved for the flash header.
+ * See CONFIG_TEXT_SECTION_OFFSET.

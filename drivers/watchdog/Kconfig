@@ -1,0 +1,31 @@
+# Kconfig - Watchdog configuration options
+#
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# Watchdog options
+#
+menuconfig WATCHDOG
+	bool
+	prompt "Watchdog Support"
+	default n
+	help
+	  Include support for watchdogs.
+
+if WATCHDOG
+
+source "drivers/watchdog/Kconfig.qmsi"
+
+source "drivers/watchdog/Kconfig.stm32"
+
+source "drivers/watchdog/Kconfig.cmsdk_apb"
+
+source "drivers/watchdog/Kconfig.sam"
+
+source "drivers/watchdog/Kconfig.esp32"
+
+endif

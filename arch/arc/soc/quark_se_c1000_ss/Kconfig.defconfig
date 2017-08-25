@@ -1,0 +1,365 @@
+#
+# Copyright (c) 2014 Wind River Systems, Inc.
+# Copyright (c) 2015-2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+if SOC_QUARK_SE_C1000_SS
+
+config SOC
+	default quark_se_c1000_ss
+
+config NUM_IRQ_PRIO_LEVELS
+	# This processor supports only 2 priority levels:
+	# 0 for Fast Interrupts (FIRQs) and 1 for Regular Interrupts (IRQs).
+	default 2
+
+config NUM_IRQS
+	# must be > the highest interrupt number used
+	default 68
+
+config RGF_NUM_BANKS
+	default 2
+
+config SYS_CLOCK_HW_CYCLES_PER_SEC
+	default 32000000
+
+config HARVARD
+	def_bool n
+
+config FLASH_BASE_ADDRESS
+	default 0x40000000
+
+config FLASH_SIZE
+	default 152
+
+config SRAM_BASE_ADDRESS
+	default 0x4000 if NSIM
+	default 0xa8000400
+
+config SRAM_SIZE
+	default 16 if NSIM
+	default 24
+
+config ICCM_BASE_ADDRESS
+	default 0xFFFFFFFF
+
+config ICCM_SIZE
+	default 0
+
+config DCCM_BASE_ADDRESS
+	default 0x80000000
+
+config DCCM_SIZE
+	default 8
+
+config QMSI
+	def_bool y
+
+config QMSI_BUILTIN
+	def_bool y
+
+if RTC
+
+config RTC_QMSI
+	def_bool y
+
+config RTC_0_IRQ_PRI
+	default 2
+
+endif # RTC
+
+if PWM
+config PWM_QMSI
+	def_bool y
+endif # PWM
+
+if PINMUX
+config PINMUX_QMSI
+	def_bool y
+endif
+
+if GPIO
+
+config GPIO_QMSI
+	def_bool n
+
+if GPIO_QMSI
+
+config GPIO_QMSI_0
+	def_bool y
+
+if GPIO_QMSI_0
+
+config GPIO_QMSI_0_NAME
+	default "GPIO_2"
+
+config GPIO_QMSI_0_IRQ_PRI
+	default 1
+
+endif # GPIO_QMSI_0
+
+config GPIO_QMSI_1
+	def_bool y
+
+if GPIO_QMSI_1
+
+config GPIO_QMSI_1_NAME
+	default "GPIO_3"
+
+config GPIO_QMSI_1_IRQ_PRI
+	default 1
+
+endif # GPIO_QMSI_1
+
+endif # GPIO_QMSI
+
+config GPIO_QMSI_SS
+	def_bool y
+
+if GPIO_QMSI_SS
+
+config GPIO_QMSI_SS_0
+	def_bool y
+
+if GPIO_QMSI_SS_0
+
+config GPIO_QMSI_SS_0_NAME
+	default "GPIO_0"
+
+config GPIO_QMSI_SS_0_IRQ_PRI
+	default 1
+
+endif # GPIO_QMSI_SS_0
+
+config GPIO_QMSI_SS_1
+	def_bool y
+
+if GPIO_QMSI_SS_1
+
+config GPIO_QMSI_SS_1_NAME
+	default "GPIO_1"
+
+config GPIO_QMSI_SS_1_IRQ_PRI
+	default 1
+
+endif # GPIO_QMSI_SS_1
+
+endif # GPIO_QMSI_SS
+
+endif # GPIO
+
+
+if I2C
+
+config I2C_QMSI
+	def_bool n
+
+if I2C_QMSI
+config I2C_0
+	def_bool y
+
+config I2C_0_NAME
+	default "I2C_2"
+
+config I2C_0_IRQ_PRI
+	default 1
+
+config I2C_0_DEFAULT_CFG
+	default 0x12
+
+config I2C_1
+	def_bool y
+
+config I2C_1_NAME
+	default "I2C_3"
+
+config I2C_1_IRQ_PRI
+	default 1
+
+config I2C_1_DEFAULT_CFG
+	default 0x12
+
+config I2C_SDA_SETUP
+	default 2
+
+config I2C_SDA_TX_HOLD
+	default 16
+
+config I2C_SDA_RX_HOLD
+	default 24
+
+endif
+
+config I2C_QMSI_SS
+	def_bool y
+
+if I2C_QMSI_SS
+config I2C_SS_0
+	def_bool y
+
+config I2C_SS_0_NAME
+	default "I2C_0"
+
+config I2C_SS_0_DEFAULT_CFG
+	default 0x12
+
+config I2C_SS_1
+	def_bool y
+
+config I2C_SS_1_NAME
+	default "I2C_1"
+
+config I2C_SS_1_DEFAULT_CFG
+	default 0x12
+
+config I2C_SS_SDA_SETUP
+	default 2
+
+config I2C_SS_SDA_HOLD
+	default 10
+
+endif
+
+endif # I2C
+
+if ADC
+config ADC_QMSI_SS
+	def_bool y
+endif
+
+if BT_H4
+
+config BT_UART_ON_DEV_NAME
+	default UART_QMSI_0_NAME
+
+config UART_QMSI_0
+	def_bool y
+
+config UART_QMSI_0_BAUDRATE
+	default 1000000
+
+config UART_QMSI_0_HW_FC
+	def_bool y
+
+endif # BT_H4
+
+if UART_QMSI
+
+if UART_QMSI_0
+
+config UART_QMSI_0_IRQ_PRI
+	default 3
+
+endif # UART_QMSI_0
+
+config UART_QMSI_1
+	def_bool y
+
+if UART_QMSI_1
+
+config UART_QMSI_1_IRQ_PRI
+	default 3
+
+endif # UART_QMSI_1
+
+endif # UART_QMSI
+
+if UART_CONSOLE
+
+config UART_CONSOLE_ON_DEV_NAME
+	default "UART_1"
+
+endif
+
+if SPI
+
+config SPI_QMSI
+	def_bool n
+
+if SPI_QMSI
+config SPI_0
+	def_bool y
+
+config SPI_0_NAME
+	default "SPI_2"
+
+config SPI_0_IRQ_PRI
+	default 1
+
+config SPI_1
+	def_bool y
+
+config SPI_1_NAME
+	default "SPI_3"
+
+config SPI_1_IRQ_PRI
+	default 1
+
+endif
+
+config SPI_QMSI_SS
+	def_bool y
+
+if SPI_QMSI_SS
+config SPI_SS_0
+	def_bool y
+
+config SPI_SS_0_NAME
+	default "SPI_0"
+
+config SPI_SS_0_IRQ_PRI
+	default 1
+
+config SPI_SS_1
+	def_bool y
+
+config SPI_SS_1_NAME
+	default "SPI_1"
+
+config SPI_SS_1_IRQ_PRI
+	default 1
+
+endif
+
+endif # SPI
+
+if AIO_COMPARATOR
+
+config AIO_COMPARATOR_QMSI
+	def_bool y
+
+endif # AIO_COMPARATOR
+
+if WATCHDOG
+
+config WDT_QMSI
+	def_bool y
+
+config WDT_0_IRQ_PRI
+	default 2
+
+endif # WATCHDOG
+
+if DMA
+
+config DMA_QMSI
+	def_bool y
+
+endif # DMA
+
+if COUNTER
+
+config AON_COUNTER_QMSI
+	def_bool y
+
+config AON_TIMER_QMSI
+	def_bool y
+
+config AON_TIMER_IRQ_PRI
+	default 2
+
+endif # COUNTER
+
+endif #SOC_QUARK_SE_C1000_SS

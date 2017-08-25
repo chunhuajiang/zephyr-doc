@@ -1,0 +1,24 @@
+# Kconfig.series - Nordic Semiconductor nRF5 MCU line
+#
+# Copyright (c) 2016 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config  SOC_SERIES_NRF52X
+	bool "Nordic Semiconductor nRF52 series MCU"
+	select CPU_CORTEX_M
+	select CPU_CORTEX_M4
+	select CPU_HAS_FPU
+	select CPU_HAS_MPU
+	select SOC_FAMILY_NRF5
+	select NRF_RTC_TIMER
+	select CLOCK_CONTROL
+	select CLOCK_CONTROL_NRF5
+	select SYS_POWER_LOW_POWER_STATE_SUPPORTED
+	select XIP
+	select HAS_CMSIS
+	select HAS_NORDIC_MDK
+	select HAS_NORDIC_HAL
+	help
+	 Enable support for NRF52 MCU series

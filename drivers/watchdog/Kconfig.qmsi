@@ -1,0 +1,36 @@
+# Kconfig - Watchdog configuration options for QMSI WDT
+#
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+config WDT_QMSI
+	bool "QMSI Watchdog driver"
+	default n
+	help
+	  This option enables the QMSI watchdog driver.
+	  This driver is simply a shim driver based on the watchdog
+	  driver provided by the QMSI BSP.
+
+config WDT_0_NAME
+	string "Watchdog driver instance name"
+	default "WATCHDOG_0"
+	depends on WDT_QMSI
+	help
+	  Watchdog driver instance name
+
+config WDT_0_IRQ_PRI
+	int "Interrupt priority"
+	depends on WDT_QMSI
+	help
+	  Watchdog interrupt priority
+
+config WDT_QMSI_API_REENTRANCY
+	bool
+	prompt "WDT shim driver API reentrancy"
+	depends on WDT_QMSI
+	default n
+	help
+	  Enable support for WDT shim driver API reentrancy.

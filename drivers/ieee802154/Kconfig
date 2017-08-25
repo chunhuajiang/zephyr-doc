@@ -1,0 +1,54 @@
+# Kconfig - IEEE 802.15.4 driver configuration options
+
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# IEEE 802.15.4 options
+#
+menu "IEEE 802.15.4 drivers options"
+
+config SYS_LOG_IEEE802154_DRIVER_LEVEL
+	int
+	prompt "IEEE802154 driver log level"
+	depends on SYS_LOG
+	default 0
+	help
+	Sets log level for 802.15.4 drivers.
+
+	Levels are:
+
+	- 0 OFF, do not write
+
+	- 1 ERROR, only write SYS_LOG_ERR
+
+	- 2 WARNING, write SYS_LOG_WRN in addition to previous level
+
+	- 3 INFO, write SYS_LOG_INF in addition to previous levels
+
+	- 4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+
+source "drivers/ieee802154/Kconfig.cc2520"
+
+source "drivers/ieee802154/Kconfig.kw41z"
+
+source "drivers/ieee802154/Kconfig.mcr20a"
+
+source "drivers/ieee802154/Kconfig.nrf5"
+
+menuconfig IEEE802154_UPIPE
+	bool "UART PIPE fake radio driver support for QEMU"
+	depends on BOARD_QEMU_X86
+	select NETWORKING
+	select UART_PIPE
+	default n
+
+config IEEE802154_UPIPE_DRV_NAME
+	string "UART PIPE Driver name"
+	default "IEEE802154_UPIPE"
+	depends on IEEE802154_UPIPE
+
+endmenu

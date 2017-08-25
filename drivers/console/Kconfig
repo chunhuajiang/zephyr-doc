@@ -1,0 +1,210 @@
+# Kconfig - console driver configuration options
+
+#
+# Copyright (c) 2014-2015 Wind River Systems, Inc.
+# Copyright (c) 2016 Cadence Design Systems, Inc.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig CONSOLE
+	bool
+	prompt "Console drivers"
+
+if CONSOLE
+
+config CONSOLE_INPUT_MAX_LINE_LEN
+	int "Console maximum input line length"
+	default 128
+	help
+	This option can be used to modify the maximum length a console input
+	can be.
+
+config CONSOLE_HAS_DRIVER
+	bool
+	default n
+	help
+	This is an option to be enabled by console drivers to signal
+	that some kind of console exists.
+
+config CONSOLE_HANDLER
+	bool
+	prompt "Enable console input handler"
+	depends on UART_CONSOLE
+	select UART_INTERRUPT_DRIVEN
+	default n
+	help
+	This option enables console input handler allowing to write simple
+	interaction between serial console and the OS.
+
+config UART_CONSOLE
+	bool
+	prompt "Use UART for console"
+	default n
+	depends on SERIAL && SERIAL_HAS_DRIVER
+	select CONSOLE_HAS_DRIVER
+	help
+	Enable this option to use one UART for console. Make sure
+	CONFIG_UART_CONSOLE_ON_DEV_NAME is also set correctly.
+
+if !HAS_DTS
+config UART_CONSOLE_ON_DEV_NAME
+	string "Device Name of UART Device for UART Console"
+	default "UART_0"
+	depends on UART_CONSOLE
+	help
+	This option specifies the name of UART device to be used for
+	UART console.
+endif
+
+config UART_CONSOLE_INIT_PRIORITY
+	int
+	prompt "Init priority"
+	default 60
+	depends on UART_CONSOLE
+	help
+	  Device driver initialization priority.
+	  Console has to be initialized after the UART driver
+	  it uses.
+
+config UART_CONSOLE_DEBUG_SERVER_HOOKS
+	bool
+	prompt "Debug server hooks in debug console"
+	default n
+	depends on UART_CONSOLE
+	help
+	This option allows a debug server agent such as GDB to take over the
+	handling of traffic that goes through the console logic. The debug
+	server looks at characters received and decides to handle them itself if
+	they are some sort of control characters, or let the regular console
+	code handle them if they are of no special significance to it.
+
+config USB_UART_CONSOLE
+	bool
+	prompt "Use USB port for console outputs"
+	depends on SERIAL
+	select CONSOLE_HAS_DRIVER
+	select USB_CDC_ACM
+	default n
+	help
+	Enable this option to use the USB UART for console output. The output
+	can be viewed from the USB host via /dev/ttyACM* port. Note that console
+	inputs from the USB UART are not functional yet. Also since the USB
+	layer currently doesn't support multiple interfaces, this shouldn't be
+	selected in conjunction with say USB Mass Storage.
+
+config USB_UART_DTR_WAIT
+	bool
+	prompt "Wait on DTR control signal"
+	default n
+	depends on USB_UART_CONSOLE
+	help
+	Enable this option to use flow control on the console. The uart console
+	waits until the DTR is asserted by the host.
+	Note: Disabling this might lead to missing console prints.
+
+config RAM_CONSOLE
+	bool
+	prompt "Use RAM console"
+	select CONSOLE_HAS_DRIVER
+	default n
+	help
+	Emit console messages to a RAM buffer "ram_console" which can
+	be examined at runtime with a debugger. Useful in board bring-up
+	if there aren't any working serial drivers.
+
+config RAM_CONSOLE_BUFFER_SIZE
+	int "Ram Console buffer size"
+	default 1024
+	depends on RAM_CONSOLE
+	help
+	Size of the RAM console buffer. Messages will wrap around if the
+	length is exceeded.
+
+config RTT_CONSOLE
+	bool
+	prompt "Use RTT console"
+	depends on HAS_SEGGER_RTT
+	select CONSOLE_HAS_DRIVER
+	default n
+	help
+	Emit console messages to a RAM buffer that is then read by the
+	Segger J-Link software and displayed on a computer in real-time.
+	Requires support for Segger J-Link on the companion IC onboard.
+
+config IPM_CONSOLE_SENDER
+	bool
+	prompt "Inter-processor Mailbox console sender"
+	select CONSOLE_HAS_DRIVER
+	default n
+	help
+	Enable the sending side of IPM console
+
+config IPM_CONSOLE_RECEIVER
+	bool
+	prompt "Inter-processor Mailbox console receiver"
+	select RING_BUFFER
+	default n
+	help
+	Enable the receiving side of IPM console
+
+config IPM_CONSOLE_STACK_SIZE
+	int
+	prompt "Stack size for IPM console receiver thread"
+	depends on IPM_CONSOLE_RECEIVER
+	default 512
+	help
+	Each instance of the IPM console receiver driver creates a worker
+	thread to print out incoming messages from the remote CPU. Specify the
+	stack size for these threads here.
+
+config IPM_CONSOLE_INIT_PRIORITY
+	int
+	prompt "IPM console init priority"
+	default 60
+	depends on IPM_CONSOLE_SENDER || IPM_CONSOLE_RECEIVER
+	help
+	  Device driver initialization priority.
+	  Console has to be initialized after the IPM subsystem
+	  it uses.
+
+config	UART_PIPE
+	bool
+	prompt "Enable pipe UART driver"
+	select UART_INTERRUPT_DRIVEN
+	default n
+	help
+	Enable pipe UART driver. This driver allows application to communicate
+	over UART with custom defined protocol. Driver doesn't inspect received
+	data (as contrary to console UART driver) and all aspects of received
+	protocol data are handled by application provided callback.
+
+if !HAS_DTS
+config UART_PIPE_ON_DEV_NAME
+	string "Device Name of UART Device for pipe UART"
+	default "UART_0"
+	depends on UART_PIPE
+	help
+	This option specifies the name of UART device to be used
+	for pipe UART.
+endif
+
+config XTENSA_SIM_CONSOLE
+	bool
+	prompt "Use Xtensa simulator console"
+	depends on SIMULATOR_XTENSA
+	select CONSOLE_HAS_DRIVER
+	default y
+	help
+	Use simulator console to print messages.
+
+config XTENSA_CONSOLE_INIT_PRIORITY
+	int
+	prompt "Init priority"
+	default 60
+	depends on XTENSA_SIM_CONSOLE
+	help
+	  Device driver initialization priority.
+
+source "drivers/console/Kconfig.telnet"
+endif

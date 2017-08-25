@@ -1,0 +1,127 @@
+# Kconfig.debug - Debug Options
+
+#
+# Copyright (c) 2016 Intel Corporation.
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menuconfig NET_LOG
+	bool "Enable network stack logging and debugging"
+	default n
+	select SYS_LOG
+	help
+	Enable logging in various parts of the network stack.
+	Specific debugging options to other sub-menus will be unlocked
+	as well (IPv6, IPv4, ...).
+
+if NET_LOG
+
+config SYS_LOG_NET_LEVEL
+	int
+	prompt "Network Stack Logging level"
+	default 1
+	depends on SYS_LOG
+	range 0 4
+	help
+	  Sets log level for the network stack.
+	  Levels are:
+	  0 OFF, do not write
+	  1 ERROR, only write SYS_LOG_ERR
+	  2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  3 INFO, write SYS_LOG_INF in addition to previous levels
+	  4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+
+config NET_LOG_GLOBAL
+	bool "Enable global network stack logging"
+	default n
+	select NET_DEBUG_CORE
+	select NET_DEBUG_IF
+	select NET_DEBUG_UTILS
+	select NET_DEBUG_CONTEXT
+	select NET_DEBUG_NET_PKT
+	select NET_DEBUG_CONN
+	select NET_DEBUG_ROUTE if NET_ROUTE
+	select NET_DEBUG_IPV6 if NET_IPV6
+	select NET_DEBUG_ICMPV6 if NET_IPV6
+	select NET_DEBUG_IPV6_NBR_CACHE if NET_IPV6
+	select NET_DEBUG_6LO if NET_6LO
+	select NET_DEBUG_IPV4 if NET_IPV4
+	select NET_DEBUG_ICMPV4 if NET_IPV4
+	select NET_DEBUG_DHCPV4 if NET_DHCPV4
+	select NET_DEBUG_UDP if NET_UDP
+	select NET_DEBUG_TCP if NET_TCP
+	select NET_DEBUG_RPL if NET_RPL
+	select NET_DEBUG_TRICKLE if NET_TRICKLE
+	select NET_DEBUG_MGMT_EVENT if NET_MGMT
+	select NET_DEBUG_MGMT_EVENT_STACK if NET_MGMT_EVENT
+	help
+	By default, logging will apply only on enabled CONFIG_NET_DEBUG_*
+	options, on which CONFIG_SYS_LOG_NET_LEVEL would be applied.
+	However, if you want all the network stack logging enabled at once,
+	use this option. Beware logging takes a lot of ROM/RAM and kills
+	execution timing so it can affect your use case.
+
+config NET_DEBUG_CORE
+	bool "Debug core IP stack"
+	default n
+	help
+	Enables core network stack code part to output debug messages
+
+config NET_DEBUG_IF
+	bool "Debug network interface code"
+	default n
+	help
+	Enables network interface code part to output debug messages
+
+config NET_DEBUG_UTILS
+	bool "Debug utility functions in IP stack"
+	default n
+	help
+	Enables utility functions to output debug messages
+
+config NET_DEBUG_CONTEXT
+	bool "Debug network context allocation"
+	default n
+	help
+	Enables printing of network context allocations and frees.
+
+config NET_DEBUG_NET_PKT
+	bool "Debug network packet and buffer allocation"
+	default n
+	select NET_BUF_POOL_USAGE
+	help
+	Enables collection of network packet and buffer allocations and frees.
+
+config NET_DEBUG_NET_PKT_ALL
+	bool "Debug network packet and buffer individual allocation"
+	default n
+	depends on NET_DEBUG_NET_PKT
+	help
+	Enables printing of network packet and buffer allocations and frees for
+	each allocation. This can produce lot of output so it is disabled by
+	default.
+
+config NET_DEBUG_NET_PKT_EXTERNALS
+	int "How many external network packet allocations"
+	default 0
+	depends on NET_DEBUG_NET_PKT
+	help
+	How many external net_pkt objects are there in user specific pools.
+	This value is used when allocating space for tracking the
+	memory allocations.
+
+config NET_DEBUG_CONN
+	bool "Debug connection handling"
+	default n
+	help
+	Enables connection debug messages
+
+config NET_DEBUG_ROUTE
+	bool "Debug route management"
+	depends on NET_ROUTE
+	default n
+	help
+	Enables routing engine debug messages
+
+endif # NET_LOG

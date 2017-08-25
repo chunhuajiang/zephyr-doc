@@ -1,0 +1,90 @@
+# Kconfig - net stack configuration options
+
+#
+# Copyright (c) 2015 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+menu "Networking"
+
+config NET_BUF
+	bool "Network buffer support"
+	default n
+	help
+	This option enables support for generic network protocol
+	buffers.
+
+config NET_BUF_LOG
+	bool "Network buffer logging"
+	depends on NET_BUF
+	select STDOUT_CONSOLE
+	select SYS_LOG
+	default n
+	help
+	Enable logs and checks for the generic network buffers.
+
+config SYS_LOG_NET_BUF_LEVEL
+	int
+	prompt "Network buffer Logging level"
+	depends on NET_BUF_LOG && SYS_LOG
+	default 1
+	range 0 4
+	help
+	  Sets log level for network buffers.
+	  Levels are:
+	  0 OFF, do not write
+	  1 ERROR, only write SYS_LOG_ERR
+	  2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  3 INFO, write SYS_LOG_INF in addition to previous levels
+	  4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+
+config NET_BUF_WARN_ALLOC_INTERVAL
+	int
+	prompt "Interval of Network buffer allocation warnings"
+	depends on NET_BUF_LOG
+	default 1
+	range 0 60
+	help
+	Interval in seconds of Network buffer allocation warnings which are
+	generated when a buffer cannot immediately be allocated with K_FOREVER
+	which may lead to deadlocks. Setting it to 0 makes warnings to be
+	printed only once per allocation.
+
+config NET_BUF_SIMPLE_LOG
+	bool "Network buffer memory debugging"
+	depends on NET_BUF_LOG
+	select STDOUT_CONSOLE
+	select SYS_LOG
+	default n
+	help
+	  Enable extra debug logs and checks for the generic network buffers.
+
+config NET_BUF_POOL_USAGE
+	bool "Network buffer pool usage tracking"
+	depends on NET_BUF
+	default n
+	help
+	Enable network buffer pool tracking. This means that:
+	* amount of free buffers in the pool is remembered
+	* total size of the pool is calculated
+	* pool name is stored and can be shown in debugging prints
+
+config  NETWORKING
+	bool "Link layer and IP networking support"
+	select NET_BUF
+	select POLL
+	select RANDOM_GENERATOR
+	default n
+	help
+	This option enabled generic link layer and IP networking support.
+
+if NETWORKING
+
+source "subsys/net/ip/Kconfig"
+
+source "subsys/net/lib/Kconfig"
+
+endif
+
+endmenu

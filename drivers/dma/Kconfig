@@ -1,0 +1,73 @@
+# Kconfig - DMA configuration options
+#
+#
+# Copyright (c) 2016 Intel Corporation
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+#
+# DMA options
+#
+menuconfig DMA
+	bool
+	prompt "DMA driver Configuration"
+	default n
+
+if DMA
+config DMA_0_NAME
+	string "Device name for DMA Controller 0"
+	default "DMA_0"
+	help
+	Device name for DMA Controller 0.
+
+config DMA_0_IRQ_PRI
+	int "IRQ Priority for DMA Controller 0"
+	default 3
+	help
+	IRQ Priority for the DMA Controller.
+
+config DMA_1_NAME
+	string "Device name for DMA Controller 1"
+	default "DMA_1"
+	help
+	Device name for DMA Controller 1.
+
+config DMA_1_IRQ_PRI
+	int "IRQ Priority for DMA Controller 1"
+	default 3
+	help
+	IRQ Priority for DMA Controller 1.
+
+config DMA_2_NAME
+	string "Device name for DMA Controller 2"
+	default "DMA_2"
+	help
+	Device name for DMA Controller 2.
+
+config DMA_2_IRQ_PRI
+	int "IRQ Priority for DMA Controller 2"
+	default 3
+	help
+	IRQ Priority for DMA Controller 2.
+
+config SYS_LOG_DMA_LEVEL
+	int
+	prompt "DMA Driver Log level"
+	depends on SYS_LOG
+	default 0
+	range 0 4
+	help
+	  Sets log level for DMA drivers.
+	  Levels are:
+	  0 OFF, do not write
+	  1 ERROR, only write SYS_LOG_ERR
+	  2 WARNING, write SYS_LOG_WRN in addition to previous level
+	  3 INFO, write SYS_LOG_INF in addition to previous levels
+	  4 DEBUG, write SYS_LOG_DBG in addition to previous levels
+
+source "drivers/dma/Kconfig.qmsi"
+
+source "drivers/dma/Kconfig.stm32f4x"
+
+endif # DMA

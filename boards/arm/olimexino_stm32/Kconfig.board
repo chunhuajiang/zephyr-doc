@@ -1,0 +1,10 @@
+# Kconfig - OLIMEXINO-STM32 board configuration
+#
+# Copyright (c) 2016, I-SENSE group of ICCS
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+config BOARD_OLIMEXINO_STM32
+	bool "OLIMEXINO-STM32 Development Board"
+	select I2C_2 if I2C
+	depends on SOC_STM32F103XB
