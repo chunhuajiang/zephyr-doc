@@ -1,45 +1,33 @@
 ..
     Zephyr Project documentation master file
 
-Zephyr Project Documentation
+Zephyr 项目中文文档
 ############################
-
-.. only:: release
-
-   Welcome to the Zephyr Project's documentation version |version|!
-
-   Documentation for the development branch of Zephyr can be found at
-   https://www.zephyrproject.org/doc/
 
 .. only:: (development or daily)
 
-   Welcome to the Zephyr Project's documentation. This is the documentation of the
-   master tree under development (version |version|).
+   欢迎阅读 Zephyr 项目的学习文档，当前文档对应的 Zephyr 版本是 1.9.0！
 
-   Documentation for released versions of Zephyr can be found at
-   ``https://www.zephyrproject.org/doc/<version>``. The following documentation
-   versions are available:
+.. Hint:: 
 
-   `Zephyr 1.5.0`_ | `Zephyr 1.6.0`_ | `Zephyr 1.7.0`_ | `Zephyr 1.8.0`_
+  当前版本的中文版正在翻译当中，您可以在 `这里`_ 查看其它版本。
 
-For more information about previous releases, please consult the published
-:ref:`zephyr_release_notes`.
 
-The Zephyr OS is provided under the `Apache 2.0 license`_ (as found in
-the LICENSE file in the project's `GitHub repo`_).  The Zephyr OS also
-imports or reuses packages, scripts, and other files that use other
-licensing, as described in :ref:`Zephyr_Licensing`.
+关于早期发布的其它版本的信息，请查阅 :ref:`zephyr_release_notes`。
 
-Source code for the Zephyr Project is maintained in the Zephyr Project's
-`GitHub repo`_.
+Zephyr OS 的主体代码遵循开源协议 `Apache 2.0 license`_ ，您可以通过查看 `GitHub 仓库`_ 中的 LINCENSE 文件查看该协议的具体内容。除此之外，Zephyr OS 还导入/引用了一些软件包、脚本以及其它文件，这些文件遵循协议 :ref:`Zephyr_Licensing`。
+
+Zephyr 项目的源代码维护在 `GitHub 仓库`_ 中。
 
 .. _Apache 2.0 license:
    https://github.com/zephyrproject-rtos/zephyr/blob/master/LICENSE
 
-.. _GitHub repo: https://github.com/zephyrproject-rtos/zephyr
+.. _GitHub 仓库: https://github.com/zephyrproject-rtos/zephyr
+
+.. _这里: http://zephyr-doc.readthedocs.io/zh_CN/latest/
 
 
-Sections
+目录
 ********
 
 .. toctree::
@@ -55,7 +43,7 @@ Sections
    devices/index.rst
    subsystems/subsystems.rst
 
-Indices and Tables
+索引和表格
 ******************
 
 * :ref:`glossary`
