@@ -143,6 +143,9 @@ rst_epilog = """
 
 # -- Options for HTML output ----------------------------------------------
 
+html_theme = "sphinx_rtd_theme"
+html_theme_path = ['./themes']
+'''
 try:
     import sphinx_rtd_theme
 except ImportError:
@@ -155,6 +158,7 @@ else:
 if tags.has('daily') or tags.has('release'):
     html_theme = 'zephyr-docs-theme'
     html_theme_path = ['./themes']
+	'''
 
 
 if tags.has('release'):
