@@ -38,10 +38,7 @@ Zephyr 的设备模型为配置驱动程序提供了一致的设备模型。设�
 
 Zephyr 对多种板子提供了一系列的设备驱动程序。除非硬件不支持，否则每个驱动都应当提供基于中断（而不是轮询）的实现。
 
-
-High-level calls accessed through device-specific APIs, such as i2c.h
-or spi.h, are usually intended as synchronous. Thus, these calls should be
-blocking.
+通过上层的设备API来调用这些驱动, 例如 i2c.h spi.h, 他们通常被特意设计为同步操作, 这些调用会产生阻塞.
 
 驱动程序 API
 ******************
