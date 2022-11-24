@@ -124,7 +124,7 @@
 |  示例           |    网络           | CoAP Server                        |    陈蛇                              |  完成    |
 |  示例           |    网络           | zperf: Network Traffic Generator   |    陈蛇                              |  完成    |
 |  示例           |    蓝牙           | Beacon                     |                                             |      |
-|  示例           |    蓝牙           | Central                    |                                             |      |
+|  示例           |    蓝牙           | Central                    |  [unrulife](https://github.com/unrulife)    | 领取  |
 |  示例           |    蓝牙           | Heart-rate Monitor         |                                             |      |
 |  示例           |    蓝牙           | Eddystone                  |                                             |      |
 |  示例           |    蓝牙           | Handsfree                  |                                             |      |
