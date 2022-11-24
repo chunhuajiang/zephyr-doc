@@ -1,26 +1,22 @@
 .. _bluetooth_central:
 
-Bluetooth: Central
+蓝牙：中央角色(之前称为：master主设备)
 ##################
 
-Overview
+概述
 ********
 
-Application demonstrating very basic BLE Central role functionality by scanning
-for other BLE devices and establishing a connection to the first one with a
-strong enough signal.
+该示例通过扫描其它BLE(蓝牙低功耗)设备，并与首个信号足够强的设备建立蓝牙连接的方式，来演示最基本的BLE主设备的功能。
 
 
-
-Requirements
+要求
 ************
 
-* BlueZ running on the host, or
-* A board with BLE support
+* 运行在主机host上的BlueZ，或
+* 支持BLE的开发板
 
-Building and Running
+编译与运行
 ********************
-This sample can be found under :file:`samples/bluetooth/central` in the
-Zephyr tree.
+该例程可在Zephyr树的如下路径找到 :file:`samples/bluetooth/central` 
 
-See :ref:`bluetooth setup section <bluetooth_setup>` for details.
+详情请参考 :ref:`bluetooth setup section <bluetooth_setup>` .
